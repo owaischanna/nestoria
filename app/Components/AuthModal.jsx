@@ -29,7 +29,7 @@ const AuthModal = ({ isOpen, onClose }) => {
 
         {/* Title */}
         <h2 className="text-center text-xl font-semibold mb-6"> {/* Increased text size and margin */}
-          Welcome to <span className="text-green-600">Nestoria</span>
+          Welcome to <span className="text-600">Nestoria</span>
         </h2>
 
         {/* Tabs */}

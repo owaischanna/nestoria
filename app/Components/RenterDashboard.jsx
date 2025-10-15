@@ -1,4 +1,3 @@
-// Dashboard.jsx
 "use client";
 
 import {
@@ -7,16 +6,16 @@ import {
 } from 'lucide-react';
 import Sidebar from './Sidebar'; // Import the separated Sidebar component
 
-// IMPORTANT: Adjust this import path based on your actual file structure
-import bedImage from '../../assets/bed.jpeg'; // Assuming 'assets' is a sibling folder to Dashboard.jsx
-
-
 // --- Header Component (Kept Local) ---
 const Header = () => (
   <header className="flex items-center justify-between p-4 border-b border-gray-200 bg-white sticky top-0 z-10">
     {/* Logo */}
     <div className="flex items-center space-x-2">
-      <img src="https://i.imgur.com/Kz4eQ7e.png" alt="BeakVia Logo" className="h-6 w-auto" />
+      <img
+        src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR0HFWiXvgfpFSXkpGQHyGt2iHrEiBRvM_T-A&s"
+        alt="BeakVia Logo"
+        className="h-6 w-auto"
+      />
       <span className="text-lg font-bold text-green-700">BeakVia</span>
     </div>
 
@@ -53,12 +52,12 @@ const Header = () => (
   </header>
 );
 
-// --- Stat Card Component (Kept Local) ---
+// --- Stat Card Component ---
 const iconsMap = {
-    "FileText": FileText,
-    "Heart": Heart,
-    "DollarSign": DollarSign,
-    "Briefcase": Briefcase,
+  "FileText": FileText,
+  "Heart": Heart,
+  "DollarSign": DollarSign,
+  "Briefcase": Briefcase,
 };
 
 const StatCard = ({ iconName, title, value, subtext, colorClass }) => {
@@ -77,7 +76,7 @@ const StatCard = ({ iconName, title, value, subtext, colorClass }) => {
   );
 };
 
-// --- Listing Card Component (Kept Local) ---
+// --- Listing Card Component ---
 const ListingBadge = ({ text, type }) => {
   let color = 'bg-gray-100 text-gray-700';
   if (type === 'student') color = 'bg-yellow-100 text-yellow-700';
@@ -95,9 +94,8 @@ const ListingCard = ({ roomName, location, price, details, badges, imageUrl }) =
   <div className="flex border border-gray-200 rounded-lg overflow-hidden shadow-sm hover:shadow-lg transition duration-300 bg-white">
     {/* Image */}
     <div className="w-48 flex-shrink-0">
-      {/* Using the imported local image */}
       <img
-        src={imageUrl} // This will now be the imported bedImage
+        src={imageUrl}
         alt={roomName}
         className="w-full h-full object-cover"
       />
@@ -133,15 +131,20 @@ const ListingCard = ({ roomName, location, price, details, badges, imageUrl }) =
 
       {/* Price */}
       <div className="text-right">
-        <p className="text-xl font-bold text-green-700">{price}<span className="text-sm font-normal text-gray-500">/month</span></p>
+        <p className="text-xl font-bold text-green-700">
+          {price}
+          <span className="text-sm font-normal text-gray-500">/month</span>
+        </p>
         <Heart className="h-5 w-5 text-gray-400 mt-2 hover:text-red-500 cursor-pointer" />
       </div>
     </div>
   </div>
 );
 
-// --- Main Dashboard Content (Kept Local) ---
+// --- Main Dashboard Content ---
 const DashboardContent = () => {
+  const imageUrl = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR0HFWiXvgfpFSXkpGQHyGt2iHrEiBRvM_T-A&s";
+
   const listings = [
     {
       roomName: "Cozy Room Near NYU Campus",
@@ -153,7 +156,7 @@ const DashboardContent = () => {
         { text: "Female Only", type: "female" },
         { text: "Available Sep 1", type: "available" },
       ],
-      imageUrl: bedImage, // Using the local image
+      imageUrl: imageUrl,
     },
     {
       roomName: "Modern Room in Brooklyn",
@@ -164,7 +167,7 @@ const DashboardContent = () => {
         { text: "Student Friendly", type: "student" },
         { text: "Available Sep 1", type: "available" },
       ],
-      imageUrl: bedImage, // Using the local image
+      imageUrl: imageUrl,
     },
     {
       roomName: "Modern Room in Brooklyn",
@@ -176,7 +179,7 @@ const DashboardContent = () => {
         { text: "Female Only", type: "female" },
         { text: "Available Sep 1", type: "available" },
       ],
-      imageUrl: bedImage, // Using the local image
+      imageUrl: imageUrl,
     },
   ];
 
@@ -233,9 +236,11 @@ const DashboardContent = () => {
           <h2 className="text-xl font-bold text-gray-800">Recommended for You</h2>
           <div className="flex items-center space-x-4">
             <div className="text-xs font-semibold text-green-700 py-1 px-3 bg-green-200 rounded-full">
-                95% Match
+              95% Match
             </div>
-            <a href="#" className="text-sm font-medium text-gray-600 hover:text-green-700">View all</a>
+            <a href="#" className="text-sm font-medium text-gray-600 hover:text-green-700">
+              View all
+            </a>
           </div>
         </div>
         <div className="space-y-4">
@@ -247,7 +252,6 @@ const DashboardContent = () => {
     </main>
   );
 };
-
 
 const RenterDashboard = () => {
   return (

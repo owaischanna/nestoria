@@ -10,10 +10,9 @@ const PersonalInformationForm = ({ onContinue, onClose }) => {
   };
 
   return (
-    <div className="p-6 bg-white rounded-lg shadow-xl max-w-lg mx-auto">
-      {/* Header and Close Button */}
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-xl font-bold text-gray-800">Personal Information</h2>
+    <div className="p-4 sm:p-6 bg-white rounded-lg shadow-xl max-w-lg w-full mx-auto">
+      {/* Header Close Button Only */}
+      <div className="flex justify-end mb-4 sm:mb-6">
         <button
           onClick={onClose}
           className="text-gray-400 hover:text-gray-600 transition"
@@ -23,10 +22,8 @@ const PersonalInformationForm = ({ onContinue, onClose }) => {
         </button>
       </div>
 
-      <p className="text-sm text-gray-600 mb-6">Fill in your information</p>
-
       <form className="space-y-4" onSubmit={handleSubmit}>
-        {/* First Name and Last Name in one line - Single input field */}
+        {/* First Name */}
         <div>
           <label className="block text-sm mb-1">First Name</label>
           <input
@@ -36,7 +33,7 @@ const PersonalInformationForm = ({ onContinue, onClose }) => {
           />
         </div>
 
-        {/* Last Name in separate line */}
+        {/* Last Name */}
         <div>
           <label className="block text-sm mb-1">Last Name</label>
           <input
@@ -46,8 +43,8 @@ const PersonalInformationForm = ({ onContinue, onClose }) => {
           />
         </div>
 
-        {/* Country and State/Province in one line */}
-        <div className="grid grid-cols-2 gap-4">
+        {/* Country and State/Province */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <label className="block text-sm mb-1">Country</label>
             <input
@@ -66,8 +63,8 @@ const PersonalInformationForm = ({ onContinue, onClose }) => {
           </div>
         </div>
 
-        {/* Zip/Postal and Phone Number in one line */}
-        <div className="grid grid-cols-2 gap-4">
+        {/* Zip/Postal and Phone Number */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <label className="block text-sm mb-1">Zip/Postal</label>
             <input
