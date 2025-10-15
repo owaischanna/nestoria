@@ -1,81 +1,179 @@
-// RoleSelection.jsx
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { FaSearch, FaHome, FaCheck } from "react-icons/fa";
-import { useTranslation } from 'next-i18next'; // Import useTranslation
 
 const RoleSelection = ({ onClose }) => {
-  const { t } = useTranslation('common'); // Use the 'common' namespace
   const [selectedRole, setSelectedRole] = useState(null);
   const router = useRouter();
-  // ... (handleRoleSelect and handleContinue logic remains the same)
+
+  const handleRoleSelect = (role) => {
+    setSelectedRole(role);
+  };
+
+  const handleContinue = () => {
+    if (selectedRole === "renter") {
+      router.push("/renterdashboard");
+    } else if (selectedRole === "host") {
+      router.push("/hostdashboard");
+    }
+  };
 
   return (
-    <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-2xl shadow-xl max-w-4xl w-full mx-auto overflow-y-auto max-h-[95vh]">
+    <div className="fixed inset-0 bg-opacity-50 flex items-center justify-center p-4 z-50">
+      <div className="bg-white rounded-2xl shadow-xl max-w-4xl w-full mx-auto max-h-[95vh] overflow-y-auto">
         {/* Header */}
-        <div className="p-4 sm:p-8 border-b border-gray-200">
+        <div className="p-6 sm:p-8 border-b border-gray-200">
           <h1 className="text-xl sm:text-2xl font-bold text-gray-900 text-center mb-2">
-            {t('role_modal_title')} {/* TRANSLATED */}
+            How would you like to use Nestoria?
           </h1>
           <p className="text-gray-600 text-center text-sm sm:text-base">
-            {t('role_modal_subtitle')} {/* TRANSLATED */}
+            Choose your role to get started with the right features
           </p>
         </div>
 
-        <div className="p-4 sm:p-8">
+        <div className="p-6 sm:p-8">
           <h2 className="text-base sm:text-lg font-semibold text-gray-800 mb-6 text-center">
-            {t('role_i_am_a')} {/* TRANSLATED */}
+            I am a...
           </h2>
 
-          <div className="grid md:grid-cols-2 gap-4 sm:gap-6">
-            
+          {/* Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Renter Card */}
             <div
-              // ... (styling/logic remains the same)
+              className={`border-2 rounded-xl p-4 sm:p-6 transition-all cursor-pointer ${
+                selectedRole === "renter"
+                  ? "border-orange-500 bg-orange-50"
+                  : "border-gray-200 hover:border-orange-300"
+              }`}
               onClick={() => handleRoleSelect("renter")}
             >
-              {/* ... (Icon/Styling remains the same) ... */}
+              <div className="flex justify-center mb-4">
+                <div className="bg-blue-100 p-3 sm:p-4 rounded-full">
+                  <FaSearch className="text-blue-600 text-xl sm:text-2xl" />
+                </div>
+              </div>
 
               <div className="text-center mb-4">
-                <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2">{t('role_renter')}</h3> {/* TRANSLATED */}
-                <p className="text-gray-600 text-xs sm:text-sm">
-                  {t('role_renter_desc')} {/* TRANSLATED */}
+                <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2">
+                  Renter
+                </h3>
+                <p className="text-gray-600 text-sm">
+                  I'm looking for accommodation
                 </p>
               </div>
 
-              {/* ... (Features/Perfect For sections would need translation of their lists/tags if desired) ... */}
+              <div className="space-y-2 sm:space-y-3 mb-4">
+                {[
+                  "Search available rooms and apartments",
+                  "Apply to multiple listings",
+                  "Track application status",
+                  "Message hosts directly",
+                  "Save favorite listings",
+                ].map((text, idx) => (
+                  <div className="flex items-center" key={idx}>
+                    <FaCheck className="text-green-500 mr-2 text-sm" />
+                    <span className="text-gray-700 text-sm">{text}</span>
+                  </div>
+                ))}
+              </div>
+
+              <div className="mb-4">
+                <h4 className="font-semibold text-gray-700 text-sm mb-3">
+                  Perfect for:
+                </h4>
+                <div className="flex flex-wrap gap-2">
+                  {["Students", "Professionals", "International"].map(
+                    (tag, i) => (
+                      <span
+                        key={i}
+                        className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-xs font-medium"
+                      >
+                        {tag}
+                      </span>
+                    )
+                  )}
+                </div>
+              </div>
 
               <button
                 onClick={handleContinue}
-                // ... (styling/logic remains the same)
+                className={`w-full py-2 sm:py-3 rounded-lg font-semibold text-sm transition ${
+                  selectedRole === "renter"
+                    ? "bg-orange-500 text-white hover:bg-orange-600"
+                    : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                }`}
               >
-                {t('button_continue_renter')} {/* TRANSLATED */}
+                Continue as Renter
               </button>
             </div>
 
             {/* Host Card */}
             <div
-              // ... (styling/logic remains the same)
+              className={`border-2 rounded-xl p-4 sm:p-6 transition-all cursor-pointer ${
+                selectedRole === "host"
+                  ? "border-green-500 bg-green-50"
+                  : "border-gray-200 hover:border-green-300"
+              }`}
               onClick={() => handleRoleSelect("host")}
             >
-              {/* ... (Icon/Styling remains the same) ... */}
+              <div className="flex justify-center mb-4">
+                <div className="bg-green-100 p-3 sm:p-4 rounded-full">
+                  <FaHome className="text-green-600 text-xl sm:text-2xl" />
+                </div>
+              </div>
 
               <div className="text-center mb-4">
-                <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2">{t('role_host')}</h3> {/* TRANSLATED */}
-                <p className="text-gray-600 text-xs sm:text-sm">
-                  {t('role_host_desc')} {/* TRANSLATED */}
+                <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2">
+                  Host
+                </h3>
+                <p className="text-gray-600 text-sm">
+                  I have rooms or properties to rent
                 </p>
               </div>
 
-              {/* ... (Features/Perfect For sections would need translation of their lists/tags if desired) ... */}
+              <div className="space-y-2 sm:space-y-3 mb-4">
+                {[
+                  "List your available rooms",
+                  "Manage tenant applications",
+                  "Track bookings and payments",
+                  "Screen potential tenants",
+                  "Manage multiple properties",
+                ].map((text, idx) => (
+                  <div className="flex items-center" key={idx}>
+                    <FaCheck className="text-green-500 mr-2 text-sm" />
+                    <span className="text-gray-700 text-sm">{text}</span>
+                  </div>
+                ))}
+              </div>
+
+              <div className="mb-4">
+                <h4 className="font-semibold text-gray-700 text-sm mb-3">
+                  Perfect for:
+                </h4>
+                <div className="flex flex-wrap gap-2">
+                  {["Homeowners", "Landlords", "Property Mgrs"].map(
+                    (tag, i) => (
+                      <span
+                        key={i}
+                        className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-xs font-medium"
+                      >
+                        {tag}
+                      </span>
+                    )
+                  )}
+                </div>
+              </div>
 
               <button
                 onClick={handleContinue}
-                // ... (styling/logic remains the same)
+                className={`w-full py-2 sm:py-3 rounded-lg font-semibold text-sm transition ${
+                  selectedRole === "host"
+                    ? "bg-green-600 text-white hover:bg-green-700"
+                    : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                }`}
               >
-                {t('button_continue_host')} {/* TRANSLATED */}
+                Continue as Host
               </button>
             </div>
           </div>
@@ -86,7 +184,7 @@ const RoleSelection = ({ onClose }) => {
               onClick={onClose}
               className="text-gray-600 hover:text-gray-800 font-medium text-sm sm:text-base"
             >
-              {t('button_back')} {/* TRANSLATED */}
+              Back
             </button>
           </div>
         </div>
