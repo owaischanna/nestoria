@@ -99,19 +99,19 @@ const OurImpactsSection = () => (
           <li className="flex items-start">
             <span className="w-2.5 h-2.5 bg-green-600 rounded-full mt-2 mr-3 flex-shrink-0" />
             <p className="text-gray-700">
-              **241,775** International Students in Spain (2022 - 2023), with numbers rising every year.
+              241,775 International Students in Spain (2022 - 2023), with numbers rising every year.
             </p>
           </li>
           <li className="flex items-start">
             <span className="w-2.5 h-2.5 bg-green-600 rounded-full mt-2 mr-3 flex-shrink-0" />
             <p className="text-gray-700">
-              **Housing Crisis:** Many renters spend 40-50% of income on rent.
+              Housing Crisis: Many renters spend 40-50% of income on rent.
             </p>
           </li>
           <li className="flex items-start">
             <span className="w-2.5 h-2.5 bg-green-600 rounded-full mt-2 mr-3 flex-shrink-0" />
             <p className="text-gray-700">
-              **Seniors** own over **80%** of housing stock, with many living alone.
+              Seniors own over 80% of housing stock, with many living alone.
             </p>
           </li>
         </ul>

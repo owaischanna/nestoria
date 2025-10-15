@@ -80,15 +80,15 @@ const MainFooter = () => {
                     <address className={`not-italic text-sm ${textColor} space-y-3`}>
                         <p className="flex items-start">
                             <MapPin className="w-4 h-4 mr-2 mt-1 flex-shrink-0 text-green-600" />
-                            2728 Hickory Street Salt City, UT 84104
+                            Malaga, Spain
                         </p>
                         <p className="flex items-center">
                             <Phone className="w-4 h-4 mr-2 flex-shrink-0 text-green-600" />
-                            +1 206-214-2298
+                            602 56 27 12
                         </p>
                         <p className="flex items-center">
                             <Mail className="w-4 h-4 mr-2 flex-shrink-0 text-green-600" />
-                            support@nestoria.com
+                            hello@nestoria.online
                         </p>
                     </address>
                 </div>
