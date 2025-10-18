@@ -121,11 +121,11 @@ export default function Home() {
     <>
      
       <HeroSection />
-     <section id="about"><AboutUsSection /></section> 
-    <section id="how-it-works"><HowItWorksSection /></section>
+       <section id="about"><AboutUsSection /></section> 
+       <section id="how-it-works"><HowItWorksSection /></section>
       <section id="testimonials"><TestimonialsSection/></section>
       <section id="faq"><FAQSection /></section>
-     <section id="footer"> <Footer /></section>
+      <section id="footer"> <Footer /></section>
     
     </>
   );

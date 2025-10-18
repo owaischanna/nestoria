@@ -1,8 +1,8 @@
 import React from 'react'
-import HeroSection from '@/app/Components/HeroSection'
+import MessagesPage from '@/app/Components/Message'
 function page() {
   return (
-    <HeroSection/>
+    <MessagesPage/>
   )
 }
 

@@ -3,10 +3,13 @@
 import {
   Menu, Search, Heart, Bell, User, MapPin, DollarSign,
   FileText, Briefcase, ChevronRight
-} from 'lucide-react';
-import Sidebar from './Sidebar'; // Import the separated Sidebar component
+} from "lucide-react";
 
-// --- Header Component (Kept Local) ---
+import { useState } from "react";
+
+import ApplicationFormContainer from "./ApplicationForm"; // ✅ your form component
+
+// --- Header Component ---
 const Header = () => (
   <header className="flex items-center justify-between p-4 border-b border-gray-200 bg-white sticky top-0 z-10">
     {/* Logo */}
@@ -54,18 +57,20 @@ const Header = () => (
 
 // --- Stat Card Component ---
 const iconsMap = {
-  "FileText": FileText,
-  "Heart": Heart,
-  "DollarSign": DollarSign,
-  "Briefcase": Briefcase,
+  FileText: FileText,
+  Heart: Heart,
+  DollarSign: DollarSign,
+  Briefcase: Briefcase,
 };
 
 const StatCard = ({ iconName, title, value, subtext, colorClass }) => {
   const Icon = iconsMap[iconName];
-  const borderClass = colorClass || 'border-l-4 border-gray-300';
+  const borderClass = colorClass || "border-l-4 border-gray-300";
 
   return (
-    <div className={`p-4 rounded-xl shadow-sm border border-gray-100 flex flex-col justify-between bg-white ${borderClass}`}>
+    <div
+      className={`p-4 rounded-xl shadow-sm border border-gray-100 flex flex-col justify-between bg-white ${borderClass}`}
+    >
       <div className="flex justify-between items-start mb-2">
         <h4 className="text-xs font-semibold text-gray-500 uppercase">{title}</h4>
         {Icon && <Icon className="h-5 w-5 text-gray-400" />}
@@ -76,12 +81,12 @@ const StatCard = ({ iconName, title, value, subtext, colorClass }) => {
   );
 };
 
-// --- Listing Card Component ---
+// --- Listing Components ---
 const ListingBadge = ({ text, type }) => {
-  let color = 'bg-gray-100 text-gray-700';
-  if (type === 'student') color = 'bg-yellow-100 text-yellow-700';
-  if (type === 'female') color = 'bg-pink-100 text-pink-700';
-  if (type === 'available') color = 'bg-green-100 text-green-700';
+  let color = "bg-gray-100 text-gray-700";
+  if (type === "student") color = "bg-yellow-100 text-yellow-700";
+  if (type === "female") color = "bg-pink-100 text-pink-700";
+  if (type === "available") color = "bg-green-100 text-green-700";
 
   return (
     <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${color}`}>
@@ -90,15 +95,11 @@ const ListingBadge = ({ text, type }) => {
   );
 };
 
-const ListingCard = ({ roomName, location, price, details, badges, imageUrl }) => (
+const ListingCard = ({ roomName, location, price, details, badges, imageUrl, onApply }) => (
   <div className="flex border border-gray-200 rounded-lg overflow-hidden shadow-sm hover:shadow-lg transition duration-300 bg-white">
     {/* Image */}
     <div className="w-48 flex-shrink-0">
-      <img
-        src={imageUrl}
-        alt={roomName}
-        className="w-full h-full object-cover"
-      />
+      <img src={imageUrl} alt={roomName} className="w-full h-full object-cover" />
     </div>
 
     {/* Content */}
@@ -123,7 +124,10 @@ const ListingCard = ({ roomName, location, price, details, badges, imageUrl }) =
           <button className="text-sm font-medium text-green-700 border border-green-700 px-3 py-1 rounded hover:bg-green-50 transition">
             Message
           </button>
-          <button className="text-sm font-medium text-white bg-amber-600 px-3 py-1 rounded hover:bg-amber-700 transition">
+          <button
+            onClick={onApply}
+            className="text-sm font-medium text-white bg-amber-600 px-3 py-1 rounded hover:bg-amber-700 transition"
+          >
             Apply
           </button>
         </div>
@@ -141,9 +145,10 @@ const ListingCard = ({ roomName, location, price, details, badges, imageUrl }) =
   </div>
 );
 
-// --- Main Dashboard Content ---
-const DashboardContent = () => {
-  const imageUrl = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR0HFWiXvgfpFSXkpGQHyGt2iHrEiBRvM_T-A&s";
+// --- Dashboard Content ---
+const DashboardContent = ({ onApply }) => {
+  const imageUrl =
+    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR0HFWiXvgfpFSXkpGQHyGt2iHrEiBRvM_T-A&s";
 
   const listings = [
     {
@@ -156,7 +161,7 @@ const DashboardContent = () => {
         { text: "Female Only", type: "female" },
         { text: "Available Sep 1", type: "available" },
       ],
-      imageUrl: imageUrl,
+      imageUrl,
     },
     {
       roomName: "Modern Room in Brooklyn",
@@ -167,19 +172,7 @@ const DashboardContent = () => {
         { text: "Student Friendly", type: "student" },
         { text: "Available Sep 1", type: "available" },
       ],
-      imageUrl: imageUrl,
-    },
-    {
-      roomName: "Modern Room in Brooklyn",
-      location: "Williamsburg, Brooklyn",
-      price: "$850",
-      details: "Private Room · WiFi Included",
-      badges: [
-        { text: "Student Friendly", type: "student" },
-        { text: "Female Only", type: "female" },
-        { text: "Available Sep 1", type: "available" },
-      ],
-      imageUrl: imageUrl,
+      imageUrl,
     },
   ];
 
@@ -189,7 +182,9 @@ const DashboardContent = () => {
       <div className="flex justify-between items-center mb-8">
         <div>
           <h1 className="text-3xl font-bold text-gray-800">Welcome, Anna!</h1>
-          <p className="text-gray-600 mt-1">Let's find your perfect home away from home</p>
+          <p className="text-gray-600 mt-1">
+            Let's find your perfect home away from home
+          </p>
         </div>
         <div className="flex items-center space-x-2 bg-white border border-yellow-400 text-yellow-700 p-2 rounded-full text-sm font-medium shadow-sm cursor-pointer hover:bg-yellow-50">
           <User className="w-4 h-4" />
@@ -200,34 +195,10 @@ const DashboardContent = () => {
 
       {/* Stat Cards */}
       <div className="grid grid-cols-4 gap-6 mb-10">
-        <StatCard
-          iconName="FileText"
-          title="Active Applications"
-          value={<>3</>}
-          subtext="2 pending responses"
-          colorClass="border-l-4 border-blue-500"
-        />
-        <StatCard
-          iconName="Heart"
-          title="Saved Favorites"
-          value={<>7</>}
-          subtext="3 new this week"
-          colorClass="border-l-4 border-red-500"
-        />
-        <StatCard
-          iconName="DollarSign"
-          title="Budget Range"
-          value={<>$600-900</>}
-          subtext="Per month"
-          colorClass="border-l-4 border-green-500"
-        />
-        <StatCard
-          iconName="Briefcase"
-          title="Preferred Move-in"
-          value={<span className="text-xl font-bold text-purple-600">Sep 1</span>}
-          subtext="2024"
-          colorClass="border-l-4 border-purple-500"
-        />
+        <StatCard iconName="FileText" title="Active Applications" value={<>3</>} subtext="2 pending responses" colorClass="border-l-4 border-blue-500" />
+        <StatCard iconName="Heart" title="Saved Favorites" value={<>7</>} subtext="3 new this week" colorClass="border-l-4 border-red-500" />
+        <StatCard iconName="DollarSign" title="Budget Range" value={<>$600-900</>} subtext="Per month" colorClass="border-l-4 border-green-500" />
+        <StatCard iconName="Briefcase" title="Preferred Move-in" value={<span className="text-xl font-bold text-purple-600">Sep 1</span>} subtext="2024" colorClass="border-l-4 border-purple-500" />
       </div>
 
       {/* Recommended Listings */}
@@ -245,7 +216,7 @@ const DashboardContent = () => {
         </div>
         <div className="space-y-4">
           {listings.map((listing, index) => (
-            <ListingCard key={index} {...listing} />
+            <ListingCard key={index} {...listing} onApply={onApply} />
           ))}
         </div>
       </div>
@@ -253,14 +224,37 @@ const DashboardContent = () => {
   );
 };
 
+// --- Modal ---
+const Modal = ({ children, onClose }) => (
+  <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+    <div className="bg-white rounded-lg shadow-lg w-full max-w-lg relative p-6">
+      <button
+        onClick={onClose}
+        className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
+      >
+        ✕
+      </button>
+      {children}
+    </div>
+  </div>
+);
+
+// --- Main Dashboard ---
 const RenterDashboard = () => {
+  const [isFormOpen, setIsFormOpen] = useState(false);
+
   return (
     <div className="flex flex-col h-screen">
       <Header />
       <div className="flex flex-1 overflow-hidden">
-        <Sidebar />
-        <DashboardContent />
+        <DashboardContent onApply={() => setIsFormOpen(true)} />
       </div>
+
+      {isFormOpen && (
+        <Modal onClose={() => setIsFormOpen(false)}>
+          <ApplicationFormContainer onClose={() => setIsFormOpen(false)} />
+        </Modal>
+      )}
     </div>
   );
 };

@@ -1,8 +1,8 @@
 import React from 'react'
-import AboutUsSection from '@/app/Components/AboutUs'
+import MyFavoritesPage from '@/app/Components/Favorite'
 function page() {
   return (
-    <AboutUsSection />
+    <MyFavoritesPage/>
   )
 }
 
