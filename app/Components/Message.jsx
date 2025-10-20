@@ -276,7 +276,7 @@ const MessagesContent = () => {
 
 const MessagesPage = () => {
     return (
-        // Wrapper for Header and Sidebar
+       
         <DashboardLayout>
             <MessagesContent />
         </DashboardLayout>

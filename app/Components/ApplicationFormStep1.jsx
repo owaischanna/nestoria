@@ -1,6 +1,6 @@
 // ApplicationFormStep1.jsx
 import React from 'react';
-import { ChevronRight } from 'lucide-react';
+
 
 const ApplicationFormStep1 = ({ onContinue }) => {
     return (
