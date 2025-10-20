@@ -4,27 +4,92 @@ import { FcGoogle } from "react-icons/fc";
 import { FaApple } from "react-icons/fa";
 import { useState } from "react";
 import RoleSelection from "./RoleSelection";
+import toast from 'react-hot-toast';
 
 const SignUpForm = ({ switchToSignIn }) => {
-  const [step, setStep] = useState("signup"); // signup → personal → role
+  const [step, setStep] = useState("signup");
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+    firstName: "",
+    lastName: "",
+    country: "",
+    stateProvince: "",
+    zipPostal: "",
+    phoneNumber: "",
+  });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
 
   const handleSignUp = (e) => {
     e.preventDefault();
+    // **VALIDATION ADDED:** Check if email and password are provided.
+    if (!formData.email || !formData.password) {
+      toast.error("Please fill in both email and password.");
+      return;
+    }
     setStep("personal");
   };
 
   const handlePersonalInfoContinue = () => {
+    // **VALIDATION ADDED:** Check if the main personal info fields are provided.
+    if (!formData.firstName || !formData.lastName || !formData.country || !formData.phoneNumber) {
+      toast.error("Please fill in all required personal information.");
+      return;
+    }
     setStep("role");
   };
 
-  const handleRoleSelect = (role) => {
-    console.log(`Selected role: ${role}`);
-    setStep("signup");
-    // handle next steps after role selection
+  const handleRoleSelectAndSubmit = async (role) => {
+    setLoading(true);
+    setError(null);
+    const finalData = {
+      firstName: formData.firstName,
+      lastName: formData.lastName,
+      email: formData.email,
+      password: formData.password,
+      role: role,
+      country: formData.country,
+      state: formData.stateProvince,
+      zip: formData.zipPostal,
+      phone: formData.phoneNumber,
+    };
+    const loadingToastId = toast.loading('Creating your account...');
+
+    try {
+      const response = await fetch("/api/auth/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(finalData),
+      });
+      const result = await response.json();
+      if (!response.ok) {
+        throw new Error(result.message || "An error occurred during signup.");
+      }
+
+      toast.success('Account created! Please sign in.', { id: loadingToastId });
+      switchToSignIn();
+      setLoading(false);
+      return true;
+    } catch (err) {
+      console.error("Signup failed:", err);
+      setError(err.message);
+      toast.error(err.message, { id: loadingToastId });
+      setLoading(false);
+      return false;
+    }
   };
 
   const handleCloseRoleSelection = () => {
-    setStep("signup");
+    setStep("personal");
   };
 
   return (
@@ -32,7 +97,7 @@ const SignUpForm = ({ switchToSignIn }) => {
       {step === "role" && (
         <RoleSelection
           onClose={handleCloseRoleSelection}
-          onRoleSelect={handleRoleSelect}
+          onRoleSelect={handleRoleSelectAndSubmit}
         />
       )}
 
@@ -44,6 +109,9 @@ const SignUpForm = ({ switchToSignIn }) => {
             <input
               type="text"
               placeholder="First Name"
+              name="firstName"
+              value={formData.firstName}
+              onChange={handleInputChange}
               className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-1 focus:ring-green-500 outline-none"
             />
           </div>
@@ -54,6 +122,9 @@ const SignUpForm = ({ switchToSignIn }) => {
             <input
               type="text"
               placeholder="Last Name"
+              name="lastName"
+              value={formData.lastName}
+              onChange={handleInputChange}
               className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-1 focus:ring-green-500 outline-none"
             />
           </div>
@@ -65,6 +136,9 @@ const SignUpForm = ({ switchToSignIn }) => {
               <input
                 type="text"
                 placeholder="Country"
+                name="country"
+                value={formData.country}
+                onChange={handleInputChange}
                 className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-1 focus:ring-green-500 outline-none"
               />
             </div>
@@ -73,6 +147,9 @@ const SignUpForm = ({ switchToSignIn }) => {
               <input
                 type="text"
                 placeholder="State/Province"
+                name="stateProvince"
+                value={formData.stateProvince}
+                onChange={handleInputChange}
                 className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-1 focus:ring-green-500 outline-none"
               />
             </div>
@@ -85,6 +162,9 @@ const SignUpForm = ({ switchToSignIn }) => {
               <input
                 type="text"
                 placeholder="Zip/Postal"
+                name="zipPostal"
+                value={formData.zipPostal}
+                onChange={handleInputChange}
                 className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-1 focus:ring-green-500 outline-none"
               />
             </div>
@@ -93,6 +173,9 @@ const SignUpForm = ({ switchToSignIn }) => {
               <input
                 type="tel"
                 placeholder="Phone Number"
+                name="phoneNumber"
+                value={formData.phoneNumber}
+                onChange={handleInputChange}
                 className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-1 focus:ring-green-500 outline-none"
               />
             </div>
@@ -100,29 +183,23 @@ const SignUpForm = ({ switchToSignIn }) => {
 
           <button
             onClick={handlePersonalInfoContinue}
-            className="w-full bg-green-600 text-white py-2 rounded-md text-sm hover:bg-green-700 transition mt-4"
+            disabled={loading}
+            className="w-full bg-green-600 text-white py-2 rounded-md text-sm hover:bg-green-700 transition mt-4 disabled:bg-gray-400"
           >
-            Continue
+            {loading ? "Please wait..." : "Continue"}
           </button>
         </div>
       ) : step === "signup" ? (
         <div className="space-y-3">
-          {/* Name */}
-          <div>
-            <label className="block text-sm mb-1">Full Name</label>
-            <input
-              type="text"
-              placeholder="Enter your name"
-              className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-1 focus:ring-green-500 outline-none"
-            />
-          </div>
-
           {/* Email */}
           <div>
             <label className="block text-sm mb-1">Email</label>
             <input
               type="email"
               placeholder="Enter email"
+              name="email"
+              value={formData.email}
+              onChange={handleInputChange}
               className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-1 focus:ring-green-500 outline-none"
             />
           </div>
@@ -133,16 +210,20 @@ const SignUpForm = ({ switchToSignIn }) => {
             <input
               type="password"
               placeholder="Create password"
+              name="password"
+              value={formData.password}
+              onChange={handleInputChange}
               className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-1 focus:ring-green-500 outline-none"
             />
           </div>
 
-          {/* Sign Up */}
+          {/* Next Button */}
           <button
             onClick={handleSignUp}
-            className="w-full bg-green-600 text-white py-2 rounded-md text-sm hover:bg-green-700 transition"
+            disabled={loading}
+            className="w-full bg-green-600 text-white py-2 rounded-md text-sm hover:bg-green-700 transition disabled:bg-gray-400"
           >
-            Sign Up
+            {loading ? "..." : "Next"}
           </button>
 
           {/* OR Divider */}

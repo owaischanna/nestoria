@@ -1,22 +1,34 @@
 "use client";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { FaSearch, FaHome, FaCheck } from "react-icons/fa";
+import toast from "react-hot-toast"; // Import toast
 
-const RoleSelection = ({ onClose }) => {
+// **FIX:** Removed useRouter from imports
+
+const RoleSelection = ({ onClose, onRoleSelect }) => {
   const [selectedRole, setSelectedRole] = useState(null);
-  const router = useRouter();
+  // **FIX:** Removed the router instance
+  // const router = useRouter(); 
 
   const handleRoleSelect = (role) => {
     setSelectedRole(role);
   };
 
-  const handleContinue = () => {
-    if (selectedRole === "renter") {
-      router.push("/renterdashboard");
-    } else if (selectedRole === "host") {
-      router.push("/hostdashboard");
+  const handleContinue = async () => {
+    if (!selectedRole) {
+      // **FIX:** Replaced alert with a toast notification
+      toast.error("Please select a role to continue.");
+      return;
     }
+
+    // This now ONLY calls the function in the parent component.
+    // The parent component is responsible for showing the success toast
+    // and switching to the sign-in form.
+    if (onRoleSelect) {
+      await onRoleSelect(selectedRole);
+    }
+
+    // **FIX:** All redirection logic has been removed from this component.
   };
 
   return (
@@ -41,11 +53,10 @@ const RoleSelection = ({ onClose }) => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Renter Card */}
             <div
-              className={`border-2 rounded-xl p-4 sm:p-6 transition-all cursor-pointer ${
-                selectedRole === "renter"
+              className={`border-2 rounded-xl p-4 sm:p-6 transition-all cursor-pointer ${selectedRole === "renter"
                   ? "border-orange-500 bg-orange-50"
                   : "border-gray-200 hover:border-orange-300"
-              }`}
+                }`}
               onClick={() => handleRoleSelect("renter")}
             >
               <div className="flex justify-center mb-4">
@@ -98,11 +109,10 @@ const RoleSelection = ({ onClose }) => {
 
               <button
                 onClick={handleContinue}
-                className={`w-full py-2 sm:py-3 rounded-lg font-semibold text-sm transition ${
-                  selectedRole === "renter"
+                className={`w-full py-2 sm:py-3 rounded-lg font-semibold text-sm transition ${selectedRole === "renter"
                     ? "bg-orange-500 text-white hover:bg-orange-600"
                     : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-                }`}
+                  }`}
               >
                 Continue as Renter
               </button>
@@ -110,11 +120,10 @@ const RoleSelection = ({ onClose }) => {
 
             {/* Host Card */}
             <div
-              className={`border-2 rounded-xl p-4 sm:p-6 transition-all cursor-pointer ${
-                selectedRole === "host"
+              className={`border-2 rounded-xl p-4 sm:p-6 transition-all cursor-pointer ${selectedRole === "host"
                   ? "border-green-500 bg-green-50"
                   : "border-gray-200 hover:border-green-300"
-              }`}
+                }`}
               onClick={() => handleRoleSelect("host")}
             >
               <div className="flex justify-center mb-4">
@@ -167,11 +176,10 @@ const RoleSelection = ({ onClose }) => {
 
               <button
                 onClick={handleContinue}
-                className={`w-full py-2 sm:py-3 rounded-lg font-semibold text-sm transition ${
-                  selectedRole === "host"
+                className={`w-full py-2 sm:py-3 rounded-lg font-semibold text-sm transition ${selectedRole === "host"
                     ? "bg-green-600 text-white hover:bg-green-700"
                     : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-                }`}
+                  }`}
               >
                 Continue as Host
               </button>
