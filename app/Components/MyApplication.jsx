@@ -4,7 +4,7 @@ import {
     FileText, ChevronDown, CheckCircle, Clock 
 } from 'lucide-react';
 
-import DashboardLayout from './dashboardLayout';
+import DashboardLayout from './DashboardLayout'; 
 
 
 // --- DATA MOCKUP ---

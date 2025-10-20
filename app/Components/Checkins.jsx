@@ -11,8 +11,8 @@ import {
 } from "lucide-react";
 
 // ✅ Import your existing Host Layout Components
-import HostSidebar from "../components/HostSidebar";
-import HostHeader from "../components/HostHeader";
+import HostSidebar from "../Components/HostSidebar";
+import HostHeader from "../Components/HostHeader";
 
 
 // --- Preparation Status Badge ---
