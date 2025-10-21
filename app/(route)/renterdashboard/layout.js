@@ -1,6 +1,6 @@
 "use client";
 import Sidebar from "@/app/Components/Sidebar";
-
+import DashboardLayout from "@/app/Components/DashboardLayout";
 
 export default function RenterDashboardLayout({ children }) {
   return (
@@ -12,6 +12,11 @@ export default function RenterDashboardLayout({ children }) {
       <main className="flex-1 bg-gray-50 p-6 overflow-y-auto">
         {children}
       </main>
+
+
+      
     </div>
   );
 }
+
+
