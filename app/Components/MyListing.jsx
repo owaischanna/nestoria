@@ -1,28 +1,17 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
+import { useAuth } from "../context/AuthContext";
+import toast from 'react-hot-toast';
 import HostSidebar from "@/app/Components/HostSidebar";
 import HostHeader from "./HostHeader";
 import AddListingFormContainer from "./AddListing";
 import {
-  Plus,
-  Wifi,
-  Utensils,
-  Car,
-  Shirt,
-  PawPrint,
-  Leaf,
-  MapPin,
-  Bed,
-  Bath,
-  Edit,
-  Trash2,
-  Eye,
+  Plus, Wifi, Utensils, Car, Shirt, PawPrint, Leaf,
+  MapPin, Bed, Bath, Edit, Trash2, Eye, Loader2
 } from "lucide-react";
 
-// The rest of the Utility Components and HostListingCard remain the same...
-
-// ============== Utility Components ==============
 const ListingAmenity = ({ icon: Icon, label }) => (
   <div className="flex items-center text-xs text-gray-600 bg-gray-100 px-2 py-1 rounded-full space-x-1">
     <Icon className="w-3 h-3 text-green-700" />
@@ -31,233 +20,227 @@ const ListingAmenity = ({ icon: Icon, label }) => (
 );
 
 const ListingStatusBadge = ({ status }) => {
-  const color =
-    status === "Available"
-      ? "bg-green-100 text-green-700"
-      : "bg-yellow-100 text-yellow-700";
+  const color = status === "Available" ? "bg-green-100 text-green-700" : "bg-yellow-100 text-yellow-700";
+  return <span className={`text-xs font-semibold px-3 py-1 rounded-full ${color}`}>{status}</span>;
+};
+
+const HostListingCard = ({ listing }) => {
+  const amenityIcons = {
+    Wifi: Wifi,
+    Kitchen: Utensils,
+    Parking: Car,
+    Laundry: Shirt,
+    Pets: PawPrint,
+    Garden: Leaf,
+  };
+
+  const imageUrl = listing.photos?.cover || 'https://via.placeholder.com/256x256?text=No+Image';
+  const status = listing.status || "Available";
+
   return (
-    <span
-      className={`text-xs font-semibold px-3 py-1 rounded-full ${color}`}
-    >
-      {status}
-    </span>
+    <div className="flex border border-gray-200 rounded-lg overflow-hidden shadow-sm bg-white mb-6">
+      <div className="w-64 h-48 flex-shrink-0 bg-gray-100">
+        <img
+          src={imageUrl}
+          alt={listing.listingTitle}
+          className="w-full h-full object-cover"
+        />
+      </div>
+      <div className="flex-1 p-5 flex flex-col justify-between">
+        <div>
+          <div className="flex justify-between items-start mb-2">
+            <h3 className="text-xl font-bold text-gray-800">{listing.listingTitle}</h3>
+            <ListingStatusBadge status={status} />
+          </div>
+          <p className="text-sm text-gray-500 flex items-center mb-4">
+            <MapPin className="w-4 h-4 mr-1 text-gray-400" />
+            {listing.address}, {listing.town}, {listing.state} {listing.zip}
+          </p>
+          <div className="flex items-center space-x-6 mb-4 text-sm text-gray-600">
+            <span className="font-semibold text-green-700 text-2xl">
+              €{listing.monthlyRent}/month
+            </span>
+            <span className="flex items-center space-x-1">
+              <Bed className="w-4 h-4" /> {listing.propertyType}
+            </span>
+            <span className="flex items-center space-x-1">
+              <Bath className="w-4 h-4" /> {listing.bathroomType}
+            </span>
+            <span>{listing.roomSize} sqft</span>
+          </div>
+          <div className="flex flex-wrap gap-2 mb-4">
+            {listing.utilities?.slice(0, 5).map((util, index) => {
+              const Icon = amenityIcons[util] || Leaf;
+              return <ListingAmenity key={index} icon={Icon} label={util} />;
+            })}
+          </div>
+        </div>
+        <div className="border-t border-gray-100 pt-4 flex justify-end items-center">
+          <div className="flex space-x-2">
+            <button className="flex items-center space-x-1 text-sm font-medium text-gray-700 border border-gray-300 px-3 py-1 rounded hover:bg-gray-50 transition">
+              <Edit className="w-4 h-4" /> Edit
+            </button>
+            <button className="flex items-center space-x-1 text-sm font-medium text-red-600 border border-red-300 px-3 py-1 rounded hover:bg-red-50 transition">
+              <Trash2 className="w-4 h-4" /> Delete
+            </button>
+            <button className="flex items-center space-x-1 text-sm font-medium text-white bg-green-600 px-3 py-1 rounded hover:bg-green-700 transition">
+              <Eye className="w-4 h-4" /> View Live
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };
 
-// ============== Listing Card Component ==============
-const HostListingCard = ({ listing }) => (
-  <div className="flex border border-gray-200 rounded-lg overflow-hidden shadow-sm bg-white mb-6">
-    {/* Image */}
-    <div className="w-64 flex-shrink-0">
-      <img
-        src={listing.imageUrl}
-        alt={listing.title}
-        className="w-full h-full object-cover"
-      />
-    </div>
+const MyListingsContent = ({ onAddListing }) => {
+  const [listings, setListings] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [isLoadingListings, setIsLoadingListings] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
+  const scrollContainerRef = useRef(null);
+  const welcomeToastShown = useRef(false);
 
-    {/* Content */}
-    <div className="flex-1 p-5">
-      <div className="flex justify-between items-start mb-2">
-        <h3 className="text-xl font-bold text-gray-800">{listing.title}</h3>
-        <ListingStatusBadge status={listing.status} />
-      </div>
+  const fetchListings = useCallback(async (pageToFetch) => {
+    if (isLoadingListings || !hasMore) return;
 
-      <p className="text-sm text-gray-500 flex items-center mb-4">
-        <MapPin className="w-4 h-4 mr-1 text-gray-400" />
-        {listing.location}
-      </p>
+    setIsLoadingListings(true);
+    if (pageToFetch === 1) {
+      toast.loading('Fetching your listings...', { id: 'fetch-listings' });
+    }
 
-      <div className="flex items-center space-x-6 mb-4 text-sm text-gray-600">
-        <span className="font-semibold text-green-700 text-2xl">
-          {listing.price}
-        </span>
-        <span>{listing.utilities}</span>
-        <span className="flex items-center space-x-1">
-          <Bed className="w-4 h-4" /> {listing.roomType}
-        </span>
-        <span className="flex items-center space-x-1">
-          <Bath className="w-4 h-4" /> {listing.bathType}
-        </span>
-        <span>{listing.sqft} sqft</span>
-      </div>
+    try {
+      const response = await fetch(`/api/listings?page=${pageToFetch}&limit=5`);
+      const result = await response.json();
 
-      {/* Amenities */}
-      <div className="flex flex-wrap gap-2 mb-4">
-        {listing.amenities.map((amenity, index) => (
-          <ListingAmenity
-            key={index}
-            icon={amenity.icon}
-            label={amenity.label}
-          />
-        ))}
-      </div>
+      if (!response.ok) {
+        throw new Error(result.message || 'Failed to fetch listings.');
+      }
 
-      {/* Performance Metrics */}
-      <div className="border-t border-gray-100 pt-4 flex justify-between items-center">
-        <div className="flex space-x-6 text-sm">
-          <div className="text-center">
-            <p className="font-bold text-lg text-blue-600">
-              {listing.performance.views}
-            </p>
-            <p className="text-xs text-gray-500">Total Views</p>
-          </div>
-          <div className="text-center">
-            <p className="font-bold text-lg text-blue-600">
-              {listing.performance.inquiries}
-            </p>
-            <p className="text-xs text-gray-500">Inquiries</p>
-          </div>
-          <div className="text-center">
-            <p className="font-bold text-lg text-blue-600">
-              {listing.performance.applications}
-            </p>
-            <p className="text-xs text-gray-500">Applications</p>
-          </div>
-          <div className="text-center">
-            <p className="font-bold text-lg text-green-600">
-              {listing.performance.responseRate}
-            </p>
-            <p className="text-xs text-gray-500">Response Rate</p>
-          </div>
-          <div className="text-center">
-            <p className="font-bold text-lg text-red-600">
-              {listing.performance.avgResponseTime}
-            </p>
-            <p className="text-xs text-gray-500">Avg Response</p>
-          </div>
-        </div>
+      setListings(prev => pageToFetch === 1 ? result.data : [...prev, ...result.data]);
+      setCurrentPage(result.pagination.currentPage);
+      setTotalPages(result.pagination.totalPages);
+      setHasMore(result.pagination.currentPage < result.pagination.totalPages);
 
-        {/* Actions */}
-        <div className="flex space-x-2">
-          <button className="flex items-center space-x-1 text-sm font-medium text-gray-700 border border-gray-300 px-3 py-1 rounded hover:bg-gray-50">
-            <Edit className="w-4 h-4" /> Edit
-          </button>
-          <button className="flex items-center space-x-1 text-sm font-medium text-red-600 border border-red-300 px-3 py-1 rounded hover:bg-red-50">
-            <Trash2 className="w-4 h-4" /> Delete
-          </button>
-          <button className="flex items-center space-x-1 text-sm font-medium text-white bg-green-600 px-3 py-1 rounded hover:bg-green-700">
-            <Eye className="w-4 h-4" /> View Live
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-);
+      if (pageToFetch === 1) {
+        toast.success('Listings loaded!', { id: 'fetch-listings' });
+        // if (!welcomeToastShown.current) {
+        //   toast('Welcome back!', { icon: '👋' }); // Re-added welcome toast as per user request
+        //   welcomeToastShown.current = true;
+        // }
+      }
 
-// ============== My Listings Content Component (Modified to receive a handler) ==============
-const MyListingsContent = ({ onAddListing }) => { // <--- Receive handler
-  const listingsData = [
-    {
-      title: "Cozy Room in Victorian House",
-      location: "Park Slope, Brooklyn",
-      price: "$750/month",
-      utilities: "Utilities included",
-      roomType: "Private Room",
-      bathType: "Shared Bath",
-      sqft: "120",
-      status: "Available",
-      imageUrl:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR0HFWiXvgfpFSXkpGQHyGt2iHrEiBRvM_T-A&s",
-      amenities: [
-        { icon: Wifi, label: "WiFi" },
-        { icon: Utensils, label: "Kitchen Access" },
-        { icon: Car, label: "Parking" },
-        { icon: Shirt, label: "Laundry" },
-        { icon: PawPrint, label: "Pet Friendly" },
-        { icon: Leaf, label: "Garden" },
-      ],
-      performance: {
-        views: 124,
-        inquiries: 18,
-        applications: 8,
-        responseRate: "92%",
-        avgResponseTime: "2.4h",
-      },
-    },
-  ];
+    } catch (error) {
+      toast.error(`Error fetching listings: ${error.message}`, { id: 'fetch-listings' });
+      setHasMore(false);
+    } finally {
+      setIsLoadingListings(false);
+    }
+  }, [isLoadingListings, hasMore]);
+
+  useEffect(() => {
+    fetchListings(1);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    const container = scrollContainerRef.current;
+    if (!container) return;
+
+    const handleScroll = () => {
+      const { scrollTop, scrollHeight, clientHeight } = container;
+      if (scrollHeight - scrollTop - clientHeight < 200 && !isLoadingListings && hasMore) {
+        fetchListings(currentPage + 1);
+      }
+    };
+
+    container.addEventListener('scroll', handleScroll);
+    return () => container.removeEventListener('scroll', handleScroll);
+  }, [isLoadingListings, hasMore, currentPage, fetchListings]);
 
   return (
-    <div className="p-8">
-      {/* Page Header and Actions */}
+    <div ref={scrollContainerRef} className="p-8 h-full overflow-y-auto">
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-3xl font-bold text-gray-800">My Listings</h1>
-        <button 
+        <button
           className="flex items-center space-x-2 text-sm font-semibold text-white bg-green-600 px-4 py-2 rounded shadow-md hover:bg-green-700 transition"
-          onClick={onAddListing} // <--- 3. Call the handler here
+          onClick={onAddListing}
         >
           <Plus className="w-4 h-4" />
           <span>Add New Listing</span>
         </button>
       </div>
 
-      {/* Stats and Filters */}
       <div className="flex justify-between items-center mb-6 border-b border-gray-200 pb-4">
         <div className="flex items-center space-x-6 text-sm text-gray-600">
-          <span>
-            <span className="font-bold text-lg text-gray-800">3</span> Total
-            Listings
-          </span>
-          <span>
-            <span className="font-bold text-lg text-green-600">2</span> Available
-          </span>
-          <span>
-            <span className="font-bold text-lg text-orange-600">1</span>{" "}
-            Occupied
-          </span>
-        </div>
-
-        <div className="flex items-center space-x-3">
-          <button className="text-sm font-semibold text-gray-800 border-b-2 border-green-600 pb-1">
-            All Status
-          </button>
-          <button className="text-sm font-semibold text-gray-500 hover:text-gray-800">
-            Recently Updated
-          </button>
+          <span><span className="font-bold text-lg text-gray-800">{listings.length}</span> Displayed Listings</span>
         </div>
       </div>
 
-      {/* Listings List */}
       <div className="space-y-6">
-        {listingsData.map((listing, index) => (
-          <HostListingCard key={index} listing={listing} />
-        ))}
+        {listings.length > 0 ? (
+          listings.map((listing) => (
+            <HostListingCard key={listing._id} listing={listing} />
+          ))
+        ) : (
+          !isLoadingListings && <p className="text-center text-gray-500 py-10">No listings found. Add your first one!</p>
+        )}
       </div>
+
+      {isLoadingListings && (
+        <div className="flex justify-center py-6">
+          <Loader2 className="w-6 h-6 text-green-600 animate-spin" />
+        </div>
+      )}
+
+      {!hasMore && listings.length > 0 && (
+        <p className="text-center text-gray-500 py-6">You've reached the end of your listings.</p>
+      )}
     </div>
   );
 };
 
-// ============== Final Page Layout (Modified for Mode Management) ==============
 export default function HostListingsPage() {
-  // 2. State to manage the mode
-  const [mode, setMode] = useState("list"); // 'list' or 'add'
+  const [mode, setMode] = useState("list");
+  const { user, loading } = useAuth();
+  const router = useRouter();
 
-  // Handlers to switch modes
+  useEffect(() => {
+    if (!loading && (!user || user.role !== 'host')) {
+      router.push('/');
+    }
+  }, [user, loading, router]);
+
   const handleAddListing = () => setMode("add");
-  const handleCancel = () => setMode("list");
+  const handleCancelOrSuccess = () => setMode("list");
 
-  // Conditional Content
-  const pageContent = 
+  if (loading || !user || user.role !== 'host') {
+    return (
+      <div className="flex h-screen w-full items-center justify-center bg-gray-50">
+        <p className="text-lg font-semibold text-gray-700">Loading...</p>
+      </div>
+    );
+  }
+
+  const pageContent =
     mode === "list" ? (
       <MyListingsContent onAddListing={handleAddListing} />
     ) : (
-      // Pass the cancel handler to the form
-      <AddListingFormContainer onCancel={handleCancel} />
+      <AddListingFormContainer
+        onCancel={handleCancelOrSuccess}
+        onSuccess={handleCancelOrSuccess}
+      />
     );
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
-      {/* Sidebar */}
+    <div className="flex h-screen bg-gray-50 overflow-hidden">
       <HostSidebar />
-
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col overflow-hidden">
         <HostHeader />
-
-        {/* 4. Conditionally render content */}
-        <main className="flex-1 p-0 overflow-y-auto">
+        <div className="flex-1 overflow-y-auto">
           {pageContent}
-        </main>
+        </div>
       </div>
     </div>
   );
