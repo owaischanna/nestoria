@@ -1,8 +1,9 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import HostSidebar from "@/app/Components/HostSidebar";
 import HostHeader from "./HostHeader";
+import AddListingFormContainer from "./AddListing";
 import {
   Plus,
   Wifi,
@@ -18,6 +19,8 @@ import {
   Trash2,
   Eye,
 } from "lucide-react";
+
+// The rest of the Utility Components and HostListingCard remain the same...
 
 // ============== Utility Components ==============
 const ListingAmenity = ({ icon: Icon, label }) => (
@@ -142,8 +145,8 @@ const HostListingCard = ({ listing }) => (
   </div>
 );
 
-// ============== My Listings Content Component ==============
-const MyListingsContent = () => {
+// ============== My Listings Content Component (Modified to receive a handler) ==============
+const MyListingsContent = ({ onAddListing }) => { // <--- Receive handler
   const listingsData = [
     {
       title: "Cozy Room in Victorian House",
@@ -179,7 +182,10 @@ const MyListingsContent = () => {
       {/* Page Header and Actions */}
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-3xl font-bold text-gray-800">My Listings</h1>
-        <button className="flex items-center space-x-2 text-sm font-semibold text-white bg-green-600 px-4 py-2 rounded shadow-md hover:bg-green-700 transition">
+        <button 
+          className="flex items-center space-x-2 text-sm font-semibold text-white bg-green-600 px-4 py-2 rounded shadow-md hover:bg-green-700 transition"
+          onClick={onAddListing} // <--- 3. Call the handler here
+        >
           <Plus className="w-4 h-4" />
           <span>Add New Listing</span>
         </button>
@@ -221,8 +227,24 @@ const MyListingsContent = () => {
   );
 };
 
-// ============== Final Page Layout ==============
+// ============== Final Page Layout (Modified for Mode Management) ==============
 export default function HostListingsPage() {
+  // 2. State to manage the mode
+  const [mode, setMode] = useState("list"); // 'list' or 'add'
+
+  // Handlers to switch modes
+  const handleAddListing = () => setMode("add");
+  const handleCancel = () => setMode("list");
+
+  // Conditional Content
+  const pageContent = 
+    mode === "list" ? (
+      <MyListingsContent onAddListing={handleAddListing} />
+    ) : (
+      // Pass the cancel handler to the form
+      <AddListingFormContainer onCancel={handleCancel} />
+    );
+
   return (
     <div className="flex min-h-screen bg-gray-50">
       {/* Sidebar */}
@@ -230,12 +252,11 @@ export default function HostListingsPage() {
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col">
-        {/* ✅ Replaced Hardcoded Header with HostHeader */}
         <HostHeader />
 
-        {/* Page Content */}
+        {/* 4. Conditionally render content */}
         <main className="flex-1 p-0 overflow-y-auto">
-          <MyListingsContent />
+          {pageContent}
         </main>
       </div>
     </div>

@@ -134,7 +134,7 @@ const mainMenuItems = [
 
     ],
   },
-  { id: "messages", label: "Messages", icon: MessageSquare, dot: true, route: "/hostmessages" },
+  { id: "messages", label: "Messages", icon: MessageSquare, dot: true, route: "/hostmessage" },
   { id: "reviews", label: "Reviews", icon: Star, route: "/hostreviews" },
   { id: "payments", label: "Payments", icon: DollarSign, route: "/hostpayments" },
 ];
