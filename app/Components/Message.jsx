@@ -10,7 +10,8 @@ import {
     Search, Plus, Phone, Paperclip, Send, MoreVertical,
     CheckCheck, X, Loader2, Image as ImageIcon, Smile
 } from 'lucide-react';
-import DashboardLayout from './DashboardLayout';
+import RenterHeader from './RenterHeader';
+import Sidebar from './RenterSidebar';
 
 // --- Helper Functions ---
 const formatTime = (dateString) => {
@@ -472,9 +473,23 @@ const MessagesPage = () => {
     }
 
     return (
-        <DashboardLayout>
-            <MessagesContent />
-        </DashboardLayout>
+     
+
+         <div className="flex min-h-screen">
+            {/* Sidebar on the left */}
+            <Sidebar />
+
+            {/* Page content on the right */}
+            <div className="flex-1 flex flex-col overflow-hidden bg-gray-50">
+                {/* Renter Header at the top */}
+                <RenterHeader />
+
+                {/* Main Message Content */}
+                <main className="flex-1 overflow-y-auto">
+                    <MessagesContent />
+                </main>
+            </div>
+        </div>
     );
 };
 

@@ -16,8 +16,8 @@ export default function Header() {
         <Link href="/home" className="hover:text-green-600 font-medium">
           Home
         </Link>
-        <Link href="#about" className="hover:text-green-600 font-medium">
-          About
+        <Link href="#about " className="hover:text-green-600 font-medium">
+          About Us
         </Link>
         <Link href="#how" className="hover:text-green-600 font-medium">
           How it works

@@ -7,7 +7,8 @@ import {
 } from 'lucide-react';
 
 // Assume DashboardLayout is available as established
-import DashboardLayout from './DashboardLayout'; 
+import RenterHeader from './RenterHeader';
+import Sidebar from './RenterSidebar';
 
 // --- MOCK DATA ---
 const bookingsData = {
@@ -255,9 +256,21 @@ const MyBookingsContent = () => {
 // --- Full Page Component ---
 const MyBookingsPage = () => {
     return (
-        <DashboardLayout>
-            <MyBookingsContent />
-        </DashboardLayout>
+  <div className="flex min-h-screen">
+            {/* Sidebar on the left */}
+            <Sidebar />
+
+            {/* Page content on the right */}
+            <div className="flex-1 flex flex-col overflow-hidden bg-gray-50">
+                {/* Renter Header at the top */}
+                <RenterHeader />
+
+                {/* Main Message Content */}
+                <main className="flex-1 overflow-y-auto">
+                    <MyBookingsContent />
+                </main>
+            </div>
+        </div>
     );
 };
 

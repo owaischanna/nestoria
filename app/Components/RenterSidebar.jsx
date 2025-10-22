@@ -15,7 +15,7 @@ const mainMenuItems = [
     { id: 'favorites', label: "Favorites", icon: Heart, count: 7, route: "/renterfavorite" },
     { id: 'messages', label: "Messages", icon: MessageSquare, count: 3, alert: true, route: "/rentermessage" },
     { id: 'bookings', label: "My Bookings", icon: Briefcase, route: "/rentermybooking" },
-    { id: 'payments', label: "Payments", icon: CreditCard, route: "/renterpayments" },
+    { id: 'payments', label: "Payments", icon: CreditCard, route: "/renterpayment" },
 ];
 
 const quickFilters = [

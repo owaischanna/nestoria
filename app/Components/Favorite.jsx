@@ -6,7 +6,8 @@ import {
     Heart, MapPin, DollarSign, Menu, Search, Bell, User, 
     LayoutDashboard, FileText, MessageSquare, Calendar, CreditCard, Settings, HelpCircle 
 } from 'lucide-react';
-import DashboardLayout from './DashboardLayout';
+import RenterHeader from './RenterHeader';
+import Sidebar from './RenterSidebar';
 
 
 // --- MOCK DATA ---
@@ -134,6 +135,7 @@ const MyFavoritesContent = () => {
     return (
         <div className="flex-1 p-8 bg-gray-50 overflow-y-auto">
             {/* Page Header */}
+            
             <div className="flex justify-between items-center mb-6">
                 <div>
                     <h1 className="text-2xl font-bold text-gray-900">My Favorites</h1>
@@ -184,9 +186,23 @@ const MyFavoritesContent = () => {
 // --- Full Page Component ---
 const MyFavoritesPage = () => {
     return (
-        <DashboardLayout>
-            <MyFavoritesContent />
-        </DashboardLayout>
+  
+
+         <div className="flex min-h-screen">
+            {/* Sidebar on the left */}
+            <Sidebar />
+
+            {/* Page content on the right */}
+            <div className="flex-1 flex flex-col overflow-hidden bg-gray-50">
+                {/* Renter Header at the top */}
+                <RenterHeader />
+
+                {/* Main Message Content */}
+                <main className="flex-1 overflow-y-auto">
+                    <MyFavoritesContent />
+                </main>
+            </div>
+        </div>
     );
 };
 
