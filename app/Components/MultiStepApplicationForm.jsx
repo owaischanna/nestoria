@@ -1,18 +1,16 @@
 // MultiStepApplicationForm.jsx
 import React, { useState } from 'react';
-import { ChevronLeft, ChevronRight, CheckCircle, Upload, Calendar, X, Star } from 'lucide-react';
+import { ChevronLeft, ChevronRight, CheckCircle, Upload, Calendar, X, Star, MapPin, Home, Loader2 } from 'lucide-react';
+import toast from 'react-hot-toast';
 
-// --- Utility Components for Steps ---
-
-// Status Bar (Steps 1, 2, 3)
+// --- Utility Components ---
 const StepStatusBar = ({ currentStep, totalSteps }) => (
     <div className="flex justify-between items-center mb-6">
         {[...Array(totalSteps)].map((_, index) => (
             <div
                 key={index}
-                className={`flex-1 h-1 rounded-full mx-1 ${
-                    index + 1 <= currentStep ? 'bg-green-600' : 'bg-gray-300'
-                }`}
+                className={`flex-1 h-1 rounded-full mx-1 ${index + 1 <= currentStep ? 'bg-green-600' : 'bg-gray-300'
+                    }`}
             ></div>
         ))}
     </div>
@@ -69,11 +67,10 @@ const FileUpload = ({ title, required = false, acceptedFiles = [], onFileUpload,
                 {title}
                 {required && <span className="text-red-500 text-xs font-normal ml-2">REQUIRED</span>}
             </p>
-            
+
             <div
-                className={`text-center p-6 border-2 border-dashed rounded-lg transition-colors ${
-                    isDragging ? 'border-green-500 bg-green-50' : 'border-gray-300 bg-gray-50'
-                }`}
+                className={`text-center p-6 border-2 border-dashed rounded-lg transition-colors ${isDragging ? 'border-green-500 bg-green-50' : 'border-gray-300 bg-gray-50'
+                    }`}
                 onDragOver={handleDragOver}
                 onDragLeave={handleDragLeave}
                 onDrop={handleDrop}
@@ -97,7 +94,6 @@ const FileUpload = ({ title, required = false, acceptedFiles = [], onFileUpload,
                 </label>
             </div>
 
-            {/* Uploaded Files Preview */}
             {uploadedFiles.length > 0 && (
                 <div className="space-y-2">
                     <p className="text-sm font-medium text-gray-700">Uploaded files:</p>
@@ -118,181 +114,232 @@ const FileUpload = ({ title, required = false, acceptedFiles = [], onFileUpload,
     );
 };
 
-// --- Step 1: Personal Information ---
-const Step1PersonalInfo = ({ applicationData, handleChange }) => (
-    <div className="space-y-6">
-        <div className="text-center mb-2">
-            <h3 className="text-xl font-semibold text-gray-800">Step 1 of 3: Personal Information</h3>
-            <p className="text-sm text-gray-500">Please fill out all required information to complete your application</p>
-        </div>
-        
-        <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-1">
-                <label className="text-sm font-medium text-gray-700">Full Name * <span className="text-red-500 text-xs">REQUIRED</span></label>
-                <input 
-                    type="text" 
-                    name="fullName" 
-                    value={applicationData.fullName} 
-                    onChange={handleChange} 
-                    className="w-full p-2 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500" 
-                    placeholder="Anna Chen" 
-                    required 
-                />
-            </div>
-            <div className="space-y-1">
-                <label className="text-sm font-medium text-gray-700">Email Address * <span className="text-red-500 text-xs">REQUIRED</span></label>
-                <input 
-                    type="email" 
-                    name="email" 
-                    value={applicationData.email} 
-                    onChange={handleChange} 
-                    className="w-full p-2 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500" 
-                    placeholder="anna.chen@nyu.edu" 
-                    required 
-                />
-            </div>
-        </div>
+// Property & Host Info Sidebar
+const PropertyHostSidebar = ({ listing, host }) => (
+    <div className="w-80 bg-gray-50 p-6 space-y-6 border-r border-gray-200">
+        <div>
+            <p className="text-xs font-semibold text-gray-500 uppercase mb-3">Applying For</p>
 
-        <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-1">
-                <label className="text-sm font-medium text-gray-700">Phone Number *</label>
-                <input 
-                    type="tel" 
-                    name="phone" 
-                    value={applicationData.phone} 
-                    onChange={handleChange} 
-                    className="w-full p-2 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500" 
-                    placeholder="+1 (555) 123-4567" 
+            {/* Property Image */}
+            <div className="bg-white rounded-lg overflow-hidden shadow-sm mb-4">
+                <img
+                    src={listing?.photos?.cover || "https://via.placeholder.com/320x200?text=Property"}
+                    alt={listing?.listingTitle}
+                    className="w-full h-40 object-cover"
                 />
             </div>
-            <div className="space-y-1">
-                <label className="text-sm font-medium text-gray-700">Date of Birth *</label>
-                <div className="relative">
-                    <input 
-                        type="date" 
-                        name="dob" 
-                        value={applicationData.dob} 
-                        onChange={handleChange} 
-                        className="w-full p-2 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500 pr-10" 
-                    />
-                    <Calendar className="absolute right-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400 pointer-events-none" />
+
+            {/* Property Details */}
+            <div className="bg-white p-4 rounded-lg shadow-sm">
+                <h4 className="font-semibold text-gray-800 mb-2">{listing?.listingTitle || 'Property Name'}</h4>
+                <div className="space-y-2 text-sm text-gray-600">
+                    <p className="flex items-center">
+                        <MapPin className="w-3 h-3 mr-2" />
+                        {listing?.address}, {listing?.town}
+                    </p>
+                    <p className="font-bold text-green-700 text-lg">€{listing?.monthlyRent}/month</p>
+                    <div className="flex items-center space-x-2 text-xs">
+                        <span className="flex items-center">
+                            <Home className="w-3 h-3 mr-1" />
+                            {listing?.roomType || 'Private Room'}
+                        </span>
+                        <span>•</span>
+                        <span>{listing?.roomSize || '120'} sqft</span>
+                    </div>
+                    <p className="text-xs text-gray-500">
+                        Available {listing?.availableFrom ? new Date(listing.availableFrom).toLocaleDateString() : 'Now'}
+                    </p>
                 </div>
             </div>
         </div>
 
-        <div className="space-y-1">
+        {/* Host Information */}
+        <div className="bg-white p-4 rounded-lg shadow-sm">
+            <h4 className="font-semibold text-gray-800 mb-3 text-sm">HOST INFORMATION</h4>
+            <div className="flex items-center space-x-3">
+                <div className="w-12 h-12 bg-gradient-to-br from-green-400 to-blue-500 rounded-full flex items-center justify-center">
+                    <span className="text-white font-semibold text-lg">
+                        {host?.firstName?.[0]}{host?.lastName?.[0]}
+                    </span>
+                </div>
+                <div>
+                    <p className="font-semibold text-gray-800">{host?.firstName} {host?.lastName}</p>
+                    <div className="flex items-center space-x-1">
+                        <Star className="w-3 h-3 text-yellow-500 fill-current" />
+                        <span className="text-xs text-gray-600">4.8</span>
+                        <span className="text-xs text-gray-600">•</span>
+                        <span className="text-xs text-gray-600">24 reviews</span>
+                    </div>
+                    <p className="text-xs text-gray-500">Host since 2020</p>
+                </div>
+            </div>
+        </div>
+
+        {/* Progress Indicator */}
+        <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+            <p className="text-xs font-semibold text-blue-800 mb-2">Application Progress</p>
+            <p className="text-xs text-gray-600">Complete all steps to submit your application</p>
+        </div>
+    </div>
+);
+
+// --- Step Components ---
+const Step1PersonalInfo = ({ applicationData, handleChange }) => (
+    <div className="space-y-6">
+        <div className="mb-4">
+            <h3 className="text-xl font-semibold text-gray-800">Step 1 of 3: Personal Information</h3>
+            <p className="text-sm text-gray-500">Please fill out all required information</p>
+        </div>
+
+        <div className="grid grid-cols-2 gap-4">
+            <div>
+                <label className="text-sm font-medium text-gray-700">Full Name *</label>
+                <input
+                    type="text"
+                    name="fullName"
+                    value={applicationData.fullName}
+                    onChange={handleChange}
+                    className="w-full p-2 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500 mt-1"
+                    required
+                />
+            </div>
+            <div>
+                <label className="text-sm font-medium text-gray-700">Email Address *</label>
+                <input
+                    type="email"
+                    name="email"
+                    value={applicationData.email}
+                    onChange={handleChange}
+                    className="w-full p-2 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500 mt-1"
+                    required
+                />
+            </div>
+        </div>
+
+        <div className="grid grid-cols-2 gap-4">
+            <div>
+                <label className="text-sm font-medium text-gray-700">Phone Number *</label>
+                <input
+                    type="tel"
+                    name="phone"
+                    value={applicationData.phone}
+                    onChange={handleChange}
+                    className="w-full p-2 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500 mt-1"
+                />
+            </div>
+            <div>
+                <label className="text-sm font-medium text-gray-700">Date of Birth *</label>
+                <input
+                    type="date"
+                    name="dob"
+                    value={applicationData.dob}
+                    onChange={handleChange}
+                    className="w-full p-2 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500 mt-1"
+                />
+            </div>
+        </div>
+
+        <div>
             <label className="text-sm font-medium text-gray-700">Current Address *</label>
-            <input 
-                type="text" 
-                name="currentAddress" 
-                value={applicationData.currentAddress} 
-                onChange={handleChange} 
-                className="w-full p-2 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500" 
-                placeholder="789 University Place, Apt 4C, New York, NY 10003" 
+            <input
+                type="text"
+                name="currentAddress"
+                value={applicationData.currentAddress}
+                onChange={handleChange}
+                className="w-full p-2 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500 mt-1"
             />
         </div>
 
         <div className="border-t pt-4">
-            <h3 className="text-lg font-semibold text-gray-800 mb-4">Occupation & Status <span className="text-green-600 text-xs">IMPORTANT</span></h3>
+            <h3 className="text-lg font-semibold text-gray-800 mb-4">Occupation & Status</h3>
             <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-1">
+                <div>
                     <label className="text-sm font-medium text-gray-700">Employment Status *</label>
-                    <div className="flex space-x-2">
+                    <div className="flex space-x-2 mt-1">
                         {['Student', 'Employed', 'Self-Employed'].map(status => (
-                            <button 
-                                key={status} 
-                                type="button" 
+                            <button
+                                key={status}
+                                type="button"
                                 onClick={() => handleChange({ target: { name: 'employmentStatus', value: status } })}
-                                className={`px-3 py-1 text-sm rounded-full transition ${
-                                    applicationData.employmentStatus === status ? 'bg-orange-500 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                                }`}
+                                className={`px-3 py-1 text-sm rounded-full transition ${applicationData.employmentStatus === status ? 'bg-orange-500 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                                    }`}
                             >
                                 {status}
                             </button>
                         ))}
                     </div>
                 </div>
-                <div className="space-y-1">
+                <div>
                     <label className="text-sm font-medium text-gray-700">University/Institution *</label>
-                    <input 
-                        type="text" 
-                        name="university" 
-                        value={applicationData.university} 
-                        onChange={handleChange} 
-                        className="w-full p-2 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500" 
-                        placeholder="New York University (NYU)" 
+                    <input
+                        type="text"
+                        name="university"
+                        value={applicationData.university}
+                        onChange={handleChange}
+                        className="w-full p-2 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500 mt-1"
                     />
                 </div>
             </div>
 
             <div className="grid grid-cols-2 gap-4 mt-4">
-                <div className="space-y-1">
+                <div>
                     <label className="text-sm font-medium text-gray-700">Program of Study *</label>
-                    <input 
-                        type="text" 
-                        name="programOfStudy" 
-                        value={applicationData.programOfStudy} 
-                        onChange={handleChange} 
-                        className="w-full p-2 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500" 
-                        placeholder="Computer Science - Master's Degree" 
+                    <input
+                        type="text"
+                        name="programOfStudy"
+                        value={applicationData.programOfStudy}
+                        onChange={handleChange}
+                        className="w-full p-2 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500 mt-1"
                     />
                 </div>
-                <div className="space-y-1">
+                <div>
                     <label className="text-sm font-medium text-gray-700">Expected Graduation *</label>
-                    <input 
-                        type="text" 
-                        name="expectedGraduation" 
-                        value={applicationData.expectedGraduation} 
-                        onChange={handleChange} 
-                        className="w-full p-2 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500" 
-                        placeholder="May 2025" 
+                    <input
+                        type="text"
+                        name="expectedGraduation"
+                        value={applicationData.expectedGraduation}
+                        onChange={handleChange}
+                        className="w-full p-2 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500 mt-1"
                     />
                 </div>
             </div>
 
             <div className="mt-4">
                 <label className="text-sm font-medium text-gray-700">Monthly Income/Support *</label>
-                <input 
-                    type="text" 
-                    name="monthlyIncome" 
-                    value={applicationData.monthlyIncome} 
-                    onChange={handleChange} 
-                    className="w-full p-2 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500 mt-1" 
-                    placeholder="$2,500 (Family support + Part-time work)" 
+                <input
+                    type="text"
+                    name="monthlyIncome"
+                    value={applicationData.monthlyIncome}
+                    onChange={handleChange}
+                    className="w-full p-2 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500 mt-1"
                 />
-                <p className="text-xs text-gray-500 mt-1">This helps hosts understand your ability to pay rent consistently</p>
             </div>
         </div>
 
-        {/* Lease Preferences Section - ADDED */}
         <div className="border-t pt-4">
             <h3 className="text-lg font-semibold text-gray-800 mb-4">Lease Preferences</h3>
-            
+
             <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-1">
+                <div>
                     <label className="text-sm font-medium text-gray-700">Preferred Move-in Date *</label>
-                    <div className="relative">
-                        <input 
-                            type="date" 
-                            name="preferredMoveIn" 
-                            value={applicationData.preferredMoveIn} 
-                            onChange={handleChange} 
-                            className="w-full p-2 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500 pr-10" 
-                        />
-                        <Calendar className="absolute right-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400 pointer-events-none" />
-                    </div>
+                    <input
+                        type="date"
+                        name="preferredMoveIn"
+                        value={applicationData.preferredMoveIn}
+                        onChange={handleChange}
+                        className="w-full p-2 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500 mt-1"
+                    />
                 </div>
-                <div className="space-y-1">
+                <div>
                     <label className="text-sm font-medium text-gray-700">Preferred Lease Length *</label>
-                    <div className="flex space-x-2">
+                    <div className="flex space-x-2 mt-1">
                         {['6 Months', '12 Months', 'Flexible'].map(term => (
-                            <button 
-                                key={term} 
-                                type="button" 
+                            <button
+                                key={term}
+                                type="button"
                                 onClick={() => handleChange({ target: { name: 'leaseLength', value: term } })}
-                                className={`px-3 py-1 text-sm rounded-full transition ${
-                                    applicationData.leaseLength === term ? 'bg-orange-500 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                                }`}
+                                className={`px-3 py-1 text-sm rounded-full transition ${applicationData.leaseLength === term ? 'bg-orange-500 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                                    }`}
                             >
                                 {term}
                             </button>
@@ -303,49 +350,37 @@ const Step1PersonalInfo = ({ applicationData, handleChange }) => (
 
             <div className="mt-4">
                 <label className="text-sm font-medium text-gray-700">Additional Information</label>
-                <textarea 
-                    name="additionalInfo" 
-                    value={applicationData.additionalInfo} 
-                    onChange={handleChange} 
+                <textarea
+                    name="additionalInfo"
+                    value={applicationData.additionalInfo}
+                    onChange={handleChange}
                     rows="4"
-                    className="w-full p-2 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500 mt-1" 
-                    placeholder="I am an international student from Singapore studying Computer Science at NYU. I am quiet, clean, and respectful. I don't smoke or have pets. I'm looking for a peaceful place to focus on my studies and would be happy to contribute to a friendly household environment."
+                    className="w-full p-2 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500 mt-1"
                 />
             </div>
         </div>
     </div>
 );
 
-// --- Step 2: Documents Upload ---
 const Step2Documents = ({ applicationData, handleFileUpload }) => (
     <div className="space-y-6">
-        <div className="text-center mb-2">
+        <div className="mb-4">
             <h3 className="text-xl font-semibold text-gray-800">Step 2 of 3: Upload Required Documents</h3>
-            <p className="text-sm text-gray-500">Please upload the following documents to complete your application</p>
+            <p className="text-sm text-gray-500">Please upload the following documents</p>
         </div>
 
-        <div className="bg-blue-50 p-4 rounded-lg border border-blue-200 space-y-2 text-sm text-gray-700">
-            <p className="font-semibold text-blue-700 flex items-center">
-                <CheckCircle className="w-4 h-4 mr-2 text-blue-500"/> Document Upload Guidelines
+        <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+            <p className="font-semibold text-blue-700 flex items-center text-sm">
+                <CheckCircle className="w-4 h-4 mr-2" /> Document Upload Guidelines
             </p>
-            <ul className="list-disc list-inside ml-4 space-y-1">
+            <ul className="list-disc list-inside ml-4 mt-2 space-y-1 text-xs text-gray-700">
                 <li>Upload clear, high-quality scans or photos</li>
-                <li>Ensure all text is readable and corners are visible</li>
                 <li>Accepted formats: PDF, JPG, PNG (max 10MB each)</li>
                 <li>All documents must be current and valid</li>
             </ul>
         </div>
-        
+
         <div className="space-y-6">
-            <h4 className="text-lg font-semibold text-gray-800 flex justify-between items-center">
-                Required Documents
-                <span className="text-green-600 text-xs font-normal">
-                    {applicationData.uploadedDocuments.filter(doc => doc.required).length}/
-                    {applicationData.documents.filter(doc => doc.required).length} Complete
-                </span>
-            </h4>
-            
-            {/* Identity Documents */}
             <FileUpload
                 title="Identity Documents"
                 required={true}
@@ -353,9 +388,7 @@ const Step2Documents = ({ applicationData, handleFileUpload }) => (
                 onFileUpload={(file) => handleFileUpload('identity', file)}
                 uploadedFiles={applicationData.uploadedDocuments.filter(doc => doc.type === 'identity')}
             />
-            <p className="text-xs text-gray-500 -mt-2">For international students: Passport required</p>
 
-            {/* Financial Verification */}
             <FileUpload
                 title="Financial Verification"
                 required={true}
@@ -363,10 +396,7 @@ const Step2Documents = ({ applicationData, handleFileUpload }) => (
                 onFileUpload={(file) => handleFileUpload('financial', file)}
                 uploadedFiles={applicationData.uploadedDocuments.filter(doc => doc.type === 'financial')}
             />
-            <p className="text-xs text-gray-500 -mt-2">Pay stubs, employment letter, or financial support letter</p>
-            <p className="text-xs text-gray-500">Students: Family support letter or scholarship documents</p>
 
-            {/* Additional Documents */}
             <FileUpload
                 title="Additional Documents"
                 required={false}
@@ -374,365 +404,104 @@ const Step2Documents = ({ applicationData, handleFileUpload }) => (
                 onFileUpload={(file) => handleFileUpload('additional', file)}
                 uploadedFiles={applicationData.uploadedDocuments.filter(doc => doc.type === 'additional')}
             />
-            <p className="text-xs text-gray-500 -mt-2">OPTIONAL - Any other supporting documents</p>
         </div>
     </div>
 );
 
-// Property Info Component for Review and Success steps
-const PropertyInfo = () => (
-    <div className="bg-gray-50 p-4 rounded-lg border border-gray-200 mb-6">
-        <h4 className="font-semibold text-gray-800 mb-3">Key Room Near NYU Campus</h4>
-        <div className="space-y-1 text-sm text-gray-600">
-            <p>Greenwich Village, Manhattan</p>
-            <p className="font-bold text-green-700">€750/month</p>
-            <p>Private Room • Shared Bathroom • 120 sqft</p>
-            <p>Available Sep 1</p>
-        </div>
-    </div>
-);
-
-// Host Info Component for Success step
-const HostInfo = () => (
-    <div className="bg-white p-4 rounded-lg border border-gray-200 mb-6">
-        <h4 className="font-semibold text-gray-800 mb-3">HOST INFORMATION</h4>
-        <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center">
-                <span className="text-sm font-semibold">MJ</span>
-            </div>
-            <div>
-                <p className="font-semibold">Margaret Johnson</p>
-                <div className="flex items-center space-x-1">
-                    <Star className="w-4 h-4 text-yellow-500 fill-current" />
-                    <span className="text-sm text-gray-600">4.8</span>
-                    <span className="text-sm text-gray-600">•</span>
-                    <span className="text-sm text-gray-600">24 reviews</span>
-                </div>
-                <p className="text-xs text-gray-500">Host since 2005</p>
-            </div>
-        </div>
-    </div>
-);
-
-// --- Step 3: Review & Submit ---
-// --- Step 3: Review & Submit ---
-const Step3Review = ({ applicationData }) => {
-    // Function to get file icon based on type
-    const getFileIcon = (fileName) => {
-        if (fileName?.toLowerCase().includes('.pdf')) {
-            return (
-                <div className="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center">
-                    <span className="text-red-600 font-bold text-sm">PDF</span>
-                </div>
-            );
-        } else if (fileName?.toLowerCase().match(/\.(jpg|jpeg|png|gif)$/)) {
-            // For image files, show a thumbnail preview
-            const file = applicationData.uploadedDocuments.find(doc => doc.name === fileName)?.file;
-            if (file) {
-                const url = URL.createObjectURL(file);
-                return (
-                    <img 
-                        src={url} 
-                        alt="Document preview" 
-                        className="w-12 h-12 object-cover rounded-lg border border-gray-200"
-                    />
-                );
-            }
-        }
-        
-        // Default file icon
-        return (
-            <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center">
-                <FileText className="w-6 h-6 text-gray-400" />
-            </div>
-        );
-    };
-
-    // Function to format file size
-    const formatFileSize = (bytes) => {
-        if (!bytes) return 'Unknown size';
-        if (bytes < 1024) return bytes + ' bytes';
-        if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
-        return (bytes / 1048576).toFixed(1) + ' MB';
-    };
-
-    // Group documents by type
-    const governmentDocs = applicationData.uploadedDocuments.filter(doc => 
-        doc.type === 'identity' || 
-        doc.name?.toLowerCase().includes('id') ||
-        doc.name?.toLowerCase().includes('license') ||
-        doc.name?.toLowerCase().includes('passport')
-    );
-
-    const bankDocs = applicationData.uploadedDocuments.filter(doc => 
-        doc.type === 'financial' || 
-        doc.name?.toLowerCase().includes('bank') ||
-        doc.name?.toLowerCase().includes('statement') ||
-        doc.name?.toLowerCase().includes('income')
-    );
-
-    const additionalDocs = applicationData.uploadedDocuments.filter(doc => 
-        doc.type === 'additional' &&
-        !governmentDocs.includes(doc) &&
-        !bankDocs.includes(doc)
-    );
-
-    return (
-        <div className="space-y-6">
-            <div className="text-center mb-2">
-                <h3 className="text-xl font-semibold text-gray-800">Step 3 of 3: Review & Submit Application</h3>
-                <p className="text-sm text-gray-500">Please review all information before submitting your application</p>
-            </div>
-            
-            {/* Property Information */}
-            <PropertyInfo />
-            
-            {/* Personal Information Review */}
-            <div className="border border-gray-200 p-4 rounded-lg bg-white">
-                <h4 className="font-semibold text-gray-800 mb-4">Personal Information</h4>
-                <div className="grid grid-cols-3 gap-4 text-sm">
-                    <div>
-                        <p className="font-medium text-gray-600">Full Name</p>
-                        <p className="text-gray-800">{applicationData.fullName}</p>
-                    </div>
-                    <div>
-                        <p className="font-medium text-gray-600">Email Address</p>
-                        <p className="text-gray-800">{applicationData.email}</p>
-                    </div>
-                    <div>
-                        <p className="font-medium text-gray-600">Phone Number</p>
-                        <p className="text-gray-800">{applicationData.phone}</p>
-                    </div>
-                    <div className="col-span-3 mt-2">
-                        <p className="font-medium text-gray-600">Date of Birth</p>
-                        <p className="text-gray-800">{new Date(applicationData.dob).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</p>
-                    </div>
-                    <div className="col-span-3 mt-2">
-                        <p className="font-medium text-gray-600">Current Address</p>
-                        <p className="text-gray-800">{applicationData.currentAddress}</p>
-                    </div>
-                </div>
-            </div>
-
-            {/* Occupation & Status Review */}
-            <div className="border border-gray-200 p-4 rounded-lg bg-white">
-                <h4 className="font-semibold text-gray-800 mb-4">Occupation & Status</h4>
-                <div className="grid grid-cols-2 gap-4 text-sm">
-                    <div>
-                        <p className="font-medium text-gray-600">Employment Status</p>
-                        <p className="text-gray-800">{applicationData.employmentStatus}</p>
-                    </div>
-                    <div>
-                        <p className="font-medium text-gray-600">University/Institution</p>
-                        <p className="text-gray-800">{applicationData.university}</p>
-                    </div>
-                    <div className="col-span-2 mt-2">
-                        <p className="font-medium text-gray-600">Program of Study</p>
-                        <p className="text-gray-800">{applicationData.programOfStudy}</p>
-                    </div>
-                    <div className="col-span-2">
-                        <p className="font-medium text-gray-600">Monthly Income/Support</p>
-                        <p className="text-gray-800">{applicationData.monthlyIncome}</p>
-                    </div>
-                </div>
-            </div>
-
-            {/* Lease Preferences Review */}
-            <div className="border border-gray-200 p-4 rounded-lg bg-white">
-                <h4 className="font-semibold text-gray-800 mb-4">Lease Preferences</h4>
-                <div className="grid grid-cols-2 gap-4 text-sm">
-                    <div>
-                        <p className="font-medium text-gray-600">Preferred Move-in Date</p>
-                        <p className="text-gray-800">{new Date(applicationData.preferredMoveIn).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</p>
-                    </div>
-                    <div>
-                        <p className="font-medium text-gray-600">Preferred Lease Length</p>
-                        <p className="text-gray-800">{applicationData.leaseLength}</p>
-                    </div>
-                    <div className="col-span-2 mt-2">
-                        <p className="font-medium text-gray-600">Additional Information</p>
-                        <p className="text-gray-800 text-sm mt-1">{applicationData.additionalInfo}</p>
-                    </div>
-                </div>
-            </div>
-
-            {/* Uploaded Documents Review */}
-            <div className="border border-gray-200 p-4 rounded-lg bg-white">
-                <h4 className="font-semibold text-gray-800 mb-4">Uploaded Documents</h4>
-                <div className="space-y-6">
-                    {/* Government Documents Section */}
-                    {governmentDocs.length > 0 && (
-                        <div className="space-y-3">
-                            <p className="font-medium text-gray-700 text-sm">Government Issued ID:</p>
-                            <div className="space-y-2">
-                                {governmentDocs.map((doc, index) => (
-                                    <div key={index} className="flex items-center justify-between bg-gray-50 p-3 rounded-lg border border-gray-200">
-                                        <div className="flex items-center space-x-3">
-                                            {getFileIcon(doc.name)}
-                                            <div>
-                                                <p className="font-medium text-gray-800 text-sm">{doc.name}</p>
-                                                <p className="text-xs text-gray-500">{formatFileSize(doc.file?.size)}</p>
-                                            </div>
-                                        </div>
-                                        <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0" />
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    )}
-
-                    {/* Bank Documents Section */}
-                    {bankDocs.length > 0 && (
-                        <div className="space-y-3">
-                            <p className="font-medium text-gray-700 text-sm">Bank Statements:</p>
-                            <div className="space-y-2">
-                                {bankDocs.map((doc, index) => (
-                                    <div key={index} className="flex items-center justify-between bg-gray-50 p-3 rounded-lg border border-gray-200">
-                                        <div className="flex items-center space-x-3">
-                                            {getFileIcon(doc.name)}
-                                            <div>
-                                                <p className="font-medium text-gray-800 text-sm">{doc.name}</p>
-                                                <p className="text-xs text-gray-500">{formatFileSize(doc.file?.size)}</p>
-                                            </div>
-                                        </div>
-                                        <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0" />
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    )}
-
-                    {/* Additional Documents Section */}
-                    {additionalDocs.length > 0 && (
-                        <div className="space-y-3">
-                            <p className="font-medium text-gray-700 text-sm">Additional Documents:</p>
-                            <div className="space-y-2">
-                                {additionalDocs.map((doc, index) => (
-                                    <div key={index} className="flex items-center justify-between bg-gray-50 p-3 rounded-lg border border-gray-200">
-                                        <div className="flex items-center space-x-3">
-                                            {getFileIcon(doc.name)}
-                                            <div>
-                                                <p className="font-medium text-gray-800 text-sm">{doc.name}</p>
-                                                <p className="text-xs text-gray-500">{formatFileSize(doc.file?.size)}</p>
-                                            </div>
-                                        </div>
-                                        <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0" />
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    )}
-
-                    {/* Show message if no documents uploaded */}
-                    {applicationData.uploadedDocuments.length === 0 && (
-                        <div className="text-center py-8">
-                            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                                <Upload className="w-8 h-8 text-gray-400" />
-                            </div>
-                            <p className="text-gray-500 text-sm">No documents uploaded yet</p>
-                            <p className="text-gray-400 text-xs mt-1">Documents will appear here after upload</p>
-                        </div>
-                    )}
-
-                    {/* Document Upload Progress */}
-                    {applicationData.uploadedDocuments.length > 0 && (
-                        <div className="bg-green-50 border border-green-200 rounded-lg p-3">
-                            <div className="flex items-center justify-between">
-                                <div className="flex items-center space-x-2">
-                                    <CheckCircle className="w-5 h-5 text-green-600" />
-                                    <span className="text-sm font-medium text-green-800">
-                                        {applicationData.uploadedDocuments.length} document(s) uploaded successfully
-                                    </span>
-                                </div>
-                                <span className="text-xs text-green-600 bg-green-100 px-2 py-1 rounded-full">
-                                    Ready to submit
-                                </span>
-                            </div>
-                        </div>
-                    )}
-                </div>
-            </div>
-        </div>
-    );
-};
-
-// --- Step 4: Submitted (Success Screen) ---
-const Step4Success = ({ onClose }) => (
+const Step3Review = ({ applicationData, listing }) => (
     <div className="space-y-6">
-        <div className="text-center mb-2">
-            <h3 className="text-2xl font-bold text-gray-800 mb-2">Application Submitted!</h3>
-            <p className="text-gray-500">Step 3 of 3: Submitted</p>
+        <div className="mb-4">
+            <h3 className="text-xl font-semibold text-gray-800">Step 3 of 3: Review & Submit</h3>
+            <p className="text-sm text-gray-500">Please review all information before submitting</p>
         </div>
-        
-        {/* Property Information */}
-        <PropertyInfo />
-        
-        {/* Host Information */}
-        <HostInfo />
-        
-        {/* Quick Links */}
-        <div className="bg-white p-4 rounded-lg border border-gray-200">
-            <h4 className="font-semibold text-gray-800 mb-3">Quick Links</h4>
-            <div className="space-y-2 text-sm">
-                <div className="flex justify-between items-center py-2 border-b">
-                    <span className="text-gray-600">Near You</span>
-                    <ChevronRight className="w-4 h-4 text-gray-400" />
+
+        <div className="border border-gray-200 p-4 rounded-lg bg-white">
+            <div className="flex justify-between items-center mb-4">
+                <h4 className="font-semibold text-gray-800">Personal Information</h4>
+            </div>
+            <div className="grid grid-cols-3 gap-4 text-sm">
+                <div>
+                    <p className="font-medium text-gray-600">Full Name</p>
+                    <p className="text-gray-800">{applicationData.fullName}</p>
                 </div>
-                <div className="flex justify-between items-center py-2 border-b">
-                    <span className="text-gray-600">Under €800</span>
-                    <ChevronRight className="w-4 h-4 text-gray-400" />
+                <div>
+                    <p className="font-medium text-gray-600">Email</p>
+                    <p className="text-gray-800">{applicationData.email}</p>
                 </div>
-                <div className="flex justify-between items-center py-2">
-                    <span className="text-gray-600">Pet Friendly</span>
-                    <ChevronRight className="w-4 h-4 text-gray-400" />
+                <div>
+                    <p className="font-medium text-gray-600">Phone</p>
+                    <p className="text-gray-800">{applicationData.phone}</p>
                 </div>
             </div>
         </div>
 
-        {/* Action Buttons */}
-        <div className="flex space-x-4 pt-4">
-            <button 
-                onClick={onClose}
-                className="flex-1 px-6 py-3 bg-gray-500 text-white rounded-lg hover:bg-gray-600 font-medium transition"
-            >
-                Back to Dashboard
-            </button>
-       
+        <div className="border border-gray-200 p-4 rounded-lg bg-white">
+            <h4 className="font-semibold text-gray-800 mb-4">Occupation & Status</h4>
+            <div className="grid grid-cols-2 gap-4 text-sm">
+                <div>
+                    <p className="font-medium text-gray-600">Employment Status</p>
+                    <p className="text-gray-800">{applicationData.employmentStatus}</p>
+                </div>
+                <div>
+                    <p className="font-medium text-gray-600">University</p>
+                    <p className="text-gray-800">{applicationData.university}</p>
+                </div>
+            </div>
+        </div>
+
+        <div className="border border-gray-200 p-4 rounded-lg bg-white">
+            <h4 className="font-semibold text-gray-800 mb-4">Uploaded Documents</h4>
+            {applicationData.uploadedDocuments.length > 0 ? (
+                <div className="space-y-2">
+                    {applicationData.uploadedDocuments.map((doc, index) => (
+                        <div key={index} className="flex items-center justify-between bg-gray-50 p-3 rounded-lg">
+                            <span className="text-sm text-gray-700">{doc.name}</span>
+                            <CheckCircle className="w-5 h-5 text-green-600" />
+                        </div>
+                    ))}
+                </div>
+            ) : (
+                <p className="text-gray-500 text-sm">No documents uploaded</p>
+            )}
         </div>
     </div>
 );
 
-// --- Main Application Form Container ---
-const MultiStepApplicationForm = ({ onClose }) => {
+const Step4Success = ({ onClose }) => (
+    <div className="text-center space-y-6 py-8">
+        <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto">
+            <CheckCircle className="w-12 h-12 text-green-600" />
+        </div>
+        <h3 className="text-2xl font-bold text-gray-800">Application Submitted!</h3>
+        <p className="text-gray-600">Your application has been sent to the host. They will review it and get back to you soon.</p>
+        <button
+            onClick={onClose}
+            className="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 font-medium"
+        >
+            Back to Dashboard
+        </button>
+    </div>
+);
+
+// --- Main Component ---
+const MultiStepApplicationForm = ({ onClose, listing }) => {
     const [currentStep, setCurrentStep] = useState(1);
-    const totalSteps = 4;
-    
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
     const [applicationData, setApplicationData] = useState({
-        // Personal Information
-        fullName: 'Anna Chen',
-        email: 'anna.chen@nyu.edu',
-        phone: '+1 (555) 123-4567',
-        dob: '1999-03-15',
-        currentAddress: '789 University Place, Apt 4C, New York, NY 10003',
-        
-        // Occupation & Status
+        fullName: '',
+        email: '',
+        phone: '',
+        dob: '',
+        currentAddress: '',
         employmentStatus: 'Student',
-        university: 'New York University (NYU)',
-        programOfStudy: "Computer Science - Master's Degree",
-        expectedGraduation: 'May 2025',
-        monthlyIncome: '$2,500 (Family support + Part-time work)',
-        
-        // Lease Preferences
-        preferredMoveIn: '2024-09-01',
+        university: '',
+        programOfStudy: '',
+        expectedGraduation: '',
+        monthlyIncome: '',
+        preferredMoveIn: '',
         leaseLength: '6 Months',
-        additionalInfo: 'I am an international student from Singapore studying Computer Science at NYU. I am quiet, clean, and respectful. I don\'t smoke or have pets. I\'m looking for a peaceful place to focus on my studies and would be happy to contribute to a friendly household environment.',
-        
-        // Documents
-        documents: [
-            { type: 'identity', required: true },
-            { type: 'financial', required: true },
-            { type: 'additional', required: false }
-        ],
+        additionalInfo: '',
         uploadedDocuments: []
     });
 
@@ -741,29 +510,30 @@ const MultiStepApplicationForm = ({ onClose }) => {
         setApplicationData(prev => ({ ...prev, [name]: value }));
     };
 
-    const handleFileUpload = (type, file) => {
-        if (!file) {
-            // Remove file logic if needed
-            return;
-        }
+    const handleFileUpload = async (type, file) => {
+        if (!file) return;
 
-        const newFile = {
-            type,
-            name: file.name,
-            file: file,
-            uploadedAt: new Date().toISOString()
+        // Convert file to Base64
+        const reader = new FileReader();
+        reader.onloadend = () => {
+            const base64String = reader.result;
+            const newFile = {
+                type,
+                name: file.name,
+                data: base64String,
+                file: file
+            };
+
+            setApplicationData(prev => ({
+                ...prev,
+                uploadedDocuments: [...prev.uploadedDocuments, newFile]
+            }));
         };
-
-        setApplicationData(prev => ({
-            ...prev,
-            uploadedDocuments: [...prev.uploadedDocuments.filter(doc => doc.type !== type || doc.name !== file.name), newFile]
-        }));
+        reader.readAsDataURL(file);
     };
 
     const handleNext = () => {
-        if (currentStep < totalSteps) {
-            setCurrentStep(currentStep + 1);
-        }
+        if (currentStep < 4) setCurrentStep(currentStep + 1);
     };
 
     const handleBack = () => {
@@ -774,10 +544,55 @@ const MultiStepApplicationForm = ({ onClose }) => {
         }
     };
 
-    const handleSubmit = () => {
-        // Here you would typically send the application data to your backend
-        console.log('Submitting application:', applicationData);
-        handleNext();
+    const handleSubmit = async () => {
+        setIsSubmitting(true);
+        const toastId = toast.loading('Submitting application...');
+
+        try {
+            // Prepare documents for API (only base64 data)
+            const documentsForAPI = applicationData.uploadedDocuments.map(doc => ({
+                type: doc.type,
+                name: doc.name,
+                data: doc.data
+            }));
+
+            const payload = {
+                listingId: listing._id,
+                fullName: applicationData.fullName,
+                email: applicationData.email,
+                phone: applicationData.phone,
+                dob: applicationData.dob,
+                currentAddress: applicationData.currentAddress,
+                employmentStatus: applicationData.employmentStatus,
+                university: applicationData.university,
+                programOfStudy: applicationData.programOfStudy,
+                expectedGraduation: applicationData.expectedGraduation,
+                monthlyIncome: applicationData.monthlyIncome,
+                preferredMoveIn: applicationData.preferredMoveIn,
+                leaseLength: applicationData.leaseLength,
+                additionalInfo: applicationData.additionalInfo,
+                uploadedDocuments: documentsForAPI
+            };
+
+            const response = await fetch('/api/applications', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            const result = await response.json();
+
+            if (!response.ok) {
+                throw new Error(result.message || 'Failed to submit application');
+            }
+
+            toast.success('Application submitted successfully!', { id: toastId });
+            handleNext();
+        } catch (error) {
+            toast.error(error.message, { id: toastId });
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     const renderStep = () => {
@@ -787,7 +602,7 @@ const MultiStepApplicationForm = ({ onClose }) => {
             case 2:
                 return <Step2Documents applicationData={applicationData} handleFileUpload={handleFileUpload} />;
             case 3:
-                return <Step3Review applicationData={applicationData} />;
+                return <Step3Review applicationData={applicationData} listing={listing} />;
             case 4:
                 return <Step4Success onClose={onClose} />;
             default:
@@ -795,45 +610,64 @@ const MultiStepApplicationForm = ({ onClose }) => {
         }
     };
 
+    const host = listing?.hostId || {};
+
     return (
-        <div className={`w-full max-w-4xl mx-auto bg-white rounded-lg h-full flex flex-col ${currentStep === 4 ? '' : 'overflow-y-auto'}`}>
-            {/* Header and Controls - Made more compact */}
-            <div className="flex justify-between items-center pb-4 border-b">
-                <h2 className="text-2xl font-bold text-gray-800">Application Form</h2>
-                <div className="flex space-x-2">
-                    {currentStep !== 4 && (
-                        <button 
-                            onClick={handleBack} 
-                            className="flex items-center text-sm font-semibold text-gray-600 border border-gray-300 px-4 py-2 rounded-lg hover:bg-gray-100 transition"
-                        >
-                            <ChevronLeft className="w-4 h-4 mr-1" /> Back
-                        </button>
-                    )}
-                    {currentStep < 3 && (
-                        <button 
-                            onClick={handleNext} 
-                            className="flex items-center text-sm font-semibold bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition"
-                        >
-                            Continue <ChevronRight className="w-4 h-4 ml-1" />
-                        </button>
-                    )}
-                    {currentStep === 3 && (
-                        <button 
-                            onClick={handleSubmit} 
-                            className="flex items-center text-sm font-semibold bg-orange-500 text-white px-4 py-2 rounded-lg hover:bg-orange-600 transition"
-                        >
-                            Submit Application
-                        </button>
-                    )}
+        <div className="flex h-full bg-white">
+            {/* Left Sidebar - Property & Host Info */}
+            {currentStep !== 4 && <PropertyHostSidebar listing={listing} host={host} />}
+
+            {/* Right Content - Form */}
+            <div className="flex-1 p-8 overflow-y-auto">
+                <div className="max-w-3xl mx-auto">
+                    {/* Header */}
+                    <div className="flex justify-between items-center mb-6">
+                        <h2 className="text-2xl font-bold text-gray-800">Application Form</h2>
+                        <div className="flex space-x-2">
+                            {currentStep !== 4 && (
+                                <button
+                                    onClick={handleBack}
+                                    disabled={isSubmitting}
+                                    className="flex items-center text-sm font-semibold text-gray-600 border border-gray-300 px-4 py-2 rounded-lg hover:bg-gray-100 transition disabled:opacity-50"
+                                >
+                                    <ChevronLeft className="w-4 h-4 mr-1" /> Back
+                                </button>
+                            )}
+                            {currentStep < 3 && (
+                                <button
+                                    onClick={handleNext}
+                                    className="flex items-center text-sm font-semibold bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition"
+                                >
+                                    Continue <ChevronRight className="w-4 h-4 ml-1" />
+                                </button>
+                            )}
+                            {currentStep === 3 && (
+                                <button
+                                    onClick={handleSubmit}
+                                    disabled={isSubmitting}
+                                    className="flex items-center text-sm font-semibold bg-orange-500 text-white px-4 py-2 rounded-lg hover:bg-orange-600 transition disabled:opacity-50"
+                                >
+                                    {isSubmitting ? (
+                                        <>
+                                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                                            Submitting...
+                                        </>
+                                    ) : (
+                                        <>Submit Application</>
+                                    )}
+                                </button>
+                            )}
+                        </div>
+                    </div>
+
+                    {/* Step Status Bar */}
+                    {currentStep !== 4 && <StepStatusBar currentStep={currentStep} totalSteps={3} />}
+
+                    {/* Content */}
+                    <div className="mt-6">
+                        {renderStep()}
+                    </div>
                 </div>
-            </div>
-
-            {/* Step Status Bar - Made more compact */}
-            {currentStep !== 4 && <StepStatusBar currentStep={currentStep} totalSteps={3} />}
-
-            {/* Content - Reduced top padding to move content up */}
-            <div className="flex-1 pt-2">
-                {renderStep()}
             </div>
         </div>
     );
