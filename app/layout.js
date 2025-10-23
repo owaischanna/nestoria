@@ -2,6 +2,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from "./context/AuthContext"; // Import the AuthProvider
+import Script from "next/script";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -28,6 +29,38 @@ export default function RootLayout({ children }) {
           <Toaster position="top-center" reverseOrder={false} />
           {children}
         </AuthProvider>
+
+
+        <Script src="/assets/lang.config.js" strategy="beforeInteractive" /> 
+        
+    
+
+    
+        <Script 
+            id="google-translate-init"
+            dangerouslySetInnerHTML={{
+                __html: `
+                    function googleTranslateElementInit() {
+                        new google.translate.TranslateElement({
+                            pageLanguage: langConfig.default || 'en',
+                            includedLanguages: langConfig.languages.map(l => l.code).join(',') || 'en,es',
+                            layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+                            autoDisplay: false
+                        }, 'google_translate_element');
+                    }
+                `
+            }}
+            strategy="afterInteractive"
+        />
+        <Script 
+            src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"
+            strategy="afterInteractive"
+        />
+
+        {/* Optional: A hidden div where Google places its default selector */}
+  <div id="google_translate_element" style={{ display: 'none' }}></div>
+        
+        {/* === END: GOOGLE TRANSLATE SCRIPTS === */}
       </body>
     </html>
   );

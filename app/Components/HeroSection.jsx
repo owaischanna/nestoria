@@ -6,6 +6,7 @@ import Link from "next/link";
 import { Search, MapPin, ChevronDown, Menu, X } from "lucide-react"; 
 // Relying on your external AuthModal file as intended
 import AuthModal from "./AuthModal"; 
+import LanguageSwitcher from "./LanguageSwitcher";
 
 // --- Data for Select Options (Used in SearchFilter) ---
 const cityOptions = [
@@ -67,6 +68,7 @@ const NavBar = ({ onOpenAuth }) => {
           
           {/* Desktop Navigation Links (Original content - hidden on small screens) */}
           <div className="hidden md:flex items-center space-x-4">
+            <LanguageSwitcher/>
             <Link 
               href="#top" 
               className={`px-4 py-2 rounded-lg transition duration-150 font-medium ${
@@ -130,6 +132,7 @@ const NavBar = ({ onOpenAuth }) => {
             >
               <span>Get Started</span>
               <span className="text-xl">→</span>
+              
             </button>
           </div>
           
@@ -270,6 +273,10 @@ const HeroSection = () => {
     <div id="top" className="min-h-screen bg-yellow-50 overflow-hidden relative">
       <NavBar onOpenAuth={() => setIsAuthOpen(true)} />
       <AuthModal isOpen={isAuthOpen} onClose={() => setIsAuthOpen(false)} />
+
+        {/* <div className="absolute top-6 right-8 z-50">
+          <LanguageSwitcher /> 
+      </div> */}
 
       {/* 1. The Large Light Green/White Curved Background */}
       <div
