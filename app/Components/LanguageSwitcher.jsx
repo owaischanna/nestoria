@@ -67,32 +67,34 @@ export default function LanguageSwitcher() {
         return langOptions.find(l => l.code === code)?.name || code.toUpperCase();
     };
 
-    const switchLanguage = (newLangCode) => {
-        // Close dropdown immediately
-        setIsOpen(false);
-        
-        // Set the cookie
-        const cookieDomain = window.location.hostname === 'localhost' 
-            ? undefined 
-            : '.' + window.location.hostname;
+ const switchLanguage = (newLangCode) => {
+    setIsOpen(false);
 
+    const cookieDomain = window.location.hostname === 'localhost' 
+        ? undefined 
+        : '.' + window.location.hostname;
+
+    if (newLangCode === 'en') {
+        // Clear the cookie to disable translation
+        Cookies.remove(GOOG_TRANS_COOKIE, { path: '/', domain: cookieDomain });
+    } else {
+        // Always keep English as the source language
         Cookies.set(GOOG_TRANS_COOKIE, `/en/${newLangCode}`, { 
             path: '/', 
             domain: cookieDomain,
             expires: 365,
             sameSite: 'Lax'
         }); 
-        
-        setCurrentLang(newLangCode);
-        
-        // Hide translate bar before reload
-        hideGoogleTranslateBar();
-        
-        // Force reload to apply the translation
-        setTimeout(() => {
-            window.location.reload();
-        }, 100);
-    };
+    }
+
+    setCurrentLang(newLangCode);
+    hideGoogleTranslateBar();
+
+    setTimeout(() => {
+        window.location.reload();
+    }, 100);
+};
+
 
     return (
         <div className="relative inline-block text-left z-[60]">

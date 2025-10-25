@@ -7,6 +7,8 @@ import { Search, MapPin, ChevronDown, Menu, X } from "lucide-react";
 // Relying on your external AuthModal file as intended
 import AuthModal from "./AuthModal"; 
 import LanguageSwitcher from "./LanguageSwitcher";
+import Image from "next/image"; 
+import Hab from '../../public/assets/hab.jpg';
 
 // --- Data for Select Options (Used in SearchFilter) ---
 const cityOptions = [
@@ -33,12 +35,23 @@ const priceRangeOptions = [
 
 
 // --- Brand logo (Original) ---
+// --- Brand logo ---
 const BrandLogo = () => (
-  <div className="flex items-center space-x-2">
-    <div className="w-6 h-6 bg-green-600 rounded-full" />
-    <span className="text-xl font-bold text-gray-800">Nestoria</span>
+  <div className="flex items-center space-x-2 h-[45px] -mt-8">
+    <div className="flex-shrink-0 flex items-center">
+      <Image
+        src={Hab}
+        alt="Habisolo Logo"
+        width={260}    // Increase freely
+        height={50}    // Increase freely
+        className="rounded-full object-none  h-[95px]" // Lock height
+        priority
+      />
+    </div>
+
   </div>
 );
+
 
 // --- NavBar Component (Responsive - Unchanged from last step) ---
 const NavBar = ({ onOpenAuth }) => {
@@ -57,7 +70,8 @@ const NavBar = ({ onOpenAuth }) => {
 
   return (
     <nav className="fixed top-0 left-0 w-full bg-white shadow-md z-50">
-      <div className="flex items-center justify-between px-8 py-4">
+   <div className="flex items-center justify-between px-8 py-3 md:py-4">
+
         {/* Left: Brand Logo */}
         <div className="flex-shrink-0">
           <BrandLogo />
