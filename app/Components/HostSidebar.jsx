@@ -302,8 +302,19 @@ const mainMenuItems = [
 ];
 
 const accountItems = [
-  { label: "Profile", icon: User, route: "/hostprofile" },
-  { label: "Settings", icon: Settings, route: "/hostsettings" },
+  { id:"Profile", label: "Profile", icon: User, route: "/hostprofile" },
+
+  {  id :"setting",
+    label: "Settings", 
+    icon: Settings, 
+    route: "/hostsetting" ,
+   subItems: [
+      { id: "account", label: "Account", route: "/hostsetting" },
+      { id: "notifications", label: "Notifications", route: "/hostsettting" },
+      { id: "privacy-security", label: "Privacy and Security", route: "/hostsetting" },
+    
+    ],
+  },
   { label: "Help & Support", icon: HelpCircle, route: "/hosthelp" },
 ];
 
@@ -406,18 +417,13 @@ export default function HostSidebar() {
         </nav>
       </div>
 
-      <div className="mb-6">
+           <div className="mb-6">
         <h3 className="text-xs font-semibold uppercase text-gray-500 mb-3">
           ACCOUNT
         </h3>
         <nav className="space-y-1">
           {accountItems.map((item) => (
-            <Link href={item.route} key={item.label}>
-              <div className="flex items-center p-3 rounded-lg text-gray-600 hover:bg-gray-100 cursor-pointer">
-                <item.icon className="h-5 w-5 mr-3 text-gray-400" />
-                <span className="text-sm">{item.label}</span>
-              </div>
-            </Link>
+            <SidebarItem key={item.id} item={item} />
           ))}
         </nav>
       </div>

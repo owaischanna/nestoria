@@ -13,10 +13,10 @@ import Hab from '../../public/assets/hab.jpg';
 // --- Data for Select Options (Used in SearchFilter) ---
 const cityOptions = [
   "Select Your City",
-  "Barcelona",
+  "Sevilla",
   "Madrid",
-  "Valencia",
-  "Seville",
+  "Granada",
+  "Madrid",
 ];
 const propertyTypeOptions = [
   "Choose Property Type",

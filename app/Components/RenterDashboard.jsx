@@ -240,7 +240,7 @@ const DashboardContent = ({ onApply }) => {
         <StatCard
           iconName="DollarSign"
           title="Budget Range"
-          value={<>$600-900</>}
+          value={<>€600-900</>}
           subtext="Per month"
           colorClass="border-l-4 border-green-500"
         />
