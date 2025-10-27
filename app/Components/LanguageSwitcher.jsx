@@ -67,33 +67,42 @@ export default function LanguageSwitcher() {
         return langOptions.find(l => l.code === code)?.name || code.toUpperCase();
     };
 
- const switchLanguage = (newLangCode) => {
-    setIsOpen(false);
+const switchLanguage = (newLangCode) => {
+  setIsOpen(false);
 
-    const cookieDomain = window.location.hostname === 'localhost' 
-        ? undefined 
-        : '.' + window.location.hostname;
+  const cookieDomain =
+    window.location.hostname === 'localhost'
+      ? undefined
+      : window.location.hostname.includes('vercel.app')
+      ? window.location.hostname // use exact hostname for vercel
+      : '.' + window.location.hostname;
 
-    if (newLangCode === 'en') {
-        // Clear the cookie to disable translation
-        Cookies.remove(GOOG_TRANS_COOKIE, { path: '/', domain: cookieDomain });
-    } else {
-        // Always keep English as the source language
-        Cookies.set(GOOG_TRANS_COOKIE, `/en/${newLangCode}`, { 
-            path: '/', 
-            domain: cookieDomain,
-            expires: 365,
-            sameSite: 'Lax'
-        }); 
-    }
+  // Remove both possible cookies first (Google sets in both cases)
+  Cookies.remove(GOOG_TRANS_COOKIE, { path: '/', domain: cookieDomain });
+  Cookies.remove(GOOG_TRANS_COOKIE, { path: '/' }); // fallback
 
-    setCurrentLang(newLangCode);
-    hideGoogleTranslateBar();
+  if (newLangCode !== 'en') {
+    Cookies.set(GOOG_TRANS_COOKIE, `/en/${newLangCode}`, {
+      path: '/',
+      domain: cookieDomain,
+      expires: 365,
+      sameSite: 'Lax',
+    });
+  }
 
-    setTimeout(() => {
-        window.location.reload();
-    }, 100);
+  setCurrentLang(newLangCode);
+  hideGoogleTranslateBar();
+
+  // Force clear translation from iframe before reload
+  const iframe = document.querySelector('.goog-te-menu-frame');
+  if (iframe) iframe.remove();
+
+  // Force reload to apply the new translation state
+  setTimeout(() => {
+    window.location.href = window.location.origin; // ensures clean reload
+  }, 200);
 };
+
 
 
     return (
