@@ -1,45 +1,29 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Search, Bell, LogOut } from "lucide-react";
+import { Search, Bell, LogOut, User } from "lucide-react";
+import { useAuth } from "../context/AuthContext";
+import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
-import { useRouter } from "next/navigation"; // for redirect after logout
 
 export default function HostHeader() {
-  const [host, setHost] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const { user, logout, loading } = useAuth();
   const router = useRouter();
 
-  useEffect(() => {
-    const fetchHostDetails = async () => {
-      try {
-        const response = await fetch("/api/user/me");
-        if (!response.ok) {
-          throw new Error("Failed to fetch host details");
-        }
-        const result = await response.json();
-        setHost(result.data);
-      } catch (error) {
-        console.error("Error fetching host:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchHostDetails();
-  }, []);
-
-  // ✅ Logout function
-  const handleLogout = () => {
-    Cookies.remove("token"); // remove auth token
-    localStorage.clear(); // clear any local data
-    router.push("/"); // redirect to home or login
-  };
-
   const getInitials = (firstName, lastName) => {
-    if (!firstName || !lastName) return "...";
-    return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
+    if (firstName && lastName) {
+      return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
+    } else if (firstName) {
+      return `${firstName.charAt(0)}`.toUpperCase();
+    }
+    return null;
   };
+
+  const displayName = user?.firstName
+    ? `${user.firstName} ${user.lastName || ''}`.trim()
+    : user?.email || 'Loading...';
+
+  const displayInitials = user ? getInitials(user.firstName, user.lastName) : null;
 
   if (loading) {
     return (
@@ -61,36 +45,34 @@ export default function HostHeader() {
 
   return (
     <header className="flex items-center justify-between p-4 bg-white shadow-sm">
-      {/* Search Bar */}
       <div className="flex-1 max-w-lg relative">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 h-5 w-5" />
         <input
           type="text"
-          placeholder="Search by location, university, or amenities..."
+          placeholder="Search..."
           className="w-full pl-10 pr-4 py-2 rounded-full text-sm bg-gray-100 focus:ring-green-500 focus:outline-none"
         />
       </div>
 
-      {/* Right Side */}
       <div className="flex items-center space-x-4">
         <Bell className="text-gray-500 h-6 w-6 cursor-pointer hover:text-green-600" />
 
-        {/* User Info */}
         <div className="flex items-center space-x-2 bg-gray-100 p-1 rounded-full cursor-pointer">
           <div className="bg-green-600 text-white rounded-full h-8 w-8 flex items-center justify-center text-sm font-semibold">
-            {host ? getInitials(host.firstName, host.lastName) : "..."}
+            {displayInitials ? (
+              displayInitials
+            ) : (
+              <User className="w-4 h-4" />
+            )}
           </div>
           <div className="text-sm hidden sm:block">
-            <p className="font-semibold text-gray-800">
-              {host ? `${host.firstName} ${host.lastName}` : "Loading..."}
-            </p>
-            <p className="text-gray-500 text-xs">{host ? host.email : "..."}</p>
+            <p className="font-semibold text-gray-800">{displayName}</p>
+            <p className="text-gray-500 text-xs">{user?.email}</p>
           </div>
         </div>
 
-        {/* ✅ Logout Button */}
         <button
-          onClick={handleLogout}
+          onClick={logout}
           title="Logout"
           className="p-2 rounded-full hover:bg-gray-200 transition"
         >

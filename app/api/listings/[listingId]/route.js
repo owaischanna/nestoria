@@ -16,35 +16,24 @@ async function verifyAuth(request) {
     }
 }
 
+/**
+ * @description GET a specific listing by its ID.
+ */
 export async function GET(request, context) {
-    // Log entry point immediately
-    console.log("\n--- [GET /api/listings/[id] Triggered] ---");
-    console.log("Timestamp:", new Date().toISOString());
+    const listingId = context?.params?.listingId;
+    console.log(`\n--- [GET /api/listings/${listingId}] ---`);
+
+    if (!listingId || !mongoose.Types.ObjectId.isValid(listingId)) {
+        return NextResponse.json({ message: "Invalid listing ID." }, { status: 400 });
+    }
 
     try {
-        console.log("Attempting DB connection...");
         await dbConnect();
-        console.log("DB connection successful.");
-
-        // FIX: Extract listingId *after* the first await
-        const listingId = context?.params?.listingId;
-        console.log(`Extracted listingId: ${listingId}`); // Log after extraction
-
-        // Validation now happens after extraction
-        if (!listingId || !mongoose.Types.ObjectId.isValid(listingId)) {
-            console.error("Validation Error: Invalid or missing listingId.");
-            return NextResponse.json({ message: "Invalid listing ID." }, { status: 400 });
-        }
-
-        console.log(`Continuing fetch for listingId: ${listingId}`);
 
         const auth = await verifyAuth(request);
         if (auth.error) {
-            console.error("Auth failed:", auth.error);
             return NextResponse.json({ message: auth.error }, { status: auth.status });
         }
-
-        console.log(`Fetching listing details for ID: ${listingId}`);
 
         const listing = await Listing.findById(listingId)
             .populate({
@@ -53,11 +42,8 @@ export async function GET(request, context) {
             });
 
         if (!listing) {
-            console.log(`Listing not found: ${listingId}`);
             return NextResponse.json({ message: "Listing not found." }, { status: 404 });
         }
-
-        console.log(`Listing found: "${listing.listingTitle}"`);
 
         return NextResponse.json({
             message: "Listing details fetched successfully!",
@@ -66,11 +52,122 @@ export async function GET(request, context) {
 
     } catch (error) {
         console.error("Error fetching listing details:", error);
-        // Log the specific listingId that caused the error, if available
-        const erroredListingId = context?.params?.listingId;
-        console.error(`Error occurred for listingId: ${erroredListingId}`);
         return NextResponse.json(
             { message: "An error occurred.", error: error.message },
+            { status: 500 }
+        );
+    }
+}
+
+/**
+ * @description UPDATE a specific listing by its ID.
+ */
+export async function PUT(request, context) {
+    const listingId = context?.params?.listingId;
+    console.log(`\n--- [PUT /api/listings/${listingId}] ---`);
+
+    if (!listingId || !mongoose.Types.ObjectId.isValid(listingId)) {
+        return NextResponse.json({ message: "Invalid listing ID." }, { status: 400 });
+    }
+
+    try {
+        await dbConnect();
+
+        const auth = await verifyAuth(request);
+        if (auth.error) {
+            return NextResponse.json({ message: auth.error }, { status: auth.status });
+        }
+
+        const { user: host } = auth;
+        const body = await request.json();
+
+        const listing = await Listing.findById(listingId);
+        if (!listing) {
+            return NextResponse.json({ message: "Listing not found." }, { status: 404 });
+        }
+
+        // Authorization: Check if the logged-in user is the host
+        if (listing.hostId.toString() !== host.userId) {
+            return NextResponse.json({ message: "Access denied. You are not the owner of this listing." }, { status: 403 });
+        }
+
+        // Exclude fields that shouldn't be updated this way
+        delete body._id;
+        delete body.hostId;
+        delete body.createdAt;
+        delete body.updatedAt;
+
+        console.log(`Updating listing ${listingId} with data...`);
+
+        const updatedListing = await Listing.findByIdAndUpdate(
+            listingId,
+            { $set: body }, // Use $set to apply updates
+            { new: true, runValidators: true } // Return the new doc and run schema validation
+        );
+
+        return NextResponse.json({
+            message: "Listing updated successfully!",
+            data: updatedListing
+        }, { status: 200 });
+
+    } catch (error) {
+        console.error("Error updating listing:", error);
+        if (error.name === 'ValidationError') {
+            return NextResponse.json({ message: "Validation Error", error: error.message }, { status: 400 });
+        }
+        return NextResponse.json(
+            { message: "An error occurred while updating the listing.", error: error.message },
+            { status: 500 }
+        );
+    }
+}
+
+/**
+ * @description DELETE a specific listing by its ID.
+ */
+export async function DELETE(request, context) {
+    const listingId = context?.params?.listingId;
+    console.log(`\n--- [DELETE /api/listings/${listingId}] ---`);
+
+    if (!listingId || !mongoose.Types.ObjectId.isValid(listingId)) {
+        return NextResponse.json({ message: "Invalid listing ID." }, { status: 400 });
+    }
+
+    try {
+        await dbConnect();
+
+        const auth = await verifyAuth(request);
+        if (auth.error) {
+            return NextResponse.json({ message: auth.error }, { status: auth.status });
+        }
+
+        const { user: host } = auth;
+        const listing = await Listing.findById(listingId);
+
+        if (!listing) {
+            return NextResponse.json({ message: "Listing not found." }, { status: 404 });
+        }
+
+        // Authorization: Check if the logged-in user is the host
+        if (listing.hostId.toString() !== host.userId) {
+            return NextResponse.json({ message: "Access denied. You are not the owner of this listing." }, { status: 403 });
+        }
+
+        console.log(`Deleting listing ${listingId}...`);
+
+        await Listing.findByIdAndDelete(listingId);
+
+        // You might also want to delete related applications, messages, etc.
+        // For example: await Application.deleteMany({ listingId: listingId });
+
+        return NextResponse.json({
+            message: "Listing deleted successfully!"
+        }, { status: 200 });
+
+    } catch (error) {
+        console.error("Error deleting listing:", error);
+        return NextResponse.json(
+            { message: "An error occurred while deleting the listing.", error: error.message },
             { status: 500 }
         );
     }

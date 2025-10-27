@@ -1,51 +1,33 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Search, Bell, LogOut,Heart} from "lucide-react";
-import Cookies from "js-cookie";
-import { useRouter } from "next/navigation";
+import { Search, Bell, LogOut, Heart, User } from "lucide-react";
+import { useAuth } from "../context/AuthContext";
 
 export default function RenterHeader() {
-  const [renter, setRenter] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const router = useRouter();
-
-  useEffect(() => {
-    const fetchRenterDetails = async () => {
-      try {
-        const response = await fetch("/api/user/me");
-        if (!response.ok) {
-          throw new Error("Failed to fetch renter details");
-        }
-        const result = await response.json();
-        setRenter(result.data);
-      } catch (error) {
-        console.error("Error fetching renter:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchRenterDetails();
-  }, []);
-
-  // ✅ Logout function
-  const handleLogout = () => {
-    Cookies.remove("token");
-    localStorage.clear();
-    router.push("/");
-  };
+  const { user, loading, logout } = useAuth();
 
   const getInitials = (firstName, lastName) => {
-    if (!firstName || !lastName) return "...";
-    return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
+    if (firstName && lastName) {
+      return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
+    } else if (firstName) {
+      return `${firstName.charAt(0)}`.toUpperCase();
+    }
+    return null;
   };
+
+  const displayName = user
+    ? `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.email
+    : 'Loading...';
+
+  const displayInitials = user ? getInitials(user.firstName, user.lastName) : null;
 
   if (loading) {
     return (
       <header className="flex items-center justify-between p-4 bg-white shadow-sm animate-pulse">
         <div className="flex-1 max-w-lg h-10 bg-gray-200 rounded-full"></div>
         <div className="flex items-center space-x-4 ml-4">
+          <div className="h-6 w-6 bg-gray-200 rounded-full"></div>
           <div className="h-6 w-6 bg-gray-200 rounded-full"></div>
           <div className="flex items-center space-x-2">
             <div className="h-10 w-10 bg-gray-200 rounded-full"></div>
@@ -61,7 +43,6 @@ export default function RenterHeader() {
 
   return (
     <header className="flex items-center justify-between p-4 bg-white shadow-sm">
-      {/* Search Bar */}
       <div className="flex-1 max-w-lg relative">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 h-5 w-5" />
         <input
@@ -71,28 +52,24 @@ export default function RenterHeader() {
         />
       </div>
 
-      {/* Right Side */}
       <div className="flex items-center space-x-4">
         <Heart className="h-6 w-6 text-gray-500 hover:text-red-500 cursor-pointer" />
-      <div className="flex items-center space-x-4">
         <Bell className="text-gray-500 h-6 w-6 cursor-pointer hover:text-green-600" />
-</div>
-        {/* User Info */}
         <div className="flex items-center space-x-2 bg-gray-100 p-1 rounded-full cursor-pointer">
-          <div className="bg-red-400 text-white rounded-full h-8 w-8 flex items-center justify-center text-sm font-semibold">
-            {renter ? getInitials(renter.firstName, renter.lastName) : "..."}
+          <div className="bg-orange-500 text-white rounded-full h-8 w-8 flex items-center justify-center text-sm font-semibold">
+            {displayInitials ? (
+              displayInitials
+            ) : (
+              <User className="w-4 h-4" />
+            )}
           </div>
           <div className="text-sm hidden sm:block">
-            <p className="font-semibold text-gray-800">
-              {renter ? `${renter.firstName} ${renter.lastName}` : "Loading..."}
-            </p>
-            <p className="text-gray-500 text-xs">{renter ? renter.email : "..."}</p>
+            <p className="font-semibold text-gray-800">{displayName}</p>
+            <p className="text-gray-500 text-xs">{user?.email}</p>
           </div>
         </div>
-
-        {/* ✅ Logout Button */}
         <button
-          onClick={handleLogout}
+          onClick={logout}
           title="Logout"
           className="p-2 rounded-full hover:bg-gray-200 transition"
         >
