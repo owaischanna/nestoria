@@ -2,8 +2,8 @@ import { NextResponse } from 'next/server';
 import jwt from 'jsonwebtoken';
 import dbConnect from '@/lib/mongodb';
 import User from '@/app/models/User';
-import Listing from '@/app/models/Listing'; // Import Listing to count properties
-import mongoose from 'mongoose';
+import Listing from '@/app/models/Listing';
+import Application from '@/app/models/Application'; // Import Application model
 
 async function verifyAuth(request) {
     const token = request.cookies.get('authToken')?.value;
@@ -16,52 +16,45 @@ async function verifyAuth(request) {
     }
 }
 
-/**
- * @description GET the logged-in user's profile and host statistics.
- */
 export async function GET(request) {
     console.log("\n--- [GET /api/user/me] ---");
     try {
         await dbConnect();
-        console.log("Database connected.");
-
         const auth = await verifyAuth(request);
         if (auth.error) {
-            console.error("Auth failed:", auth.error);
             return NextResponse.json({ message: auth.error }, { status: auth.status });
         }
 
         const { user: decodedToken } = auth;
-        console.log(`Authenticated user: ${decodedToken.email}`);
-
-        const user = await User.findById(decodedToken.userId).select('-password').lean(); // .lean() for a plain object
+        const user = await User.findById(decodedToken.userId).select('-password').lean();
         if (!user) {
             return NextResponse.json({ message: "User not found." }, { status: 404 });
         }
 
-        // --- Calculate Host Statistics ---
         let stats = {};
         if (user.role === 'host') {
-            console.log("User is a host. Fetching stats...");
             const totalProperties = await Listing.countDocuments({ hostId: user._id });
-
-            // NOTE: Bookings, Reviews, and Response Rate require separate models.
-            // We will return mock data for these for now.
             stats = {
                 totalProperties: totalProperties,
-                activeBookings: 0, // Mock: Replace with logic from 'Booking' model
-                totalReviews: 0,   // Mock: Replace with logic from 'Review' model
-                responseRate: "N/A" // Mock: Calculate based on messages
+                activeBookings: 0, // Mock
+                totalReviews: 0,   // Mock
+                responseRate: "N/A" // Mock
             };
-            console.log("Stats calculated:", stats);
+        } else if (user.role === 'renter') {
+            const totalApplications = await Application.countDocuments({ applicantId: user._id });
+            const completedStays = 0; // Mock: Needs booking model logic
+            const reviewsGiven = 0; // Mock: Needs review model logic
+            stats = {
+                totalApplications: totalApplications,
+                completedStays: completedStays,
+                reviewsGiven: reviewsGiven,
+                profileViews: 0 // Mock
+            };
         }
 
         return NextResponse.json({
             message: "User details fetched successfully!",
-            data: {
-                user: user,
-                stats: stats
-            }
+            data: { user, stats }
         }, { status: 200 });
 
     } catch (error) {
@@ -70,45 +63,44 @@ export async function GET(request) {
     }
 }
 
-/**
- * @description UPDATE the logged-in host's profile data.
- */
 export async function PUT(request) {
     console.log("\n--- [PUT /api/user/me] ---");
     try {
         await dbConnect();
-        console.log("Database connected.");
-
         const auth = await verifyAuth(request);
         if (auth.error) {
-            console.error("Auth failed:", auth.error);
             return NextResponse.json({ message: auth.error }, { status: auth.status });
         }
 
         const { user: decodedToken } = auth;
-        console.log(`Authenticated user: ${decodedToken.email}`);
-
-        // Ensure user is a host to update host-specific fields
-        if (decodedToken.role !== 'host') {
-            return NextResponse.json({ message: "Only hosts can update profile data." }, { status: 403 });
-        }
-
         const body = await request.json();
 
-        // Define which fields are allowed to be updated via this route
-        const allowedUpdates = {
+        // Allowed fields for ANY user
+        let allowedUpdates = {
             firstName: body.firstName,
             lastName: body.lastName,
-            location: body.location,
-            about: body.about,
-            languages: body.languages,
-            interests: body.interests,
-            emergencyContact: body.emergencyContact,
-            hostingPreferences: body.hostingPreferences
-            // Add 'profileImage' here once you have an upload mechanism
         };
 
-        // Remove any undefined fields to avoid overwriting existing data
+        // Add role-specific fields
+        if (decodedToken.role === 'host') {
+            Object.assign(allowedUpdates, {
+                location: body.location,
+                about: body.about,
+                languages: body.languages,
+                interests: body.interests,
+                emergencyContact: body.emergencyContact,
+                hostingPreferences: body.hostingPreferences
+            });
+        } else if (decodedToken.role === 'renter') {
+            Object.assign(allowedUpdates, {
+                phone: body.phone, // Renter can update phone
+                renterBasic: body.renterBasic,
+                renterAbout: body.renterAbout,
+                renterHousing: body.renterHousing
+            });
+        }
+
+        // Remove undefined fields
         Object.keys(allowedUpdates).forEach(key => {
             if (allowedUpdates[key] === undefined) {
                 delete allowedUpdates[key];
@@ -120,14 +112,12 @@ export async function PUT(request) {
         const updatedUser = await User.findByIdAndUpdate(
             decodedToken.userId,
             { $set: allowedUpdates },
-            { new: true, runValidators: true } // Return the new document and run schema validators
+            { new: true, runValidators: true }
         ).select('-password');
 
         if (!updatedUser) {
             return NextResponse.json({ message: "User not found." }, { status: 404 });
         }
-
-        console.log("Profile updated successfully.");
 
         return NextResponse.json({
             message: "Profile updated successfully!",

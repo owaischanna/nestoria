@@ -1,11 +1,31 @@
 import mongoose from 'mongoose';
 
 const DocumentSchema = new mongoose.Schema({
-    type: { type: String, required: true }, // e.g., 'identity', 'financial', 'additional'
+    type: { type: String, required: true },
     name: { type: String, required: true },
-    data: { type: String, required: true }, // Base64 Data URL string
+    data: { type: String, required: true },
     uploadedAt: { type: Date, default: Date.now }
 });
+
+// New Schemas for Check-in Checklists
+const ChecklistItemSchema = new mongoose.Schema({
+    id: { type: Number, required: true },
+    label: { type: String, required: true },
+    completed: { type: Boolean, default: false }
+});
+
+const CheckInSchema = new mongoose.Schema({
+    currentStep: { type: Number, default: 1 },
+    welcomeIdentity: {
+        status: { type: String, default: 'pending' },
+        // Add any fields for this step if needed
+    },
+    propertyTour: [ChecklistItemSchema],
+    documentation: [ChecklistItemSchema],
+    keysAccess: [ChecklistItemSchema],
+    finalChecklist: [ChecklistItemSchema]
+});
+
 
 const ApplicationSchema = new mongoose.Schema({
     applicantId: {
@@ -25,7 +45,7 @@ const ApplicationSchema = new mongoose.Schema({
     },
     status: {
         type: String,
-        enum: ['Pending', 'Approved', 'Rejected', 'Withdrawn'],
+        enum: ['Pending', 'Approved', 'Rejected', 'Withdrawn', 'Completed'], // Added Completed
         default: 'Pending',
     },
 
@@ -45,7 +65,13 @@ const ApplicationSchema = new mongoose.Schema({
     additionalInfo: { type: String },
 
     // Step 2 Data
-    uploadedDocuments: [DocumentSchema], // Array of embedded documents
+    uploadedDocuments: [DocumentSchema],
+
+    // New Field for Check-in Progress
+    checkIn: {
+        type: CheckInSchema,
+        default: () => ({}) // Creates a default empty CheckIn object
+    }
 
 }, { timestamps: true });
 
