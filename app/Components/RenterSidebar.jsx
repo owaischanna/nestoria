@@ -181,8 +181,8 @@ const quickFilters = [
 ];
 
 const accountItems = [
-    { label: "Profile", icon: User, route: "/renterprofile" },
-    { label: "Settings", icon: Settings, route: "/rentersettings" },
+    {  id: "Profile",label: "Profile", icon: User, route: "/renterprofile" },
+    { label: "Settings", icon: Settings, route: "/rentersetting" },
     { label: "Help & Support", icon: HelpCircle, route: "/renterhelp" },
 ];
 
