@@ -175,9 +175,9 @@ const mainMenuItems = [
 ];
 
 const quickFilters = [
-    { label: "Near You", route: "/renterlistings?filter=nearyou" },
-    { label: "Under $800", route: "/renterlistings?filter=under800" },
-    { label: "Pet Friendly", route: "/renterlistings?filter=petfriendly" },
+    { label: "Near You", route: "/renternearyou" },
+    { label: "Under $800", route: "/renterunder" },
+    { label: "Pet Friendly", route: "/renterpetfriendly" },
 ];
 
 const accountItems = [

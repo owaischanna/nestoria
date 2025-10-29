@@ -309,7 +309,7 @@ const HostEarnings = () => {
           </div>
 
           {/* Quick Actions */}
-          <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+          {/* <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
             <button className="p-6 bg-white rounded-xl shadow-sm border border-gray-100 hover:border-orange-200 transition-colors text-left">
               <DollarSign className="w-8 h-8 text-orange-500 mb-3" />
               <h3 className="font-semibold text-gray-900 mb-2">Request Payment</h3>
@@ -327,7 +327,7 @@ const HostEarnings = () => {
               <h3 className="font-semibold text-gray-900 mb-2">View Analytics</h3>
               <p className="text-sm text-gray-600">Detailed earnings insights</p>
             </button>
-          </div>
+          </div> */}
         </main>
       </div>
     </div>
