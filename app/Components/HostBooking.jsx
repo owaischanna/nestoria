@@ -94,7 +94,7 @@ const BookingCard = ({ booking }) => (
               {booking.monthlyRent}
             </p>
             <p className="text-xs text-gray-500">
-              Total Paid: ${booking.totalPaid} (1 of 6 payments)
+              Total Paid: €{booking.totalPaid} (1 of 6 payments)
             </p>
           </div>
 
@@ -156,15 +156,15 @@ const MyBookingsContent = () => {
       title: "Modern Studio in Brooklyn",
       location: "Williamsburg, Brooklyn",
       status: "Check-in Today",
-      imageUrl: "listing_image_url_1.jpg",
+      imageUrl: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTOgziMScOHDsVglNc-id0yJKnfFd_DN20hmg&s",
       host: {
         name: "Margaret Johnson",
         reviews: 24,
-        avatarUrl: "mj_avatar_url.jpg",
+        avatarUrl: "https://enzahome.pk/cdn/shop/files/baselbed.jpg?v=1740996046&width=500",
       },
       leasePeriod: "Oct 20, 2024 - Apr 28, 2025",
       monthsRemaining: "6 months remaining",
-      monthlyRent: "$950/month",
+      monthlyRent: "€950/month",
       totalPaid: 950,
       checkInTime: "2:00 PM - 3:00 PM",
       propertyAddress: "245 Berry St, Apt 3B, Brooklyn, NY 11211",
@@ -177,15 +177,15 @@ const MyBookingsContent = () => {
       title: "Cozy Room Near NYU Campus",
       location: "Greenwich Village, Manhattan",
       status: "Active Booking",
-      imageUrl: "listing_image_url_2.jpg",
+      imageUrl: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTOgziMScOHDsVglNc-id0yJKnfFd_DN20hmg&s",
       host: {
         name: "Margaret Johnson",
         reviews: 24,
-        avatarUrl: "mj_avatar_url.jpg",
+        avatarUrl: "https://enzahome.pk/cdn/shop/files/baselbed.jpg?v=1740996046&width=500",
       },
       leasePeriod: "Nov 1, 2024 - May 1, 2025",
       monthsRemaining: "6 months remaining",
-      monthlyRent: "$750/month",
+      monthlyRent: "€750/month",
       totalPaid: 750,
       checkInTime: "2:00 PM - 3:00 PM",
       propertyAddress: "245 Berry St, Apt 3B, Brooklyn, NY 11211",

@@ -17,7 +17,7 @@ const mockProperties = [
       currency: "$",
       features: ["1 Room", "1 Bath", "450 sqft"],
       tags: ["Dogs Welcome", "Cats Welcome"],
-      imageSrc: "https://images.unsplash.com/photo-1570198035617-640989f66711?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      imageSrc: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTOgziMScOHDsVglNc-id0yJKnfFd_DN20hmg&s",
     },
     {
       title: "Pet-Friendly Apartment Near Central Park",
@@ -27,7 +27,7 @@ const mockProperties = [
       currency: "$",
       features: ["1 Room", "1 Bath", "450 sqft"],
       tags: ["Dogs Welcome", "Cats Welcome"],
-      imageSrc: "https://images.unsplash.com/photo-1544438318-724f1146747d?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      imageSrc: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTOgziMScOHDsVglNc-id0yJKnfFd_DN20hmg&s",
     },
     {
       title: "Pet-Friendly Apartment Near Central Park",
@@ -37,7 +37,7 @@ const mockProperties = [
       currency: "$",
       features: ["1 Room", "1 Bath", "450 sqft"],
       tags: ["Dogs Welcome", "Cats Welcome"],
-      imageSrc: "https://images.unsplash.com/photo-1594917631388-7511c5cc2a74?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      imageSrc: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTOgziMScOHDsVglNc-id0yJKnfFd_DN20hmg&s",
     },
 ];
 

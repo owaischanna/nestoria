@@ -38,7 +38,7 @@ const Checkouts = () => {
       scheduledTime: "11:00 AM - 12:00 PM",
       contact: "+1 (555) 987-6543",
       endDate: "October 28, 2025",
-      avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b786?auto=format&fit=crop&w=80&q=80"
+      avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=80&q=80"
     }
   ];
 

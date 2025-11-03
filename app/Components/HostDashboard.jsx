@@ -163,8 +163,12 @@ const RecentActivityItem = ({ item }) => (
 
 const ListingCard = ({ listing }) => (
     <div className="flex items-center space-x-3 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition bg-white border border-gray-100 p-3">
-        <div className="w-24 h-24 flex-shrink-0 bg-gray-200 rounded-md">
-            {/* Placeholder for image */}
+        <div className="w-24 h-24 flex-shrink-0 bg-gray-200 rounded-md overflow-hidden">
+            <img 
+                src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTOgziMScOHDsVglNc-id0yJKnfFd_DN20hmg&s" 
+                alt={`Image of ${listing.title}`}
+                className="w-full h-full object-cover"
+            />
         </div>
         <div className="flex-1">
             <p className="font-semibold text-gray-800">{listing.title}</p>
