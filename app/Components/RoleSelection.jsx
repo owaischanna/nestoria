@@ -37,7 +37,7 @@ const RoleSelection = ({ onClose, onRoleSelect }) => {
         {/* Header */}
         <div className="p-6 sm:p-8 border-b border-gray-200">
           <h1 className="text-xl sm:text-2xl font-bold text-gray-900 text-center mb-2">
-            How would you like to use Nestoria?
+            How would you like to use Habisolo?
           </h1>
           <p className="text-gray-600 text-center text-sm sm:text-base">
             Choose your role to get started with the right features
@@ -181,7 +181,7 @@ const RoleSelection = ({ onClose, onRoleSelect }) => {
                     : "bg-gray-100 text-gray-600 hover:bg-gray-200"
                   }`}
               >
-                Continue as Host
+                Continue as Guest
               </button>
             </div>
           </div>
