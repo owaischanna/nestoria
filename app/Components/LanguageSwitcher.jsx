@@ -10,12 +10,75 @@ const langOptions = [
     { code: 'es', name: 'Spanish' }
 ]; 
 
-
+// Define a style ID to ensure we only inject the CSS once
+const HIDE_GT_STYLE_ID = 'google-translate-hide-css';
 
 
 export default function LanguageSwitcher() {
     const [currentLang, setCurrentLang] = useState('en');
     const [isOpen, setIsOpen] = useState(false);
+
+    // Function to hide Google Translate elements by injecting CSS
+    const hideGoogleTranslateBar = () => {
+        // Only inject the CSS once to avoid redundancy
+        if (!document.getElementById(HIDE_GT_STYLE_ID)) {
+            const style = document.createElement('style');
+            style.id = HIDE_GT_STYLE_ID;
+            
+            // These selectors target the persistent bar, the language selection frame, and the icon/tooltip
+            style.innerHTML = `
+                /* Hide the main bar/frame */
+                .goog-te-banner-frame { 
+                    display: none !important; 
+                    height: 0px !important; 
+                    visibility: hidden !important; 
+                    top: 0px !important;
+                }
+                
+                /* Hide the floating icon/tooltip */
+                #goog-gt-tt, 
+                .goog-tooltip, 
+                .goog-tooltip:hover {
+                    display: none !important;
+                    visibility: hidden !important;
+                }
+                
+                /* Fix the body displacement caused by the hidden bar */
+                body {
+                    top: 0px !important;
+                }
+                
+                /* Target the skiptranslate wrapper if it's the root of the bar/icon */
+                .skiptranslate {
+                    display: none !important;
+                }
+            `;
+            document.head.appendChild(style);
+        }
+
+        // Use the initial DOM manipulation for immediate effect and fallback
+        const elementsToHide = [
+            '.goog-te-banner-frame',
+            '.goog-te-menu-frame',
+            '#goog-gt-tt',
+            '.goog-tooltip',
+            '.skiptranslate:not(body)', // Exclude body if it has skiptranslate class
+        ];
+        
+        elementsToHide.forEach(selector => {
+            const element = document.querySelector(selector);
+            if (element) {
+                // Apply the necessary attributes directly
+                element.style.setProperty('display', 'none', 'important');
+                element.style.setProperty('visibility', 'hidden', 'important');
+                element.style.setProperty('height', '0px', 'important');
+                element.style.setProperty('top', '0px', 'important');
+            }
+        });
+        
+        // Ensure body top position is fixed (important for fixed navbars)
+        document.body.style.setProperty('top', '0px', 'important');
+    };
 
     useEffect(() => {
         // Read the current language from the cookie on mount
@@ -27,86 +90,62 @@ export default function LanguageSwitcher() {
             }
         }
         
-        // Hide Google Translate bar
+        // Hide Google Translate bar aggressively on mount and after short delays
         hideGoogleTranslateBar();
-    }, []);
+        // Set a persistent interval to re-hide the elements, in case they are re-created
+        const intervalId = setInterval(hideGoogleTranslateBar, 100); 
 
-    // Function to hide Google Translate elements
-    const hideGoogleTranslateBar = () => {
-        // Hide immediately
-        const hideElements = () => {
-            const elements = [
-                '.goog-te-banner-frame',
-                '.goog-te-menu-frame',
-                '#goog-gt-tt',
-                '.goog-tooltip',
-                '.skiptranslate'
-            ];
-            
-            elements.forEach(selector => {
-                const element = document.querySelector(selector);
-                if (element) {
-                    element.style.display = 'none';
-                    element.style.visibility = 'hidden';
-                    element.style.height = '0px';
-                }
-            });
-            
-            // Fix body top position
-            document.body.style.top = '0px';
+        return () => {
+            clearInterval(intervalId); // Cleanup interval on component unmount
         };
-
-        // Try multiple times as Google Translate loads dynamically
-        hideElements();
-        setTimeout(hideElements, 100);
-        setTimeout(hideElements, 500);
-        setTimeout(hideElements, 1000);
-    };
+    }, []);
 
     const getLangName = (code) => {
         return langOptions.find(l => l.code === code)?.name || code.toUpperCase();
     };
 
-const switchLanguage = (newLangCode) => {
-  setIsOpen(false);
+    const switchLanguage = (newLangCode) => {
+        setIsOpen(false);
 
-  const cookieDomain =
-    window.location.hostname === 'localhost'
-      ? undefined
-      : window.location.hostname.includes('vercel.app')
-      ? window.location.hostname // use exact hostname for vercel
-      : '.' + window.location.hostname;
+        const cookieDomain =
+            window.location.hostname === 'localhost'
+            ? undefined
+            : window.location.hostname.includes('vercel.app')
+            ? window.location.hostname // use exact hostname for vercel
+            : '.' + window.location.hostname;
 
-  // Remove both possible cookies first (Google sets in both cases)
-  Cookies.remove(GOOG_TRANS_COOKIE, { path: '/', domain: cookieDomain });
-  Cookies.remove(GOOG_TRANS_COOKIE, { path: '/' }); // fallback
+        // Remove both possible cookies first (Google sets in both cases)
+        Cookies.remove(GOOG_TRANS_COOKIE, { path: '/', domain: cookieDomain });
+        Cookies.remove(GOOG_TRANS_COOKIE, { path: '/' }); // fallback
 
-  if (newLangCode !== 'en') {
-    Cookies.set(GOOG_TRANS_COOKIE, `/en/${newLangCode}`, {
-      path: '/',
-      domain: cookieDomain,
-      expires: 365,
-      sameSite: 'Lax',
-    });
-  }
+        if (newLangCode !== 'en') {
+            Cookies.set(GOOG_TRANS_COOKIE, `/en/${newLangCode}`, {
+                path: '/',
+                domain: cookieDomain,
+                expires: 365,
+                sameSite: 'Lax',
+            });
+        }
 
-  setCurrentLang(newLangCode);
-  hideGoogleTranslateBar();
+        setCurrentLang(newLangCode);
+        hideGoogleTranslateBar();
 
-  // Force clear translation from iframe before reload
-  const iframe = document.querySelector('.goog-te-menu-frame');
-  if (iframe) iframe.remove();
+        // Force clear translation from iframe before reload
+        const iframe = document.querySelector('.goog-te-menu-frame');
+        if (iframe) iframe.remove();
 
-  // Force reload to apply the new translation state
-  setTimeout(() => {
-    window.location.href = window.location.origin; // ensures clean reload
-  }, 200);
-};
-
+        // Force reload to apply the new translation state
+        setTimeout(() => {
+            window.location.href = window.location.origin; // ensures clean reload
+        }, 200);
+    };
 
 
     return (
         <div className="relative inline-block text-left z-[60]">
+            {/* The actual Google Translate widget container must be here, hidden */}
+            <div id="google_translate_element" className="hidden" />
+
             <button
                 onClick={() => setIsOpen(!isOpen)}
                 className="inline-flex justify-center items-center w-full rounded-lg border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 transition duration-150"

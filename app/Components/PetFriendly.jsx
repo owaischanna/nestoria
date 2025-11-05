@@ -137,20 +137,19 @@ const PropertyCard = ({ property }) => {
   );
 };
 
-
 // --- Main Export Component: PetFriendlyProperties (Page Layout) ---
 const PetFriendlyProperties = () => {
     return (
-        <div className="flex flex-col h-screen overflow-hidden bg-white"> 
+        <div className="flex min-h-screen bg-gray-50">
+            {/* Sidebar - First in the layout */}
+            <Sidebar />
             
-            {/* 1. Header (Assumed full-width component that handles its own padding) */}
-            <RenterHeader /> 
-
-            <div className="flex flex-1 overflow-hidden">
-                {/* 2. Sidebar (Fixed width) */}
-                <Sidebar />
+            {/* Main Content Area */}
+            <div className="flex-1 flex flex-col">
+                {/* RenterHeader - Below Sidebar */}
+                <RenterHeader />
                 
-                {/* 3. Main Content Area (Scrollable) */}
+                {/* Main Content Area (Scrollable) */}
                 <div className="flex-1 p-6 md:p-8 lg:p-10 overflow-y-auto bg-gray-50">
                     
                     {/* Heading and Summary Section */}

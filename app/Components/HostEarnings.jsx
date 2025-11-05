@@ -1,5 +1,5 @@
 import React from "react";
-import { TrendingUp, DollarSign, Calendar, AlertCircle, Download, MoreHorizontal } from "lucide-react";
+import { TrendingUp, DollarSign,EuroIcon, Calendar, AlertCircle, Download, MoreHorizontal } from "lucide-react";
 import HostHeader from "./HostHeader";
 import HostSidebar from "./HostSidebar";
 
@@ -142,7 +142,7 @@ const HostEarnings = () => {
             <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-sm font-medium text-gray-600">Total Earned</h3>
-                <DollarSign className="w-5 h-5 text-green-500" />
+                <EuroIcon className="w-5 h-5 text-green-500" />
               </div>
               <div className="flex items-baseline">
                 <span className="text-3xl font-bold text-gray-900">€{earningsData.totalEarned}</span>
@@ -191,7 +191,7 @@ const HostEarnings = () => {
             <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-sm font-medium text-gray-600">Monthly Rent</h3>
-                <DollarSign className="w-5 h-5 text-purple-500" />
+                <EuroIcon className="w-5 h-5 text-purple-500" />
               </div>
               <div className="flex items-baseline">
                 <span className="text-3xl font-bold text-gray-900">€{earningsData.monthlyRent}</span>

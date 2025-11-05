@@ -161,10 +161,16 @@ const LisitngResultComponent = () => {
   // Show application form on the same page
   if (showApplicationForm && selectedProperty) {
     return (
-      <div className="flex flex-col h-screen overflow-hidden">
-        <RenterHeader />
-        <div className="flex flex-1 overflow-hidden">
-          <Sidebar />
+      <div className="flex min-h-screen bg-gray-50">
+        {/* Sidebar - First in layout */}
+        <Sidebar />
+        
+        {/* Main Content Area */}
+        <div className="flex-1 flex flex-col">
+          {/* RenterHeader - Below Sidebar */}
+          <RenterHeader />
+          
+          {/* Application Form Content */}
           <div className="flex-1 overflow-y-auto">
             <MultiStepApplicationForm 
               property={selectedProperty}
@@ -178,16 +184,16 @@ const LisitngResultComponent = () => {
 
   // Show property listings
   return (
-    <div className="flex flex-col h-screen overflow-hidden">
-      {/* Renter Header */}
-      <RenterHeader />
+    <div className="flex min-h-screen bg-gray-50">
+      {/* Sidebar - First in layout */}
+      <Sidebar />
       
       {/* Main Content Area */}
-      <div className="flex flex-1 overflow-hidden">
-        {/* Sidebar */}
-        <Sidebar />
+      <div className="flex-1 flex flex-col">
+        {/* RenterHeader - Below Sidebar */}
+        <RenterHeader />
         
-        {/* The main container for the content area */}
+        {/* Main Content Area (Scrollable) */}
         <div className="flex-1 p-6 md:p-8 lg:p-10 overflow-y-auto">
           
           {/* Heading and Summary Section */}

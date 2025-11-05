@@ -10,7 +10,7 @@ import RenterHeader from './RenterHeader';
 import Sidebar from './RenterSidebar';
 
 
-// --- MOCK DATA ---
+// --- MOCK DATA (EURO SYMBOL USED) ---
 const favoriteListings = [
     {
         id: 1,
@@ -60,7 +60,7 @@ const favoriteListings = [
     }
 ];
 
-// --- Sub-Component: FavoriteCard ---
+// --- Sub-Component: FavoriteCard (EURO SYMBOL USED) ---
 const FavoriteCard = ({ listing }) => (
     <div className="bg-white rounded-xl shadow-md overflow-hidden relative border border-gray-100 hover:shadow-lg transition duration-300">
         {/* Image and Price Drop Tag */}
@@ -92,13 +92,15 @@ const FavoriteCard = ({ listing }) => (
 
             <div className="flex items-center justify-between mt-3 mb-2">
                 <div>
+                    {/* Price with Euro symbol (€) */}
                     <p className="text-xl font-bold text-green-700">
-                        ${listing.price}
+                        €{listing.price}
                         <span className="text-sm font-normal text-gray-500">/month</span>
                     </p>
                     {listing.wasPrice && (
+                        // Was Price with Euro symbol (€) and calculation
                         <p className="text-xs text-red-500 mt-0.5">
-                            Was ${listing.wasPrice} <span className="text-green-600 font-semibold">Save $50</span>
+                            Was €{listing.wasPrice} <span className="text-green-600 font-semibold">Save €{parseInt(listing.wasPrice) - parseInt(listing.price)}</span>
                         </p>
                     )}
                 </div>
@@ -126,11 +128,12 @@ const FavoriteCard = ({ listing }) => (
 );
 
 
-// --- Main Page Content ---
+// --- Main Page Content (EURO SYMBOL USED) ---
 const MyFavoritesContent = () => {
     const totalSaved = favoriteListings.length;
-    const priceRange = "$750-$950"; // Hardcoded from image
-    const recentlyAddedCount = favoriteListings.length; // Assuming all are "recently added" for demo
+    // Updated priceRange to use the Euro symbol (€)
+    const priceRange = "€750-€950"; 
+    const recentlyAddedCount = favoriteListings.length; 
 
     return (
         <div className="flex-1 p-8 bg-gray-50 overflow-y-auto">
@@ -152,7 +155,7 @@ const MyFavoritesContent = () => {
                 </div>
             </div>
 
-            {/* Summary Stats */}
+            {/* Summary Stats (EURO SYMBOL USED) */}
             <div className="mb-8 p-4 bg-white rounded-xl shadow-sm border border-gray-200">
                 <div className="flex space-x-8">
                     <div>
@@ -160,6 +163,7 @@ const MyFavoritesContent = () => {
                         <p className="text-sm text-gray-500">Total Saved</p>
                     </div>
                     <div>
+                        {/* Updated Price Range to show Euro symbol (€) */}
                         <p className="text-3xl font-bold text-blue-600">{priceRange}</p>
                         <p className="text-sm text-gray-500">Price Range</p>
                     </div>
@@ -186,9 +190,7 @@ const MyFavoritesContent = () => {
 // --- Full Page Component ---
 const MyFavoritesPage = () => {
     return (
-  
-
-         <div className="flex min-h-screen">
+        <div className="flex min-h-screen">
             {/* Sidebar on the left */}
             <Sidebar />
 

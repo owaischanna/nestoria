@@ -8,7 +8,7 @@ export default function Header() {
       {/* Logo */}
       <div className="flex items-center gap-2">
         <img src="/favicon.ico" alt="logo" className="h-10 w-10" />
-        <span className="text-2xl font-bold text-green-600">Nestoria</span>
+        <span className="text-2xl font-bold text-green-600">HABISOLO</span>
       </div>
 
       {/* Nav Links */}

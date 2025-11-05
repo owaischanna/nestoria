@@ -67,7 +67,7 @@ const RoleSelection = ({ onClose, onRoleSelect }) => {
 
               <div className="text-center mb-4">
                 <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2">
-                  Renter
+                  Guest
                 </h3>
                 <p className="text-gray-600 text-sm">
                   I'm looking for accommodation
@@ -114,7 +114,7 @@ const RoleSelection = ({ onClose, onRoleSelect }) => {
                     : "bg-gray-100 text-gray-600 hover:bg-gray-200"
                   }`}
               >
-                Continue as Renter
+                Continue as Guest
               </button>
             </div>
 
@@ -181,7 +181,7 @@ const RoleSelection = ({ onClose, onRoleSelect }) => {
                     : "bg-gray-100 text-gray-600 hover:bg-gray-200"
                   }`}
               >
-                Continue as Guest
+                Continue as Host
               </button>
             </div>
           </div>

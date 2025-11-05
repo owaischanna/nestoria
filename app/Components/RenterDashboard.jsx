@@ -10,6 +10,7 @@ import {
   User,
   MapPin,
   DollarSign,
+  EuroIcon,
   FileText,
   Briefcase,
   ChevronRight,
@@ -18,7 +19,7 @@ import {
 } from "lucide-react";
 import MultiStepApplicationForm from "./MultiStepApplicationForm";
 
-const iconsMap = { FileText, Heart, DollarSign, Briefcase };
+const iconsMap = { FileText, Heart, EuroIcon, Briefcase };
 
 const StatCard = ({ iconName, title, value, subtext, colorClass }) => {
   const Icon = iconsMap[iconName];

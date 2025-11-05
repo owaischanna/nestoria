@@ -34,7 +34,7 @@ const CallToAction = () => (
           Ready to open your doors or find your next home?
         </h2>
         <p className="mt-2 text-white opacity-90 text-lg">
-          Join Nestoria today and be part of the change.
+          Join Habisolo today and be part of the change.
         </p>
       </div>
 
@@ -74,7 +74,7 @@ const MainFooter = () => {
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l-2 2m0 0l-7 7m7-7v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
                             </svg>
                         </div>
-                        <span className="text-xl font-bold text-gray-800">Nestoria</span>
+                        <span className="text-xl font-bold text-gray-800">Habisolo</span>
                     </div>
                     
                     <address className={`not-italic text-sm ${textColor} space-y-3`}>
@@ -88,7 +88,7 @@ const MainFooter = () => {
                         </p>
                         <p className="flex items-center">
                             <Mail className="w-4 h-4 mr-2 flex-shrink-0 text-green-600" />
-                            hello@nestoria.online
+                            info@habisolo.com
                         </p>
                     </address>
                 </div>
@@ -156,7 +156,7 @@ const MainFooter = () => {
             
                 {/* Copyright Section */}
                 <div className="pt-6 text-center text-sm text-gray-500">
-                    <p>&copy; {new Date().getFullYear()} Nestoria. All rights reserved. | Built with ❤️ for community.</p>
+                    <p>&copy; {new Date().getFullYear()} Habisolo. All rights reserved. | Built with ❤️ for community.</p>
                 </div>
             </div>
         </div>
