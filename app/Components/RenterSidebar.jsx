@@ -176,7 +176,7 @@ const mainMenuItems = [
 
 const quickFilters = [
     { label: "Near You", route: "/renternearyou" },
-    { label: "Under $800", route: "/renterunder" },
+    { label: "Under €800", route: "/renterunder" },
     { label: "Pet Friendly", route: "/renterpetfriendly" },
 ];
 

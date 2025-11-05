@@ -230,7 +230,7 @@ const MyBookingsContent = () => {
               <p className="text-sm text-gray-500">Check-out</p>
             </div>
             <div className="text-center">
-              <p className="font-bold text-2xl text-red-600">$1,900</p>
+              <p className="font-bold text-2xl text-red-600">€1,900</p>
               <p className="text-sm text-gray-500">Total Spent</p>
             </div>
           </div>

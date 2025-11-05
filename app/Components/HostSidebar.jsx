@@ -17,6 +17,8 @@
     HelpCircle,
     ChevronDown,
     ChevronRight,
+    EuroSign,
+    EuroIcon
   } from "lucide-react";
 
   const mainMenuItems = [
@@ -36,7 +38,7 @@
     },
     { id: "messages", label: "Messages", icon: MessageSquare, dot: true, route: "/hostmessage" },
     { id: "reviews", label: "Reviews", icon: Star, route: "/hostreview" },
-    { id: "payments", label: "Earnings", icon: DollarSign, route: "/hostearning" },
+    { id: "payments", label: "Earnings", icon: EuroIcon, route: "/hostearning" },
   ];
 
   const accountItems = [
