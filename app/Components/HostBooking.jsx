@@ -30,11 +30,11 @@ const PaymentStatus = ({ status, dateText }) => {
     <div className="flex items-center text-sm font-medium">
       <div className={`flex items-center px-3 py-1 rounded-full ${colorClass}`}>
         {icon}
-        <span className="font-semibold">
+        <span className="font-semibold text-xs md:text-sm">
           {isPaid ? "October rent paid" : "November due in 5 days"}
         </span>
       </div>
-      <span className="text-xs text-gray-500 ml-3">{dateText}</span>
+      <span className="text-xs text-gray-500 ml-3 hidden sm:block">{dateText}</span>
     </div>
   );
 };
@@ -42,20 +42,20 @@ const PaymentStatus = ({ status, dateText }) => {
 // --- Booking Card ---
 const BookingCard = ({ booking }) => (
   <div className="border border-gray-200 rounded-lg overflow-hidden shadow-sm bg-white mb-6">
-    <div className="flex p-5">
+    <div className="flex flex-col md:flex-row p-4 md:p-5">
       {/* Image */}
-      <div className="w-48 flex-shrink-0 mr-4">
+      <div className="w-full md:w-48 flex-shrink-0 mb-4 md:mb-0 md:mr-4">
         <img
           src={booking.imageUrl}
           alt={booking.title}
-          className="w-full h-32 object-cover rounded-md"
+          className="w-full h-48 md:h-32 object-cover rounded-md"
         />
       </div>
 
       {/* Details */}
       <div className="flex-1">
-        <div className="flex justify-between items-start mb-2">
-          <h3 className="text-xl font-bold text-gray-800">{booking.title}</h3>
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start mb-2 gap-2">
+          <h3 className="text-lg md:text-xl font-bold text-gray-800">{booking.title}</h3>
           <StatusBadge status={booking.status} />
         </div>
 
@@ -70,18 +70,18 @@ const BookingCard = ({ booking }) => (
             <img
               src={booking.host.avatarUrl}
               alt={booking.host.name}
-              className="w-8 h-8 rounded-full mr-2"
+              className="w-6 h-6 md:w-8 md:h-8 rounded-full mr-2"
             />
             <span className="text-sm font-medium text-gray-700">
               {booking.host.name}
             </span>
-            <span className="text-xs text-gray-500 ml-1">
+            <span className="text-xs text-gray-500 ml-1 hidden sm:inline">
               ({booking.host.reviews} reviews)
             </span>
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-4 border-t border-gray-100 pt-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 border-t border-gray-100 pt-4">
           {/* Lease & Rent Info */}
           <div>
             <p className="text-xs font-semibold text-gray-500 uppercase mb-1">
@@ -90,7 +90,7 @@ const BookingCard = ({ booking }) => (
             <p className="text-sm text-gray-800 font-medium">
               {booking.leasePeriod} ({booking.monthsRemaining})
             </p>
-            <p className="text-2xl font-bold text-green-700 mt-2">
+            <p className="text-xl md:text-2xl font-bold text-green-700 mt-2">
               {booking.monthlyRent}
             </p>
             <p className="text-xs text-gray-500">
@@ -112,28 +112,28 @@ const BookingCard = ({ booking }) => (
             </div>
             <div className="flex items-start text-sm text-gray-800">
               <MapPin className="w-4 h-4 mr-2 mt-1 text-gray-500 flex-shrink-0" />
-              <span className="font-medium">{booking.propertyAddress}</span>
+              <span className="font-medium text-xs md:text-sm">{booking.propertyAddress}</span>
             </div>
           </div>
         </div>
       </div>
 
       {/* Actions Column */}
-      <div className="flex flex-col justify-between items-end pl-5 border-l border-gray-100">
-        <div>
-          <p className="text-sm font-semibold text-gray-800 mb-1">
+      <div className="flex flex-col justify-between items-stretch md:items-end pl-0 md:pl-5 border-t md:border-l border-gray-100 pt-4 md:pt-0 mt-4 md:mt-0">
+        <div className="mb-4">
+          <p className="text-sm font-semibold text-gray-800">
             {booking.roomType}
           </p>
-          <p className="text-xs text-gray-500 mb-4">{booking.sqft}</p>
+          <p className="text-xs text-gray-500">{booking.sqft}</p>
         </div>
 
-        <div className="text-sm text-right">
+        <div className="text-sm text-left md:text-right">
           <PaymentStatus status={booking.paymentStatus} />
-          <div className="flex space-x-2 mt-4">
+          <div className="flex flex-col sm:flex-row sm:space-x-2 space-y-2 sm:space-y-0 mt-4">
             <button className="text-sm font-medium text-gray-700 border border-gray-300 px-3 py-1 rounded hover:bg-gray-50">
               Get Directions
             </button>
-            <button className="text-sm font-medium text-white bg-blue-600 px-3 py-1 rounded hover:bg-blue-700 flex items-center">
+            <button className="text-sm font-medium text-white bg-blue-600 px-3 py-1 rounded hover:bg-blue-700 flex items-center justify-center">
               <Phone className="w-4 h-4 mr-1" /> Call Host
             </button>
             {booking.status === "Check-in Today" && (
@@ -206,41 +206,41 @@ const MyBookingsContent = () => {
         <HstHeader />
 
         {/* Page Content */}
-        <div className="p-8">
-          <div className="flex justify-between items-center mb-8">
-            <h1 className="text-3xl font-bold text-gray-800">My Bookings</h1>
-            <button className="flex items-center space-x-2 text-sm font-semibold text-gray-700 border border-gray-300 px-4 py-2 rounded shadow-sm hover:bg-gray-50 transition">
+        <div className="p-4 md:p-6 lg:p-8">
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-6 md:mb-8 gap-4">
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-800">My Bookings</h1>
+            <button className="flex items-center justify-center space-x-2 text-sm font-semibold text-gray-700 border border-gray-300 px-4 py-2 rounded shadow-sm hover:bg-gray-50 transition w-full sm:w-auto">
               <Download className="w-4 h-4" />
               <span>Export</span>
             </button>
           </div>
 
           {/* Stats */}
-          <div className="flex space-x-6 mb-8 text-sm border-b border-gray-200 pb-4">
-            <div className="text-center">
-              <p className="font-bold text-2xl text-green-600">2</p>
-              <p className="text-sm text-gray-500">Active Bookings</p>
+          <div className="flex flex-wrap gap-4 md:gap-6 mb-6 md:mb-8 text-sm border-b border-gray-200 pb-4">
+            <div className="text-center min-w-[80px]">
+              <p className="font-bold text-xl md:text-2xl text-green-600">2</p>
+              <p className="text-xs md:text-sm text-gray-500">Active Bookings</p>
             </div>
-            <div className="text-center">
-              <p className="font-bold text-2xl text-blue-600">1</p>
-              <p className="text-sm text-gray-500">Check-ins</p>
+            <div className="text-center min-w-[80px]">
+              <p className="font-bold text-xl md:text-2xl text-blue-600">1</p>
+              <p className="text-xs md:text-sm text-gray-500">Check-ins</p>
             </div>
-            <div className="text-center">
-              <p className="font-bold text-2xl text-blue-600">1</p>
-              <p className="text-sm text-gray-500">Check-out</p>
+            <div className="text-center min-w-[80px]">
+              <p className="font-bold text-xl md:text-2xl text-blue-600">1</p>
+              <p className="text-xs md:text-sm text-gray-500">Check-out</p>
             </div>
-            <div className="text-center">
-              <p className="font-bold text-2xl text-red-600">€1,900</p>
-              <p className="text-sm text-gray-500">Total Spent</p>
+            <div className="text-center min-w-[80px]">
+              <p className="font-bold text-xl md:text-2xl text-red-600">€1,900</p>
+              <p className="text-xs md:text-sm text-gray-500">Total Spent</p>
             </div>
           </div>
 
           {/* Bookings List */}
-          <h2 className="text-xl font-bold text-gray-800 mb-4">
+          <h2 className="text-lg md:text-xl font-bold text-gray-800 mb-4">
             Current Bookings ({mockBookings.length})
           </h2>
 
-          <div className="space-y-6">
+          <div className="space-y-4 md:space-y-6">
             {mockBookings.map((booking) => (
               <BookingCard key={booking.id} booking={booking} />
             ))}

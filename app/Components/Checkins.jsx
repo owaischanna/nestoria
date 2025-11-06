@@ -44,7 +44,7 @@ const PrepStatusBadge = ({ label, isCompleted }) => (
   </span>
 );
 
-// Check In Card Component (Keep the same)
+// Check In Card Component (Updated for mobile)
 const CheckInCard = ({ application, onStartCheckIn }) => {
   const { applicant, listing, status, leaseLength, preferredMoveIn } = application;
 
@@ -52,26 +52,26 @@ const CheckInCard = ({ application, onStartCheckIn }) => {
   const prepStatus = { roomCleaned: true, keysReady: true, welcomePack: false, inventory: false };
 
   return (
-    <div className="flex flex-col md:flex-row border border-gray-200 rounded-lg overflow-hidden shadow-sm bg-white mb-6">
-      <div className="flex-1 p-5">
+    <div className="flex flex-col border border-gray-200 rounded-lg overflow-hidden shadow-sm bg-white mb-6">
+      <div className="flex-1 p-4 md:p-5">
         <div className="flex items-center mb-3">
-          <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-400 to-indigo-600 text-white flex items-center justify-center text-base font-bold shadow-md flex-shrink-0 mr-4">
+          <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-gradient-to-br from-blue-400 to-indigo-600 text-white flex items-center justify-center text-sm md:text-base font-bold shadow-md flex-shrink-0 mr-3 md:mr-4">
             {getInitials(applicant?.firstName, applicant?.lastName)}
           </div>
-          <div>
-            <h3 className="text-lg font-bold text-gray-800">{applicant?.firstName} {applicant?.lastName}</h3>
-            <div className="text-sm text-gray-600 space-x-3">
+          <div className="flex-1 min-w-0">
+            <h3 className="text-base md:text-lg font-bold text-gray-800 truncate">{applicant?.firstName} {applicant?.lastName}</h3>
+            <div className="text-xs md:text-sm text-gray-600 truncate">
               <span>{applicant?.email}</span>
             </div>
           </div>
         </div>
 
-        <h4 className="font-semibold text-gray-800">{listing?.listingTitle}</h4>
-        <p className="text-sm text-gray-500 mb-4">{listing?.address}, {listing?.town}</p>
+        <h4 className="font-semibold text-gray-800 text-sm md:text-base">{listing?.listingTitle}</h4>
+        <p className="text-xs md:text-sm text-gray-500 mb-3 md:mb-4 truncate">{listing?.address}, {listing?.town}</p>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-y-2 text-sm text-gray-700 mb-4">
+        <div className="grid grid-cols-1 gap-y-2 text-xs md:text-sm text-gray-700 mb-3 md:mb-4">
           <div className="flex items-center">
-            <Calendar className="w-4 h-4 mr-2 text-gray-500" />
+            <Calendar className="w-3 h-3 md:w-4 md:h-4 mr-1 md:mr-2 text-gray-500" />
             Move-in Date:
             <span className="font-medium ml-1 text-blue-600">{formatDate(preferredMoveIn)}</span>
           </div>
@@ -83,9 +83,9 @@ const CheckInCard = ({ application, onStartCheckIn }) => {
           </div>
         </div>
 
-        <div className="border-t border-gray-100 pt-4">
-          <p className="text-sm font-semibold text-gray-700 mb-2">Check-in Preparation Status</p>
-          <div className="flex flex-wrap gap-2">
+        <div className="border-t border-gray-100 pt-3 md:pt-4">
+          <p className="text-xs md:text-sm font-semibold text-gray-700 mb-2">Check-in Preparation Status</p>
+          <div className="flex flex-wrap gap-1 md:gap-2">
             <PrepStatusBadge label="Room Cleaned" isCompleted={prepStatus.roomCleaned} />
             <PrepStatusBadge label="Keys Ready" isCompleted={prepStatus.keysReady} />
             <PrepStatusBadge label="Welcome Pack" isCompleted={prepStatus.welcomePack} />
@@ -94,25 +94,25 @@ const CheckInCard = ({ application, onStartCheckIn }) => {
         </div>
       </div>
 
-      <div className="w-full md:w-60 flex-shrink-0 p-5 border-t md:border-t-0 md:border-l border-gray-100 bg-gray-50 flex flex-col justify-between items-end">
-        <div className="text-right w-full">
+      <div className="w-full p-4 md:p-5 border-t border-gray-100 bg-gray-50 flex flex-col justify-between items-stretch md:items-end">
+        <div className="text-left md:text-right w-full mb-3 md:mb-0">
           <span className={`text-xs font-semibold px-2 py-1 rounded-full ${status === 'Approved' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'
             }`}>
             {status === 'Approved' ? 'Check-in Soon' : status}
           </span>
-          <p className="text-2xl font-bold text-green-700 mt-2">€{listing?.monthlyRent}/month</p>
-          <p className="text-sm text-gray-500">{leaseLength}</p>
+          <p className="text-xl md:text-2xl font-bold text-green-700 mt-1 md:mt-2">€{listing?.monthlyRent}/month</p>
+          <p className="text-xs md:text-sm text-gray-500">{leaseLength}</p>
         </div>
-        <div className="flex flex-col space-y-2 w-full mt-4">
-          <button className="text-sm font-medium text-gray-700 border border-gray-300 px-3 py-2 rounded-lg hover:bg-gray-50 transition">Message Tenant</button>
-          <button className="text-sm font-medium text-orange-600 border border-orange-300 px-3 py-2 rounded-lg hover:bg-orange-50 flex items-center justify-center transition">
-            <Edit className="w-4 h-4 mr-1" /> Reschedule
+        <div className="flex flex-col space-y-2 w-full mt-2 md:mt-4">
+          <button className="text-xs md:text-sm font-medium text-gray-700 border border-gray-300 px-2 md:px-3 py-1.5 md:py-2 rounded-lg hover:bg-gray-50 transition">Message Tenant</button>
+          <button className="text-xs md:text-sm font-medium text-orange-600 border border-orange-300 px-2 md:px-3 py-1.5 md:py-2 rounded-lg hover:bg-orange-50 flex items-center justify-center transition">
+            <Edit className="w-3 h-3 md:w-4 md:h-4 mr-1" /> Reschedule
           </button>
           <button
             onClick={() => onStartCheckIn(application)}
-            className="text-sm font-medium text-white bg-green-600 px-3 py-2 rounded-lg hover:bg-green-700 flex items-center justify-center transition"
+            className="text-xs md:text-sm font-medium text-white bg-green-600 px-2 md:px-3 py-1.5 md:py-2 rounded-lg hover:bg-green-700 flex items-center justify-center transition"
           >
-            <CheckCircle className="w-4 h-4 mr-1" /> Start Check-in
+            <CheckCircle className="w-3 h-3 md:w-4 md:h-4 mr-1" /> Start Check-in
           </button>
         </div>
       </div>
@@ -226,50 +226,50 @@ const CheckInsContent = () => {
       <HostSidebar />
       <div className="flex flex-col flex-1 overflow-hidden">
         <HostHeader />
-        <div ref={scrollContainerRef} className="flex-1 p-8 overflow-y-auto">
+        <div ref={scrollContainerRef} className="flex-1 p-4 md:p-6 lg:p-8 overflow-y-auto">
           {!selectedApplication ? (
             <>
-              <div className="flex justify-between items-center mb-8">
-                <h1 className="text-3xl font-bold text-gray-800">Applications & Check-ins</h1>
-                <button className="flex items-center space-x-2 text-sm font-semibold text-gray-700 border border-gray-300 px-4 py-2 rounded-lg shadow-sm hover:bg-gray-50 transition">
+              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-6 md:mb-8 gap-4">
+                <h1 className="text-2xl md:text-3xl font-bold text-gray-800">Applications & Check-ins</h1>
+                <button className="flex items-center justify-center space-x-2 text-sm font-semibold text-gray-700 border border-gray-300 px-4 py-2 rounded-lg shadow-sm hover:bg-gray-50 transition w-full sm:w-auto">
                   <ListChecks className="w-4 h-4" />
                   <span>Checklist</span>
                 </button>
               </div>
 
-              <div className="flex space-x-8 mb-8 text-sm border-b border-gray-200 pb-4">
-                <div className="text-center">
-                  <p className="font-bold text-2xl text-blue-600">{pendingCount}</p>
-                  <p className="text-sm text-gray-500">Pending</p>
+              <div className="flex flex-wrap gap-4 md:gap-6 md:space-x-8 mb-6 md:mb-8 text-sm border-b border-gray-200 pb-4">
+                <div className="text-center min-w-[80px]">
+                  <p className="font-bold text-xl md:text-2xl text-blue-600">{pendingCount}</p>
+                  <p className="text-xs md:text-sm text-gray-500">Pending</p>
                 </div>
-                <div className="text-center">
-                  <p className="font-bold text-2xl text-green-600">{approvedCount}</p>
-                  <p className="text-sm text-gray-500">Approved</p>
+                <div className="text-center min-w-[80px]">
+                  <p className="font-bold text-xl md:text-2xl text-green-600">{approvedCount}</p>
+                  <p className="text-xs md:text-sm text-gray-500">Approved</p>
                 </div>
-                <div className="text-center">
-                  <p className="font-bold text-2xl text-gray-600">{totalApplications}</p>
-                  <p className="text-sm text-gray-500">Total</p>
+                <div className="text-center min-w-[80px]">
+                  <p className="font-bold text-xl md:text-2xl text-gray-600">{totalApplications}</p>
+                  <p className="text-xs md:text-sm text-gray-500">Total</p>
                 </div>
               </div>
 
-              <div className="flex justify-between items-center mb-4">
-                <h2 className="text-xl font-bold text-gray-800">
+              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 gap-2">
+                <h2 className="text-lg md:text-xl font-bold text-gray-800">
                   Upcoming Check-ins ({approvedCount})
                 </h2>
-                <p className="text-sm font-medium text-gray-600 flex items-center">
-                  <Calendar className="w-4 h-4 mr-1" /> {formatDate(new Date().toISOString())}
+                <p className="text-xs md:text-sm font-medium text-gray-600 flex items-center">
+                  <Calendar className="w-3 h-3 md:w-4 md:h-4 mr-1" /> {formatDate(new Date().toISOString())}
                 </p>
               </div>
 
-              <div className="space-y-4">
+              <div className="space-y-3 md:space-y-4">
                 {isLoading && currentPage === 1 && (
-                  <div className="flex justify-center py-10"><Loader2 className="w-8 h-8 animate-spin text-gray-400" /></div>
+                  <div className="flex justify-center py-8 md:py-10"><Loader2 className="w-6 h-6 md:w-8 md:h-8 animate-spin text-gray-400" /></div>
                 )}
 
                 {!isLoading && applications.length === 0 && (
-                  <div className="text-center py-10 text-gray-500">
-                    <p className="text-lg font-medium">No pending or approved applications found.</p>
-                    <p className="text-sm">When renters apply to your listings, they will appear here.</p>
+                  <div className="text-center py-8 md:py-10 text-gray-500">
+                    <p className="text-base md:text-lg font-medium">No pending or approved applications found.</p>
+                    <p className="text-xs md:text-sm mt-1">When renters apply to your listings, they will appear here.</p>
                   </div>
                 )}
 
@@ -282,10 +282,10 @@ const CheckInsContent = () => {
                 ))}
 
                 {isLoading && currentPage > 1 && (
-                  <div className="flex justify-center py-6"><Loader2 className="w-6 h-6 animate-spin text-gray-400" /></div>
+                  <div className="flex justify-center py-4 md:py-6"><Loader2 className="w-5 h-5 md:w-6 md:h-6 animate-spin text-gray-400" /></div>
                 )}
                 {!hasMore && applications.length > 0 && (
-                  <p className="text-center text-gray-500 py-6 text-sm">You've reached the end of the list.</p>
+                  <p className="text-center text-gray-500 py-4 md:py-6 text-xs md:text-sm">You've reached the end of the list.</p>
                 )}
               </div>
             </>

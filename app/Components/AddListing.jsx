@@ -79,19 +79,22 @@ const ToggleButton = ({ name, value, label, isActive, onClick }) => (
     </button>
 );
 
-// --- Step 1 Component (Unchanged) ---
+// --- Step 1 Component (Updated for mobile) ---
 const Step1BasicInfo = ({ formData, handleChange }) => {
     const { propertyType, listingTitle, description, address, roomSize, maxOccupancy, bathroomType, furnishingStatus } = formData;
     const commonAmenities = ['5min to Subway', 'Near Institution', 'Shopping Nearby', 'Great Food'];
 
     return (
         <div className="space-y-6">
-            <div><label className="block text-sm font-medium text-gray-700 mb-2">Property Type*</label>
-                <div className="flex space-x-3">{['Private Room', 'Shared Room'].map(type => (
-                    <ToggleButton key={type} label={type} isActive={propertyType === type} onClick={() => handleChange('propertyType', type)} />
-                ))}</div>
+            <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Property Type*</label>
+                <div className="flex flex-col sm:flex-row sm:space-x-3 space-y-2 sm:space-y-0">
+                    {['Private Room', 'Shared Room'].map(type => (
+                        <ToggleButton key={type} label={type} isActive={propertyType === type} onClick={() => handleChange('propertyType', type)} />
+                    ))}
+                </div>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 gap-6">
                 <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Listing Title *</label>
                     <input type="text" name="listingTitle" value={listingTitle} onChange={(e) => handleChange(e.target.name, e.target.value)} className="w-full border border-gray-300 rounded-lg p-2.5 text-sm" />
@@ -104,10 +107,10 @@ const Step1BasicInfo = ({ formData, handleChange }) => {
             <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Location *</label>
                 <input type="text" name="address" value={address} onChange={(e) => handleChange(e.target.name, e.target.value)} placeholder="Address" className="w-full border border-gray-300 rounded-lg p-2.5 text-sm mb-2" />
-                <div className="grid grid-cols-4 gap-4">
-                    <input type="text" name="state" placeholder="State" onChange={(e) => handleChange(e.target.name, e.target.value)} className="col-span-1 border border-gray-300 rounded-lg p-2.5 text-sm" />
-                    <input type="text" name="town" placeholder="Town" onChange={(e) => handleChange(e.target.name, e.target.value)} className="col-span-2 border border-gray-300 rounded-lg p-2.5 text-sm" />
-                    <input type="text" name="zip" placeholder="Zip Code" onChange={(e) => handleChange(e.target.name, e.target.value)} className="col-span-1 border border-gray-300 rounded-lg p-2.5 text-sm" />
+                <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
+                    <input type="text" name="state" placeholder="State" onChange={(e) => handleChange(e.target.name, e.target.value)} className="sm:col-span-1 border border-gray-300 rounded-lg p-2.5 text-sm" />
+                    <input type="text" name="town" placeholder="Town" onChange={(e) => handleChange(e.target.name, e.target.value)} className="sm:col-span-2 border border-gray-300 rounded-lg p-2.5 text-sm" />
+                    <input type="text" name="zip" placeholder="Zip Code" onChange={(e) => handleChange(e.target.name, e.target.value)} className="sm:col-span-1 border border-gray-300 rounded-lg p-2.5 text-sm" />
                 </div>
             </div>
             <div>
@@ -118,22 +121,24 @@ const Step1BasicInfo = ({ formData, handleChange }) => {
                     ))}
                 </div>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
                 <div><label className="block text-sm font-medium text-gray-700 mb-2">Room Size (sq ft)</label><input type="number" name="roomSize" value={roomSize} onChange={(e) => handleChange(e.target.name, e.target.value)} className="w-full border border-gray-300 rounded-lg p-2.5 text-sm" /></div>
                 <div><label className="block text-sm font-medium text-gray-700 mb-2">Max Occupancy</label><select name="maxOccupancy" value={maxOccupancy} onChange={(e) => handleChange(e.target.name, e.target.value)} className="w-full border border-gray-300 rounded-lg p-2.5 text-sm"><option>1 person</option><option>2 persons</option></select></div>
-                <div><label className="block text-sm font-medium text-gray-700 mb-2">Bathroom Type</label><div className="flex space-x-2"><ToggleButton label="Private" isActive={bathroomType === 'Private'} onClick={() => handleChange('bathroomType', 'Private')} /><ToggleButton label="Shared" isActive={bathroomType === 'Shared'} onClick={() => handleChange('bathroomType', 'Shared')} /></div></div>
+                <div><label className="block text-sm font-medium text-gray-700 mb-2">Bathroom Type</label><div className="flex flex-col sm:flex-row sm:space-x-2 space-y-2 sm:space-y-0"><ToggleButton label="Private" isActive={bathroomType === 'Private'} onClick={() => handleChange('bathroomType', 'Private')} /><ToggleButton label="Shared" isActive={bathroomType === 'Shared'} onClick={() => handleChange('bathroomType', 'Shared')} /></div></div>
             </div>
             <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Furnishing Status</label>
-                <div className="flex space-x-3">{['Fully Furnished', 'Partially Furnished', 'Unfurnished'].map(status => (
-                    <ToggleButton key={status} label={status} isActive={furnishingStatus === status} onClick={() => handleChange('furnishingStatus', status)} />
-                ))}</div>
+                <div className="flex flex-col sm:flex-row sm:space-x-3 space-y-2 sm:space-y-0">
+                    {['Fully Furnished', 'Partially Furnished', 'Unfurnished'].map(status => (
+                        <ToggleButton key={status} label={status} isActive={furnishingStatus === status} onClick={() => handleChange('furnishingStatus', status)} />
+                    ))}
+                </div>
             </div>
         </div>
     );
 };
 
-// --- Step 2 Component (Unchanged) ---
+// --- Step 2 Component (Updated for mobile) ---
 const Step2AddPhotos = ({ formData, handleChange }) => {
     const photos = formData.photos || { cover: null, room: [], common: [] };
     const coverInputRef = useRef(null);
@@ -186,11 +191,14 @@ const Step2AddPhotos = ({ formData, handleChange }) => {
             </div>
 
             <div>
-                <div className="flex justify-between items-center mb-3"><h3 className="text-lg font-semibold text-gray-800">Cover Photo</h3><span className="text-sm font-medium text-red-600">Required</span></div>
+                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-3 gap-2">
+                    <h3 className="text-lg font-semibold text-gray-800">Cover Photo</h3>
+                    <span className="text-sm font-medium text-red-600">Required</span>
+                </div>
                 <p className="text-sm text-gray-500 mb-4">This will be the main photo potential renters see first</p>
 
-                <div className="flex space-x-8">
-                    <div className="flex-1 border-2 border-dashed border-gray-300 rounded-lg p-10 flex flex-col items-center justify-center text-center relative">
+                <div className="flex flex-col lg:flex-row gap-6">
+                    <div className="flex-1 border-2 border-dashed border-gray-300 rounded-lg p-4 sm:p-10 flex flex-col items-center justify-center text-center relative">
                         {photos.cover ? (
                             <div className="w-full h-48 relative">
                                 <img src={photos.cover.preview} alt="Cover" className="w-full h-full object-contain rounded-lg" />
@@ -202,7 +210,6 @@ const Step2AddPhotos = ({ formData, handleChange }) => {
                                 <p className="text-sm font-medium text-gray-700">Drag & drop your cover photo here</p>
                                 <p className="text-xs text-gray-500 mb-4">or click to browse</p>
 
-                                {/* ✅ THIS IS THE FIX */}
                                 <button type="button" onClick={() => coverInputRef.current.click()} className="flex items-center space-x-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 text-sm font-medium">
                                     <Upload className="w-4 h-4" /><span>Choose Cover Photo</span>
                                 </button>
@@ -213,7 +220,7 @@ const Step2AddPhotos = ({ formData, handleChange }) => {
                         )}
                     </div>
 
-                    <div className="w-60 flex-shrink-0 p-4 bg-gray-50 rounded-lg border border-gray-200">
+                    <div className="w-full lg:w-60 flex-shrink-0 p-4 bg-gray-50 rounded-lg border border-gray-200">
                         <h4 className="text-sm font-semibold mb-2 text-gray-700">Cover Photo Tips:</h4>
                         <ul className="text-xs text-gray-600 list-disc pl-4 space-y-1">
                             <li>Show the room's best angle</li>
@@ -231,7 +238,7 @@ const Step2AddPhotos = ({ formData, handleChange }) => {
                 <p className="text-sm font-medium text-right text-gray-600 mb-4">{totalUploaded} of 20 photos uploaded</p>
 
                 <h4 className="text-md font-semibold text-gray-700 mb-3">Room Photos ({roomPhotosCount})</h4>
-                <div className="flex space-x-4 flex-wrap gap-4">
+                <div className="flex flex-wrap gap-4">
                     {displayRoomPhotos.map((file, i) => (
                         <PhotoThumbnail key={`room-${i}`} file={file} onRemove={() => handleRemove('room', file)} />
                     ))}
@@ -239,7 +246,7 @@ const Step2AddPhotos = ({ formData, handleChange }) => {
                 </div>
 
                 <h4 className="text-md font-semibold text-gray-700 mt-8 mb-3">Common Areas ({commonPhotosCount})</h4>
-                <div className="flex space-x-4 flex-wrap gap-4">
+                <div className="flex flex-wrap gap-4">
                     {photos.common.map((file, i) => (
                         <PhotoThumbnail key={`common-${i}`} file={file} onRemove={() => handleRemove('common', file)} />
                     ))}
@@ -250,7 +257,7 @@ const Step2AddPhotos = ({ formData, handleChange }) => {
     );
 };
 
-// --- Step 3 Component (Unchanged) ---
+// --- Step 3 Component (Updated for mobile) ---
 const Step3PricingAndAvailability = ({ formData, handleChange }) => {
     const { monthlyRent, utilities, securityDeposit, cleaningFee, houseRules, minDuration, maxDuration, monthToMonth } = formData;
 
@@ -276,8 +283,8 @@ const Step3PricingAndAvailability = ({ formData, handleChange }) => {
     };
 
     return (
-        <div className="grid grid-cols-3 gap-8">
-            <div className="col-span-2 space-y-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="lg:col-span-2 space-y-8">
                 <div>
                     <label htmlFor="monthlyRent" className="block text-lg font-semibold text-gray-800 mb-2">Monthly Rent *</label>
                     <p className="text-sm text-gray-500 mb-2">Base Monthly Rent</p>
@@ -297,21 +304,21 @@ const Step3PricingAndAvailability = ({ formData, handleChange }) => {
                     </div>
 
                     <label className="block text-sm font-medium text-gray-700 mb-2">Add utilities/amenities not stated above</label>
-                    <div className="flex space-x-2 mb-6">
+                    <div className="flex flex-col sm:flex-row sm:space-x-2 space-y-2 sm:space-y-0 mb-6">
                         <input type="text" placeholder="e.g. Kitchen Supplies" className="flex-1 border border-gray-300 rounded-lg p-2.5 text-sm" />
                         <button type="button" className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 text-sm font-medium">Add</button>
                     </div>
 
                     <h4 className="text-md font-medium text-gray-800 mb-3">Additional Fees (Optional)</h4>
                     <div className="space-y-3">
-                        <div className="flex justify-between items-center bg-gray-50 p-3 rounded-lg border border-gray-200">
+                        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center bg-gray-50 p-3 rounded-lg border border-gray-200 gap-2">
                             <span className="text-sm font-medium text-gray-700">Security Deposit</span>
                             <div className="relative">
                                 <span className="absolute left-2 top-1.5 text-sm text-gray-500">€</span>
                                 <input type="number" name="securityDeposit" value={securityDeposit} onChange={(e) => handleChange(e.target.name, e.target.value)} className="w-24 border border-gray-300 rounded-lg p-1.5 pl-6 text-sm text-right" />
                             </div>
                         </div>
-                        <div className="flex justify-between items-center bg-gray-50 p-3 rounded-lg border border-gray-200">
+                        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center bg-gray-50 p-3 rounded-lg border border-gray-200 gap-2">
                             <span className="text-sm font-medium text-gray-700">One-time Cleaning Fee</span>
                             <div className="relative">
                                 <span className="absolute left-2 top-1.5 text-sm text-gray-500">€</span>
@@ -329,7 +336,7 @@ const Step3PricingAndAvailability = ({ formData, handleChange }) => {
 
                 <div>
                     <h3 className="text-lg font-semibold text-gray-800 mb-3">Lease Terms</h3>
-                    <div className="grid grid-cols-2 gap-4 mb-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-2">Minimum Stay Duration</label>
                             <select name="minDuration" value={minDuration} onChange={(e) => handleChange(e.target.name, e.target.value)} className="w-full border border-gray-300 rounded-lg p-2.5 text-sm"><option>3 months</option><option>6 months</option></select>
@@ -339,7 +346,7 @@ const Step3PricingAndAvailability = ({ formData, handleChange }) => {
                             <select name="maxDuration" value={maxDuration} onChange={(e) => handleChange(e.target.name, e.target.value)} className="w-full border border-gray-300 rounded-lg p-2.5 text-sm"><option>12 months</option><option>Indefinite</option></select>
                         </div>
                     </div>
-                    <div className="flex space-x-3">
+                    <div className="flex flex-col sm:flex-row sm:space-x-3 space-y-2 sm:space-y-0">
                         <ToggleButton label="Month-to-Month Available" isActive={monthToMonth} onClick={() => handleChange('monthToMonth', !monthToMonth)} />
                         <button type="button" className="px-4 py-2 rounded-lg text-sm font-medium bg-gray-100 text-gray-700 border border-gray-300 cursor-not-allowed">
                             Early Termination Fee
@@ -348,8 +355,8 @@ const Step3PricingAndAvailability = ({ formData, handleChange }) => {
                 </div>
             </div>
 
-            <div className="col-span-1">
-                <div className="bg-white rounded-lg p-4 shadow-sm border border-gray-200 sticky top-0">
+            <div className="lg:col-span-1">
+                <div className="bg-white rounded-lg p-4 shadow-sm border border-gray-200 lg:sticky lg:top-0">
                     <h4 className="font-bold text-gray-800 mb-4">Availability *</h4>
                     <label htmlFor="moveInDate" className="block text-sm font-medium text-gray-700 mb-2">Available Move-in Date</label>
                     <input type="date" id="moveInDate" name="moveInDate" value={formData.moveInDate} onChange={(e) => handleChange(e.target.name, e.target.value)} className="w-full border border-gray-300 rounded-lg p-2.5 text-sm" />
@@ -359,7 +366,7 @@ const Step3PricingAndAvailability = ({ formData, handleChange }) => {
     );
 };
 
-// --- Step 4 Component (Unchanged) ---
+// --- Step 4 Component (Updated for mobile) ---
 const Step4ReviewAndPublish = ({ formData }) => {
     const {
         listingTitle, description, address, propertyType, bathroomType, roomSize,
@@ -385,12 +392,12 @@ const Step4ReviewAndPublish = ({ formData }) => {
 
 
     return (
-        <div className="grid grid-cols-3 gap-8">
-            <div className="col-span-2 space-y-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="lg:col-span-2 space-y-6">
                 <h3 className="text-xl font-semibold text-gray-800 mb-4">Listing Preview</h3>
 
                 <div className="relative rounded-xl overflow-hidden shadow-xl">
-                    <div className="h-96 w-full">
+                    <div className="h-64 sm:h-96 w-full">
                         <img
                             src={allPhotos[0]?.preview || 'https://via.placeholder.com/800x400?text=Listing+Cover+Photo'}
                             alt="Listing Cover"
@@ -399,24 +406,24 @@ const Step4ReviewAndPublish = ({ formData }) => {
                     </div>
                     <div className="absolute top-4 right-4 space-y-2">
                         {allPhotos.slice(1, 4).map((file, index) => (
-                            <div key={index} className="w-12 h-12 bg-gray-500 rounded-lg overflow-hidden border-2 border-white">
+                            <div key={index} className="w-8 h-8 sm:w-12 sm:h-12 bg-gray-500 rounded-lg overflow-hidden border-2 border-white">
                                 <img src={file.preview} alt={`Thumb ${index + 2}`} className="w-full h-full object-cover" />
                             </div>
                         ))}
                         {totalPhotos > 4 && (
-                            <div className="w-12 h-12 bg-gray-700 text-white rounded-lg flex items-center justify-center text-xs font-semibold">
+                            <div className="w-8 h-8 sm:w-12 sm:h-12 bg-gray-700 text-white rounded-lg flex items-center justify-center text-xs font-semibold">
                                 +{totalPhotos - 4}
                             </div>
                         )}
                     </div>
                 </div>
 
-                <h2 className="text-2xl font-bold text-gray-900">{listingTitle}</h2>
+                <h2 className="text-xl sm:text-2xl font-bold text-gray-900">{listingTitle}</h2>
                 <p className="flex items-center text-gray-500 text-sm"><MapPin className="w-4 h-4 mr-1" /> {address}</p>
 
-                <div className="flex items-center justify-between border-b border-gray-200 pb-4">
-                    <span className="text-2xl font-bold text-green-700">€{monthlyRent} <span className="text-sm font-normal text-gray-500">per month</span></span>
-                    <div className="flex text-sm space-x-3 text-gray-600">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between border-b border-gray-200 pb-4 gap-2">
+                    <span className="text-xl sm:text-2xl font-bold text-green-700">€{monthlyRent} <span className="text-sm font-normal text-gray-500">per month</span></span>
+                    <div className="flex flex-wrap text-sm gap-3 text-gray-600">
                         <span className="flex items-center"><Users className="w-4 h-4 mr-1" /> {propertyType}</span>
                         <span className="flex items-center"><CheckCircle className="w-4 h-4 mr-1" /> {bathroomType} Bath</span>
                         <span className="flex items-center"><span className="font-bold">{roomSize}</span> sqft</span>
@@ -438,7 +445,7 @@ const Step4ReviewAndPublish = ({ formData }) => {
                 </div>
             </div>
 
-            <div className="col-span-1">
+            <div className="lg:col-span-1">
                 <div className="bg-white rounded-lg p-6 shadow-md border border-gray-200">
                     <div className="flex justify-between items-center mb-4">
                         <h4 className="font-bold text-gray-800">Review Checklist</h4>
@@ -463,7 +470,7 @@ const Step4ReviewAndPublish = ({ formData }) => {
     );
 };
 
-// --- Main Form Container (Updated with API logic) ---
+// --- Main Form Container (Updated for mobile) ---
 const AddListingFormContainer = ({ onCancel, onSuccess }) => {
 
     const initialPhotos = {
@@ -582,7 +589,7 @@ const AddListingFormContainer = ({ onCancel, onSuccess }) => {
     }
 
     const StepTracker = () => (
-        <div className="flex items-center space-x-4 mb-8">
+        <div className="flex flex-col sm:flex-row sm:items-center space-y-4 sm:space-y-0 sm:space-x-4 mb-8">
             {[...Array(totalSteps)].map((_, index) => {
                 const stepNum = index + 1;
                 const isCurrent = stepNum === step;
@@ -597,7 +604,7 @@ const AddListingFormContainer = ({ onCancel, onSuccess }) => {
                         <span className={`ml-2 text-sm ${isCurrent ? 'font-semibold text-green-700' : 'text-gray-500'}`}>
                             Step {stepNum} of {totalSteps}
                         </span>
-                        {stepNum < totalSteps && <ChevronRight className="w-4 h-4 ml-4 text-gray-400" />}
+                        {stepNum < totalSteps && <ChevronRight className="w-4 h-4 ml-4 text-gray-400 hidden sm:block" />}
                     </div>
                 );
             })}
@@ -620,18 +627,18 @@ const AddListingFormContainer = ({ onCancel, onSuccess }) => {
     };
 
     return (
-        <div className="p-8 bg-gray-50 min-h-full">
-            <div className="flex justify-between items-center mb-6">
-                <div>
-                    <h1 className="text-2xl font-bold text-gray-800">Add New Listing - {getStepTitle()}</h1>
+        <div className="p-4 sm:p-8 bg-gray-50 min-h-full">
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-6 gap-4">
+                <div className="flex-1">
+                    <h1 className="text-xl sm:text-2xl font-bold text-gray-800">Add New Listing - {getStepTitle()}</h1>
                     <StepTracker />
                 </div>
 
-                <div className="flex space-x-3">
+                <div className="flex flex-col sm:flex-row sm:space-x-3 space-y-2 sm:space-y-0">
                     <button
                         onClick={() => setStep(step > 1 ? step - 1 : 1)}
                         disabled={isSubmitting}
-                        className="flex items-center space-x-1 text-sm font-medium text-gray-700 border border-gray-300 px-4 py-2 rounded hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="flex items-center space-x-1 text-sm font-medium text-gray-700 border border-gray-300 px-4 py-2 rounded hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed justify-center"
                     >
                         <ChevronLeft className='w-4 h-4' /> Back
                     </button>
@@ -640,7 +647,7 @@ const AddListingFormContainer = ({ onCancel, onSuccess }) => {
                         onClick={step < totalSteps ? () => setStep(step + 1) : handlePublish}
                         disabled={isSubmitting}
                         className={`flex items-center space-x-1 text-sm font-semibold text-white px-4 py-2 rounded transition ${step === totalSteps ? 'bg-green-600 hover:bg-green-700' : 'bg-green-600 hover:bg-green-700'
-                            } disabled:bg-gray-400 disabled:cursor-not-allowed`}
+                            } disabled:bg-gray-400 disabled:cursor-not-allowed justify-center`}
                     >
                         {step === totalSteps
                             ? (isSubmitting ? 'Publishing...' : 'Publish Listing')
@@ -650,7 +657,7 @@ const AddListingFormContainer = ({ onCancel, onSuccess }) => {
                 </div>
             </div>
 
-            <div className="border border-gray-200 rounded-lg p-6 bg-white shadow-md">
+            <div className="border border-gray-200 rounded-lg p-4 sm:p-6 bg-white shadow-md">
                 {renderStepContent()}
             </div>
         </div>

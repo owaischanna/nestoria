@@ -506,7 +506,7 @@ import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
 import {
     Search, Plus, Phone, Paperclip, Send, MoreVertical,
-    CheckCheck, X, Loader2, Image as ImageIcon, Smile
+    CheckCheck, X, Loader2, Image as ImageIcon, Smile, ArrowLeft, Menu
 } from 'lucide-react';
 import RenterHeader from './RenterHeader';
 import Sidebar from './RenterSidebar';
@@ -560,10 +560,10 @@ const ConversationListItem = ({ conversation, isActive, onClick, currentUserId }
         const initials = getInitials(otherParticipant?.firstName, otherParticipant?.lastName);
         return (
             <div className="relative">
-                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 text-white flex items-center justify-center text-base font-bold shadow-md">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 text-white flex items-center justify-center text-sm sm:text-base font-bold shadow-md">
                     {initials}
                 </div>
-                <div className="absolute bottom-0 right-0 w-3.5 h-3.5 bg-green-500 rounded-full border-2 border-white"></div>
+                <div className="absolute bottom-0 right-0 w-2.5 h-2.5 sm:w-3.5 sm:h-3.5 bg-green-500 rounded-full border-2 border-white"></div>
             </div>
         );
     };
@@ -571,33 +571,33 @@ const ConversationListItem = ({ conversation, isActive, onClick, currentUserId }
     return (
         <div
             onClick={() => onClick(conversation._id)}
-            className={`flex p-4 rounded-2xl cursor-pointer transition-all duration-200 ${isActive
+            className={`flex p-3 sm:p-4 rounded-xl sm:rounded-2xl cursor-pointer transition-all duration-200 ${isActive
                     ? 'bg-gradient-to-r from-amber-50 to-orange-50 shadow-md scale-[1.02]'
                     : 'hover:bg-gray-50 hover:shadow-sm'
                 }`}
         >
-            <div className="flex-shrink-0 mr-4">
+            <div className="flex-shrink-0 mr-3 sm:mr-4">
                 <AvatarComponent />
             </div>
             <div className="flex-1 min-w-0">
                 <div className="flex justify-between items-start mb-1">
-                    <p className={`font-bold text-gray-900 truncate ${unreadCount > 0 ? 'text-amber-900' : ''}`}>
+                    <p className={`font-bold text-gray-900 truncate text-sm sm:text-base ${unreadCount > 0 ? 'text-amber-900' : ''}`}>
                         {senderName}
                     </p>
                     <span className="text-xs text-gray-500 ml-2 flex-shrink-0">{messageTime}</span>
                 </div>
-                <p className={`text-sm truncate mb-2 ${unreadCount > 0 ? 'text-gray-800 font-medium' : 'text-gray-600'}`}>
+                <p className={`text-xs sm:text-sm truncate mb-2 ${unreadCount > 0 ? 'text-gray-800 font-medium' : 'text-gray-600'}`}>
                     {previewText}
                 </p>
                 <div className="flex items-center justify-between">
-                    <span className={`text-xs font-bold px-3 py-1 rounded-full ${isHost
+                    <span className={`text-xs font-bold px-2 py-1 sm:px-3 sm:py-1 rounded-full ${isHost
                             ? 'bg-gradient-to-r from-amber-100 to-orange-100 text-amber-800'
                             : 'bg-gradient-to-r from-blue-100 to-cyan-100 text-blue-800'
                         }`}>
                         {isHost ? 'HOST' : 'RENTER'}
                     </span>
                     {unreadCount > 0 && (
-                        <span className="text-xs font-bold min-w-[20px] h-5 flex items-center justify-center rounded-full bg-gradient-to-r from-red-500 to-pink-500 text-white px-2 shadow-md">
+                        <span className="text-xs font-bold min-w-[18px] h-4 sm:min-w-[20px] sm:h-5 flex items-center justify-center rounded-full bg-gradient-to-r from-red-500 to-pink-500 text-white px-1 sm:px-2 shadow-md">
                             {unreadCount}
                         </span>
                     )}
@@ -613,24 +613,24 @@ const ChatBubble = ({ message, isCurrentUser }) => {
 
     return (
         <div className={`flex ${alignment} w-full mb-4 group`}>
-            <div className={`flex items-end space-x-2 max-w-[70%] ${isCurrentUser ? 'flex-row-reverse space-x-reverse' : ''}`}>
+            <div className={`flex items-end space-x-2 max-w-[85%] sm:max-w-[70%] ${isCurrentUser ? 'flex-row-reverse space-x-reverse' : ''}`}>
                 {!isCurrentUser && (
                     // Placeholder for the other user's avatar
-                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-gray-300 to-gray-400 flex-shrink-0 mb-1"></div>
+                    <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-gradient-to-br from-gray-300 to-gray-400 flex-shrink-0 mb-1"></div>
                 )}
                 <div className="flex flex-col">
-                    <div className={`rounded-2xl px-4 py-3 shadow-md ${isCurrentUser
+                    <div className={`rounded-xl sm:rounded-2xl px-3 py-2 sm:px-4 sm:py-3 shadow-md ${isCurrentUser
                             ? 'bg-gradient-to-br from-amber-500 to-orange-600 text-white rounded-br-md'
                             : 'bg-white text-gray-800 rounded-bl-md border border-gray-100'
                         }`}>
-                        <p className="text-[15px] leading-relaxed break-words">{message.content}</p>
+                        <p className="text-sm sm:text-[15px] leading-relaxed break-words">{message.content}</p>
                     </div>
-                    <div className="flex items-center space-x-1 mt-1 px-2">
+                    <div className="flex items-center space-x-1 mt-1 px-1 sm:px-2">
                         <span className={`text-xs ${isCurrentUser ? 'text-gray-500' : 'text-gray-500'}`}>
                             {time}
                         </span>
                         {isCurrentUser && (
-                            <CheckCheck className="w-3.5 h-3.5 text-amber-600" />
+                            <CheckCheck className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-amber-600" />
                         )}
                     </div>
                 </div>
@@ -653,11 +653,28 @@ const MessagesContent = () => {
     const [isLoadingConversations, setIsLoadingConversations] = useState(true);
     const [isLoadingMessages, setIsLoadingMessages] = useState(false);
     const [conversationDetails, setConversationDetails] = useState(null);
-    // Removed: [socket, setSocket]
     const [searchQuery, setSearchQuery] = useState('');
     const [activeFilter, setActiveFilter] = useState('all');
+    const [isMobile, setIsMobile] = useState(false);
+    const [showConversationList, setShowConversationList] = useState(true);
     const messagesEndRef = useRef(null);
     const [isSending, setIsSending] = useState(false);
+
+    // Check for mobile screen size
+    useEffect(() => {
+        const checkMobile = () => {
+            setIsMobile(window.innerWidth < 768);
+            if (window.innerWidth < 768) {
+                setShowConversationList(!selectedConversationId);
+            } else {
+                setShowConversationList(true);
+            }
+        };
+
+        checkMobile();
+        window.addEventListener('resize', checkMobile);
+        return () => window.removeEventListener('resize', checkMobile);
+    }, [selectedConversationId]);
 
     // MOCK DATA: Using client-side state for static chat experience
     const mockRenterName = user?.firstName || 'Renter'; // Use actual user name or default
@@ -756,7 +773,15 @@ const MessagesContent = () => {
     const handleSelectConversation = (id) => {
         if (id === selectedConversationId) return;
         setSelectedConversationId(id);
+        if (isMobile) {
+            setShowConversationList(false);
+        }
         router.push(`/rentermessage?id=${id}`, { scroll: false });
+    };
+
+    const handleBackToConversations = () => {
+        setShowConversationList(true);
+        setSelectedConversationId(null);
     };
 
     // 🚀 FULLY STATIC Implementation: Client-side updates only. No API calls.
@@ -804,7 +829,6 @@ const MessagesContent = () => {
     const activeChatInitials = getInitials(otherParticipant?.firstName, otherParticipant?.lastName);
     const activeChatRole = otherParticipant?.role === 'host' ? 'Host' : 'User';
 
-
     const filteredConversations = conversations.filter(conv => {
         const otherPart = getOtherParticipant(conv.participants, user?.userId);
         const name = `${otherPart?.firstName || ''} ${otherPart?.lastName || ''}`.toLowerCase();
@@ -813,36 +837,36 @@ const MessagesContent = () => {
 
     return (
         <div className="flex-1 flex overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100">
-            {/* Sidebar */}
-            <div className="w-[380px] flex-shrink-0 border-r border-gray-200 bg-white shadow-xl flex flex-col">
+            {/* Sidebar - Hidden on mobile when chat is open */}
+            <div className={`${showConversationList ? 'flex' : 'hidden'} md:flex w-full md:w-[380px] flex-shrink-0 border-r border-gray-200 bg-white shadow-xl flex-col absolute md:relative z-10 h-full`}>
                 {/* Header */}
-                <div className="p-6 border-b border-gray-100 bg-gradient-to-r from-amber-500 to-orange-600">
+                <div className="p-4 sm:p-6 border-b border-gray-100 bg-gradient-to-r from-amber-500 to-orange-600">
                     <div className="flex justify-between items-center mb-4">
-                        <h1 className="text-2xl font-bold text-white">Messages</h1>
-                        <button className="p-2.5 bg-white/20 backdrop-blur-sm text-white rounded-full hover:bg-white/30 transition-all shadow-lg">
-                            <Plus className="w-5 h-5" />
+                        <h1 className="text-xl sm:text-2xl font-bold text-white">Messages</h1>
+                        <button className="p-2 sm:p-2.5 bg-white/20 backdrop-blur-sm text-white rounded-full hover:bg-white/30 transition-all shadow-lg">
+                            <Plus className="w-4 h-4 sm:w-5 sm:h-5" />
                         </button>
                     </div>
                     {/* Search */}
                     <div className="relative">
-                        <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-white/70" />
+                        <Search className="absolute left-3 sm:left-4 top-1/2 transform -translate-y-1/2 h-4 w-4 sm:h-5 sm:w-5 text-white/70" />
                         <input
                             type="text"
                             placeholder="Search conversations..."
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            className="w-full pl-12 pr-4 py-3 bg-white/20 backdrop-blur-sm border border-white/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-white/50 text-white placeholder-white/70 text-sm"
+                            className="w-full pl-10 sm:pl-12 pr-4 py-2.5 sm:py-3 bg-white/20 backdrop-blur-sm border border-white/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-white/50 text-white placeholder-white/70 text-sm"
                         />
                     </div>
                 </div>
 
                 {/* Filters */}
-                <div className="flex space-x-2 p-4 border-b border-gray-100 overflow-x-auto scrollbar-hide">
+                <div className="flex space-x-2 p-3 sm:p-4 border-b border-gray-100 overflow-x-auto scrollbar-hide">
                     {['all', 'unread', 'hosts', 'archived'].map(filter => (
                         <button
                             key={filter}
                             onClick={() => setActiveFilter(filter)}
-                            className={`px-4 py-2 text-sm font-semibold rounded-full whitespace-nowrap transition-all ${activeFilter === filter
+                            className={`px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-semibold rounded-full whitespace-nowrap transition-all ${activeFilter === filter
                                     ? 'bg-gradient-to-r from-amber-500 to-orange-600 text-white shadow-md'
                                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                                 }`}
@@ -853,10 +877,10 @@ const MessagesContent = () => {
                 </div>
 
                 {/* Conversations List */}
-                <div className="flex-1 overflow-y-auto p-4 space-y-3 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent">
+                <div className="flex-1 overflow-y-auto p-3 sm:p-4 space-y-2 sm:space-y-3 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent">
                     {isLoadingConversations ? (
                         <div className="flex justify-center items-center h-full">
-                            <Loader2 className="w-8 h-8 animate-spin text-amber-500" />
+                            <Loader2 className="w-6 h-6 sm:w-8 sm:h-8 animate-spin text-amber-500" />
                         </div>
                     ) : filteredConversations.length > 0 ? (
                         filteredConversations.map(conv => (
@@ -869,53 +893,61 @@ const MessagesContent = () => {
                             />
                         ))
                     ) : (
-                        <div className="text-center text-gray-500 pt-20">
-                            <p className="text-lg font-medium">No conversations found</p>
-                            <p className="text-sm mt-2">Start a new chat to get connected</p>
+                        <div className="text-center text-gray-500 pt-16 sm:pt-20">
+                            <p className="text-base sm:text-lg font-medium">No conversations found</p>
+                            <p className="text-xs sm:text-sm mt-2">Start a new chat to get connected</p>
                         </div>
                     )}
                 </div>
             </div>
 
             {/* Chat Area */}
-            <div className="flex-1 flex flex-col bg-white">
+            <div className={`${!showConversationList ? 'flex' : 'hidden'} md:flex flex-1 flex-col bg-white`}>
                 {selectedConversationId && conversationDetails ? (
                     <>
                         {/* Chat Header */}
-                        <div className="p-6 bg-white border-b border-gray-100 flex justify-between items-center flex-shrink-0 shadow-sm">
-                            <div className="flex items-center space-x-4">
+                        <div className="p-4 sm:p-6 bg-white border-b border-gray-100 flex justify-between items-center flex-shrink-0 shadow-sm">
+                            <div className="flex items-center space-x-3 sm:space-x-4">
+                                {isMobile && (
+                                    <button 
+                                        onClick={handleBackToConversations}
+                                        className="p-2 text-gray-500 hover:text-amber-600 hover:bg-amber-50 rounded-xl transition-all mr-2"
+                                    >
+                                        <ArrowLeft className="w-5 h-5" />
+                                    </button>
+                                )}
                                 <div className="relative">
-                                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 text-white flex items-center justify-center font-bold text-lg shadow-md">
+                                    <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 text-white flex items-center justify-center font-bold text-base sm:text-lg shadow-md">
                                         {activeChatInitials}
                                     </div>
-                                    <div className="absolute bottom-0 right-0 w-3.5 h-3.5 bg-green-500 rounded-full border-2 border-white"></div>
+                                    <div className="absolute bottom-0 right-0 w-2.5 h-2.5 sm:w-3.5 sm:h-3.5 bg-green-500 rounded-full border-2 border-white"></div>
                                 </div>
                                 <div>
-                                    <p className="font-bold text-gray-900 text-lg">{activeChatName}</p>
-                                    <p className="text-sm text-green-600 flex items-center font-medium capitalize">
-                                        <span className="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></span>
+                                    <p className="font-bold text-gray-900 text-base sm:text-lg">{activeChatName}</p>
+                                    <p className="text-xs sm:text-sm text-green-600 flex items-center font-medium capitalize">
+                                        <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-green-500 rounded-full mr-1.5 sm:mr-2 animate-pulse"></span>
                                         {activeChatRole}
                                     </p>
                                 </div>
                             </div>
-                            <div className="flex space-x-2">
-                                <button className="px-5 py-2.5 text-sm font-semibold text-amber-600 border-2 border-amber-600 rounded-xl hover:bg-amber-50 transition-all">
+                            <div className="flex space-x-1 sm:space-x-2">
+                                <button className="px-3 py-1.5 sm:px-5 sm:py-2.5 text-xs sm:text-sm font-semibold text-amber-600 border border-amber-600 sm:border-2 rounded-lg sm:rounded-xl hover:bg-amber-50 transition-all">
                                     View Listing
                                 </button>
-                                <button className="p-3 text-gray-500 hover:text-amber-600 hover:bg-amber-50 rounded-xl transition-all">
-                                    <Phone className="w-5 h-5" />
+                                <button className="p-2 sm:p-3 text-gray-500 hover:text-amber-600 hover:bg-amber-50 rounded-lg sm:rounded-xl transition-all">
+                                    <Phone className="w-4 h-4 sm:w-5 sm:h-5" />
                                 </button>
-                                <button className="p-3 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-xl transition-all">
-                                    <MoreVertical className="w-5 h-5" />
+                                <button className="p-2 sm:p-3 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg sm:rounded-xl transition-all">
+                                    <MoreVertical className="w-4 h-4 sm:w-5 sm:h-5" />
                                 </button>
                             </div>
                         </div>
 
                         {/* Messages */}
-                        <div className="flex-1 overflow-y-auto p-8 space-y-1 bg-gradient-to-br from-gray-50 to-white scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent">
+                        <div className="flex-1 overflow-y-auto p-4 sm:p-8 space-y-1 bg-gradient-to-br from-gray-50 to-white scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent">
                             {isLoadingMessages ? (
                                 <div className="flex justify-center items-center h-full">
-                                    <Loader2 className="w-8 h-8 animate-spin text-amber-500" />
+                                    <Loader2 className="w-6 h-6 sm:w-8 sm:h-8 animate-spin text-amber-500" />
                                 </div>
                             ) : messages.length > 0 ? (
                                 messages.map((msg, index, arr) => {
@@ -924,8 +956,8 @@ const MessagesContent = () => {
                                     return (
                                         <React.Fragment key={msg._id}>
                                             {dateSeparator && (
-                                                <div className="flex justify-center my-6">
-                                                    <span className="text-xs font-semibold text-gray-500 bg-gray-200 px-4 py-2 rounded-full shadow-sm">
+                                                <div className="flex justify-center my-4 sm:my-6">
+                                                    <span className="text-xs font-semibold text-gray-500 bg-gray-200 px-3 py-1.5 sm:px-4 sm:py-2 rounded-full shadow-sm">
                                                         {dateSeparator}
                                                     </span>
                                                 </div>
@@ -938,24 +970,24 @@ const MessagesContent = () => {
                                     );
                                 })
                             ) : (
-                                <div className="flex flex-col items-center justify-center h-full text-gray-500">
-                                    <div className="w-24 h-24 bg-gradient-to-br from-amber-100 to-orange-100 rounded-full flex items-center justify-center mb-4">
-                                        <Send className="w-12 h-12 text-amber-500" />
+                                <div className="flex flex-col items-center justify-center h-full text-gray-500 px-4">
+                                    <div className="w-16 h-16 sm:w-24 sm:h-24 bg-gradient-to-br from-amber-100 to-orange-100 rounded-full flex items-center justify-center mb-3 sm:mb-4">
+                                        <Send className="w-8 h-8 sm:w-12 sm:h-12 text-amber-500" />
                                     </div>
-                                    <p className="text-lg font-semibold">Start the conversation!</p>
-                                    <p className="text-sm mt-2">Send your first message below</p>
+                                    <p className="text-base sm:text-lg font-semibold text-center">Start the conversation!</p>
+                                    <p className="text-xs sm:text-sm mt-1 sm:mt-2 text-center">Send your first message below</p>
                                 </div>
                             )}
                             <div ref={messagesEndRef} />
                         </div>
 
                         {/* Message Input */}
-                        <form onSubmit={handleSendMessage} className="p-6 bg-white border-t border-gray-100 flex space-x-3 items-end flex-shrink-0 shadow-lg">
-                            <button type="button" className="p-3 text-gray-500 hover:text-amber-600 hover:bg-amber-50 rounded-xl transition-all">
-                                <Paperclip className="w-6 h-6" />
+                        <form onSubmit={handleSendMessage} className="p-4 sm:p-6 bg-white border-t border-gray-100 flex space-x-2 sm:space-x-3 items-end flex-shrink-0 shadow-lg">
+                            <button type="button" className="p-2 sm:p-3 text-gray-500 hover:text-amber-600 hover:bg-amber-50 rounded-lg sm:rounded-xl transition-all">
+                                <Paperclip className="w-4 h-4 sm:w-6 sm:h-6" />
                             </button>
-                            <button type="button" className="p-3 text-gray-500 hover:text-amber-600 hover:bg-amber-50 rounded-xl transition-all">
-                                <ImageIcon className="w-6 h-6" />
+                            <button type="button" className="p-2 sm:p-3 text-gray-500 hover:text-amber-600 hover:bg-amber-50 rounded-lg sm:rounded-xl transition-all">
+                                <ImageIcon className="w-4 h-4 sm:w-6 sm:h-6" />
                             </button>
                             <div className="flex-1 relative">
                                 <input
@@ -963,30 +995,38 @@ const MessagesContent = () => {
                                     placeholder="Type your message..."
                                     value={newMessage}
                                     onChange={(e) => setNewMessage(e.target.value)}
-                                    className="w-full border-2 border-gray-200 focus:border-amber-500 focus:ring-0 text-gray-800 px-5 py-3.5 bg-gray-50 rounded-2xl focus:bg-white transition-all text-[15px]"
+                                    className="w-full border border-gray-200 sm:border-2 focus:border-amber-500 focus:ring-0 text-gray-800 px-3 sm:px-5 py-2.5 sm:py-3.5 bg-gray-50 rounded-xl sm:rounded-2xl focus:bg-white transition-all text-sm sm:text-[15px]"
                                     disabled={isSending}
                                 />
                             </div>
                             <button 
                                 type="submit" 
-                                className="p-4 bg-gradient-to-r from-amber-500 to-orange-600 text-white rounded-2xl hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center" 
+                                className="p-3 sm:p-4 bg-gradient-to-r from-amber-500 to-orange-600 text-white rounded-xl sm:rounded-2xl hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center" 
                                 disabled={!newMessage.trim() || isSending}
                             >
-                                {isSending ? <Loader2 className="w-5 h-5 animate-spin" /> : <Send className="w-5 h-5" />}
+                                {isSending ? <Loader2 className="w-4 h-4 sm:w-5 sm:h-5 animate-spin" /> : <Send className="w-4 h-4 sm:w-5 sm:h-5" />}
                             </button>
                         </form>
                     </>
                 ) : (
-                    <div className="flex-1 flex flex-col items-center justify-center text-gray-500 bg-gradient-to-br from-gray-50 to-white">
+                    <div className="flex-1 flex flex-col items-center justify-center text-gray-500 bg-gradient-to-br from-gray-50 to-white px-4">
                         {isLoadingConversations ? (
-                            <Loader2 className="w-12 h-12 animate-spin text-amber-500" />
+                            <Loader2 className="w-8 h-8 sm:w-12 sm:h-12 animate-spin text-amber-500" />
                         ) : (
                             <>
-                                <div className="w-32 h-32 bg-gradient-to-br from-amber-100 to-orange-100 rounded-full flex items-center justify-center mb-6">
-                                    <Send className="w-16 h-16 text-amber-500" />
+                                <div className="w-20 h-20 sm:w-32 sm:h-32 bg-gradient-to-br from-amber-100 to-orange-100 rounded-full flex items-center justify-center mb-4 sm:mb-6">
+                                    <Send className="w-10 h-10 sm:w-16 sm:h-16 text-amber-500" />
                                 </div>
-                                <p className="text-xl font-bold text-gray-700">No conversation selected</p>
-                                <p className="text-sm text-gray-500 mt-2">Choose a conversation from the list to start chatting</p>
+                                <p className="text-lg sm:text-xl font-bold text-gray-700 text-center">No conversation selected</p>
+                                <p className="text-xs sm:text-sm text-gray-500 mt-1 sm:mt-2 text-center">Choose a conversation from the list to start chatting</p>
+                                {isMobile && (
+                                    <button
+                                        onClick={() => setShowConversationList(true)}
+                                        className="mt-4 px-4 py-2 bg-gradient-to-r from-amber-500 to-orange-600 text-white rounded-lg font-semibold"
+                                    >
+                                        Browse Conversations
+                                    </button>
+                                )}
                             </>
                         )}
                     </div>
@@ -1011,7 +1051,7 @@ const MessagesPage = () => {
     if (loading || !user) {
         return (
             <div className="flex h-screen items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100">
-                <Loader2 className="w-12 h-12 animate-spin text-amber-500" />
+                <Loader2 className="w-8 h-8 sm:w-12 sm:h-12 animate-spin text-amber-500" />
             </div>
         );
     }

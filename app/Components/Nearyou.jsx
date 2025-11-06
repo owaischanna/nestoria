@@ -74,10 +74,10 @@ const PropertyCard = ({ property, onApplyClick }) => {
   };
 
   return (
-    <div className="flex border border-gray-200 rounded-xl shadow-sm overflow-hidden bg-white p-4 transition-shadow hover:shadow-lg">
+    <div className="flex flex-col md:flex-row border border-gray-200 rounded-xl shadow-sm overflow-hidden bg-white p-4 md:p-6 transition-shadow hover:shadow-lg">
       
       {/* 1. Image and Heart Icon */}
-      <div className="relative w-[240px] h-48 rounded-lg overflow-hidden mr-6 flex-shrink-0">
+      <div className="relative w-full md:w-[240px] h-48 md:h-48 rounded-lg overflow-hidden mb-4 md:mb-0 md:mr-6 flex-shrink-0">
         <img
           src={imageSrc}
           alt={title}
@@ -94,14 +94,14 @@ const PropertyCard = ({ property, onApplyClick }) => {
       {/* 2. Details and Actions */}
       <div className="flex-grow flex flex-col justify-between py-1">
         <div>
-          <h2 className="text-xl font-semibold text-gray-900 mb-1">{title}</h2>
+          <h2 className="text-lg md:text-xl font-semibold text-gray-900 mb-1">{title}</h2>
           <div className="flex items-center text-sm text-gray-500 mb-3">
             <MapPin size={16} className="mr-1 text-gray-400" />
             {location}
           </div>
 
           {/* Features */}
-          <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-gray-600 mb-4">
+          <div className="flex flex-wrap gap-x-3 md:gap-x-4 gap-y-1 text-xs md:text-sm text-gray-600 mb-3 md:mb-4">
             {features.map((feature, index) => (
               <span key={index} className="flex items-center">
                 {featureIcons[feature] || <span className="mr-1">•</span>}
@@ -111,7 +111,7 @@ const PropertyCard = ({ property, onApplyClick }) => {
           </div>
 
           {/* Tags */}
-          <div className="flex flex-wrap gap-2 mb-4">
+          <div className="flex flex-wrap gap-1 md:gap-2 mb-3 md:mb-4">
             {tags.map((tag, index) => (
               <span key={index}>{formatTag(tag)}</span>
             ))}
@@ -119,12 +119,12 @@ const PropertyCard = ({ property, onApplyClick }) => {
         </div>
 
         {/* Action Buttons */}
-        <div className="flex space-x-3">
-          <button className="px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 hover:bg-gray-50 transition">
+        <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3">
+          <button className="px-3 md:px-4 py-2 border border-gray-300 text-xs md:text-sm font-medium rounded-md text-gray-700 hover:bg-gray-50 transition">
             Message Host
           </button>
           <button 
-            className="px-4 py-2 text-sm font-medium rounded-md text-white bg-orange-500 hover:bg-orange-600 transition shadow-md"
+            className="px-3 md:px-4 py-2 text-xs md:text-sm font-medium rounded-md text-white bg-orange-500 hover:bg-orange-600 transition shadow-md"
             onClick={() => onApplyClick(property)}
           >
             Apply
@@ -133,10 +133,10 @@ const PropertyCard = ({ property, onApplyClick }) => {
       </div>
 
       {/* 3. Price */}
-      <div className="w-1/6 flex justify-end text-right pt-1 flex-shrink-0">
-        <div className="text-xl font-bold text-gray-700">
-          <span className="text-2xl">{currency}{price}</span>
-          <span className="text-base font-normal text-gray-500 ml-1">/month</span>
+      <div className="w-full md:w-1/6 flex justify-start md:justify-end text-left md:text-right pt-3 md:pt-1 flex-shrink-0 mt-3 md:mt-0 border-t md:border-t-0 border-gray-200 md:border-none pt-3 md:pt-0">
+        <div className="text-lg md:text-xl font-bold text-gray-700">
+          <span className="text-xl md:text-2xl">{currency}{price}</span>
+          <span className="text-sm md:text-base font-normal text-gray-500 ml-1">/month</span>
         </div>
       </div>
     </div>
@@ -195,26 +195,26 @@ const NearYouComponent = () => {
         <RenterHeader />
         
         {/* Main Content Area (Scrollable) */}
-        <div className="flex-1 p-6 md:p-8 lg:p-10 overflow-y-auto">
+        <div className="flex-1 p-4 md:p-6 lg:p-8 xl:p-10 overflow-y-auto">
           
           {/* Heading and Summary Section */}
-          <div className="mb-6 p-6 rounded-xl shadow-lg border border-gray-100">
-            <h1 className="text-3xl font-bold text-gray-900">Near You</h1>
-            <p className="text-sm text-gray-600 mb-2">789 University Place, Apt 4C</p>
-            <p className="text-sm text-gray-600 mb-4">Cartabria, NY 10003</p>
-            <p className="text-sm text-gray-600 mb-4">47 properties found</p>
+          <div className="mb-4 md:mb-6 p-4 md:p-6 rounded-xl shadow-lg border border-gray-100">
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Near You</h1>
+            <p className="text-xs md:text-sm text-gray-600 mb-1 md:mb-2">789 University Place, Apt 4C</p>
+            <p className="text-xs md:text-sm text-gray-600 mb-2 md:mb-4">Cartabria, NY 10003</p>
+            <p className="text-xs md:text-sm text-gray-600 mb-3 md:mb-4">47 properties found</p>
 
-            <div className="flex items-center justify-between border-t pt-4">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between border-t pt-3 md:pt-4 gap-2">
                 {/* Location Filter Tag */}
-                <div className="flex items-center text-sm font-medium text-orange-600">
-                    <MapPin size={18} className="mr-2" />
+                <div className="flex items-center text-xs md:text-sm font-medium text-orange-600">
+                    <MapPin size={16} className="mr-1 md:mr-2" />
                     Showing apartments near you
                 </div>
                 
                 {/* Best Match Dropdown */}
                 <div className="relative inline-block text-left">
                     <select
-                        className="py-2 pl-3 pr-8 text-sm border border-gray-300 rounded-md bg-white text-gray-700 appearance-none focus:outline-none focus:ring-1 focus:ring-orange-500 cursor-pointer"
+                        className="py-1.5 md:py-2 pl-2 md:pl-3 pr-6 md:pr-8 text-xs md:text-sm border border-gray-300 rounded-md bg-white text-gray-700 appearance-none focus:outline-none focus:ring-1 focus:ring-orange-500 cursor-pointer w-full sm:w-auto"
                         defaultValue="Best Match"
                     >
                         <option value="Best Match">Best Match</option>
@@ -223,15 +223,15 @@ const NearYouComponent = () => {
                         <option value="Newest">Newest</option>
                     </select>
                     <ArrowDown 
-                        size={16} 
-                        className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
+                        size={14} 
+                        className="absolute right-1.5 md:right-2 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
                     />
                 </div>
             </div>
           </div>
 
           {/* Property Listings */}
-          <div className="space-y-6">
+          <div className="space-y-4 md:space-y-6">
             {mockProperties.map((property, index) => (
               <PropertyCard 
                 key={index} 
