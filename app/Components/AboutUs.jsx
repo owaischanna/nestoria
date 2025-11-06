@@ -42,7 +42,7 @@ const AboutUsSection = () => {
           <div className="relative z-10">
             <SectionHeader title="WHO ARE WE" />
             <p className="mt-4 text-gray-700 leading-relaxed text-lg">
-             Nestoria is the human-centered housing platform that connects elderly homeowners with international students and young professionals seeking affordable, meaningful accomodation in Spain. Together, we turn spare rooms into shared homes and build stronger communities.
+            Habisolo is the human-centered housing platform that connects elderly homeowners with international students and young professionals seeking affordable, meaningful accomodation in Spain. Together, we turn spare rooms into shared homes and build stronger communities.
             </p>
             <div className="mt-8 flex space-x-4">
               <button className="py-2 px-6 border border-yellow-700 text-yellow-700 rounded-full hover:bg-yellow-50 transition duration-150 font-medium">

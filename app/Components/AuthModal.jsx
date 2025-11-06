@@ -95,13 +95,14 @@ const AuthModal = ({ isOpen, onClose }) => {
         <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-green-500 to-emerald-400"></div>
         
         {/* Close Button - Fixed and Working */}
-        <button
-          onClick={onClose}
-          className="absolute top-3 right-3 z-10 w-8 h-8 flex items-center justify-center bg-white rounded-full shadow-md hover:shadow-lg hover:scale-110 active:scale-95 transition-all duration-200 group border border-gray-200"
-          aria-label="Close modal"
-        >
-          <X size={16} className="text-gray-600 group-hover:text-gray-800 transition-colors" />
-        </button>
+      {/* Close Button - FIXED: Increased z-index to z-50 to guarantee clickability */}
+ <button
+onClick={onClose} // This handler correctly calls the function to close the modal
+ className="absolute top-3 right-3 z-50 w-8 h-8 flex items-center justify-center bg-white rounded-full shadow-md hover:shadow-lg hover:scale-110 active:scale-95 transition-all duration-200 group border border-gray-200"
+ aria-label="Close modal"
+ >
+ <X size={36} className="text-gray-600 group-hover:text-gray-800 transition-colors" />
+ </button>
 
         <div className="relative z-10">
           {/* Header Section - Compact */}

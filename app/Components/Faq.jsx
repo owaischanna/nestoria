@@ -39,8 +39,8 @@ const FAQSection = () => {
   // Static data for the FAQ content
   const faqs = [
     {
-      question: 'What Is Nestoria?',
-      answer: 'Nestoria is a human-centered housing platform that connects elderly homeowners with international students and young professionals seeking affordable, meaningful accommodation in shared homes.',
+      question: 'What Is Habisolo?',
+      answer: 'Habisolo is a human-centered housing platform that connects elderly homeowners with international students and young professionals seeking affordable, meaningful accommodation in shared homes.',
     },
     {
       question: 'Is It Safe?',
@@ -55,8 +55,8 @@ const FAQSection = () => {
       answer: "We commit to transparent insurance options and a clear protocol for handling damages. This includes a security deposit and a mediation service to ensure fair resolution for both the host and the guest.",
     },
     {
-      question: 'Where Is Nestoria Available?',
-      answer: 'Currently, Nestoria is primarily focused on connecting communities across major cities in Spain. We are rapidly expanding and plan to launch in other European countries soon!',
+      question: 'Where Is Habisolo Available?',
+      answer: 'Currently, habisolo is primarily focused on connecting communities across major cities in Spain. We are rapidly expanding and plan to launch in other European countries soon!',
     },
   ];
 

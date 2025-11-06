@@ -30,7 +30,7 @@ const HowItWorksFlow = () => (
       {/* Step 1 */}
       <ProcessStep 
         title="Sign Up & Verify"
-        description="Create your Nestoria account. Verify your ID for safety."
+        description="Create your Habisolo account. Verify your ID for safety."
         color="green"
       />
       
@@ -117,7 +117,7 @@ const OurImpactsSection = () => (
         </ul>
 
         <p className="text-lg text-gray-800 leading-relaxed mt-4">
-          Nestoria solves both problems by connecting supply with demand affordably, safely, and with human value.
+          Habisolo solves both problems by connecting supply with demand affordably, safely, and with human value.
         </p>
       </div>
 

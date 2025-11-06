@@ -43,9 +43,12 @@ export default function HostHeader() {
     );
   }
 
-  return (
-    <header className="flex items-center justify-between p-4 bg-white shadow-sm">
-      <div className="flex-1 max-w-lg relative">
+return (
+  <header className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-4 bg-white shadow-sm gap-3 sm:gap-0">
+
+    {/* ✅ Search Bar — centered on mobile + pushed down to avoid hamburger overlap */}
+    <div className="w-full sm:flex-1 sm:max-w-lg relative mt-10 sm:mt-0 flex justify-center">
+      <div className="w-full max-w-sm relative">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 h-5 w-5" />
         <input
           type="text"
@@ -53,32 +56,40 @@ export default function HostHeader() {
           className="w-full pl-10 pr-4 py-2 rounded-full text-sm bg-gray-100 focus:ring-green-500 focus:outline-none"
         />
       </div>
+    </div>
 
-      <div className="flex items-center space-x-4">
-        <Bell className="text-gray-500 h-6 w-6 cursor-pointer hover:text-green-600" />
+    {/* ✅ Right Section */}
+    <div className="flex items-center justify-between sm:justify-end sm:space-x-4 w-full sm:w-auto">
 
-        <div className="flex items-center space-x-2 bg-gray-100 p-1 rounded-full cursor-pointer">
-          <div className="bg-green-600 text-white rounded-full h-8 w-8 flex items-center justify-center text-sm font-semibold">
-            {displayInitials ? (
-              displayInitials
-            ) : (
-              <User className="w-4 h-4" />
-            )}
-          </div>
-          <div className="text-sm hidden sm:block">
-            <p className="font-semibold text-gray-800">{displayName}</p>
-            <p className="text-gray-500 text-xs">{user?.email}</p>
-          </div>
+      <Bell className="text-gray-500 h-6 w-6 cursor-pointer hover:text-green-600" />
+
+      {/* ✅ User Icon + Info */}
+      <div className="flex items-center space-x-2 bg-gray-100 p-1 rounded-full cursor-pointer">
+        <div className="bg-green-600 text-white rounded-full h-8 w-8 flex items-center justify-center text-sm font-semibold">
+          {displayInitials ? (
+            displayInitials
+          ) : (
+            <User className="w-4 h-4" />
+          )}
         </div>
 
-        <button
-          onClick={logout}
-          title="Logout"
-          className="p-2 rounded-full hover:bg-gray-200 transition"
-        >
-          <LogOut className="h-5 w-5 text-gray-600" />
-        </button>
+        {/* ✅ Hide text on very small screens */}
+        <div className="text-sm hidden md:block">
+          <p className="font-semibold text-gray-800">{displayName}</p>
+          <p className="text-gray-500 text-xs">{user?.email}</p>
+        </div>
       </div>
-    </header>
-  );
+
+      {/* ✅ Logout */}
+      <button
+        onClick={logout}
+        title="Logout"
+        className="p-2 rounded-full hover:bg-gray-200 transition"
+      >
+        <LogOut className="h-5 w-5 text-gray-600" />
+      </button>
+    </div>
+  </header>
+);
+
 }

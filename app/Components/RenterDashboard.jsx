@@ -16,6 +16,8 @@ import {
   ChevronRight,
   Loader2,
   ArrowLeft,
+  Menu,
+  X,
 } from "lucide-react";
 import MultiStepApplicationForm from "./MultiStepApplicationForm";
 
@@ -51,8 +53,8 @@ const ListingBadge = ({ text, type }) => {
 };
 
 const ListingCard = ({ listing, onApply, onMessage }) => (
-  <div className="bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden flex h-48">
-    <div className="w-48 h-full flex-shrink-0">
+  <div className="bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden flex flex-col sm:flex-row h-auto sm:h-48">
+    <div className="w-full sm:w-48 h-48 sm:h-full flex-shrink-0">
       <img
         src={
           listing.photos?.cover ||
@@ -62,8 +64,8 @@ const ListingCard = ({ listing, onApply, onMessage }) => (
         className="w-full h-full object-cover"
       />
     </div>
-    <div className="flex-1 p-4 flex justify-between">
-      <div>
+    <div className="flex-1 p-4 flex flex-col sm:flex-row justify-between">
+      <div className="flex-1">
         <h5 className="text-lg font-semibold text-gray-800">
           {listing.listingTitle}
         </h5>
@@ -78,22 +80,22 @@ const ListingCard = ({ listing, onApply, onMessage }) => (
           <ListingBadge text="Student Friendly" type="student" />
           <ListingBadge text="Available Now" type="available" />
         </div>
-        <div className="flex space-x-3">
+        <div className="flex flex-wrap gap-2 sm:space-x-3">
           <button
             onClick={() => onMessage(listing.hostId._id || listing.hostId)}
-            className="text-sm font-medium text-green-700 border border-green-700 px-3 py-1 rounded hover:bg-green-50 transition"
+            className="text-sm font-medium text-green-700 border border-green-700 px-3 py-1 rounded hover:bg-green-50 transition flex-1 sm:flex-none text-center"
           >
             Message
           </button>
           <button
             onClick={() => onApply(listing)}
-            className="text-sm font-medium text-white bg-amber-600 px-3 py-1 rounded hover:bg-amber-700 transition"
+            className="text-sm font-medium text-white bg-amber-600 px-3 py-1 rounded hover:bg-amber-700 transition flex-1 sm:flex-none text-center"
           >
             Apply
           </button>
         </div>
       </div>
-      <div className="text-right">
+      <div className="flex justify-between items-center sm:items-end sm:flex-col mt-4 sm:mt-0">
         <p className="text-xl font-bold text-green-700">
           €{listing.monthlyRent}
           <span className="text-sm font-normal text-gray-500">/month</span>
@@ -206,24 +208,27 @@ const DashboardContent = ({ onApply }) => {
   return (
     <main
       ref={scrollContainerRef}
-      className="flex-1 p-8 bg-gray-50 overflow-y-auto"
+      className="flex-1 p-4 sm:p-6 lg:p-8 bg-gray-50 overflow-y-auto"
     >
-      <div className="flex justify-between items-center mb-8">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-6 sm:mb-8 gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-800">
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-800">
             Welcome, {user?.firstName}!
           </h1>
-          <p className="text-gray-600 mt-1">
+          <p className="text-gray-600 mt-1 text-sm sm:text-base">
             Let's find your perfect home away from home
           </p>
         </div>
-        <div className="flex items-center space-x-2 bg-white border border-yellow-400 text-yellow-700 p-2 rounded-full text-sm font-medium shadow-sm cursor-pointer hover:bg-yellow-50">
-          <User className="w-4 h-4" />
-          <span>Profile **90% Complete**</span>
-          <ChevronRight className="w-4 h-4" />
+        <div className="flex items-center justify-between sm:justify-start bg-white border border-yellow-400 text-yellow-700 p-2 sm:p-3 rounded-full text-sm font-medium shadow-sm cursor-pointer hover:bg-yellow-50 w-full sm:w-auto">
+          <div className="flex items-center">
+            <User className="w-4 h-4 mr-2" />
+            <span className="text-xs sm:text-sm">Profile 90% Complete</span>
+          </div>
+          <ChevronRight className="w-4 h-4 ml-2" />
         </div>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+      
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-8 sm:mb-10">
         <StatCard
           iconName="FileText"
           title="Active Applications"
@@ -253,9 +258,10 @@ const DashboardContent = ({ onApply }) => {
           colorClass="border-l-4 border-purple-500"
         />
       </div>
-      <div className="mb-10">
+      
+      <div className="mb-8 sm:mb-10">
         <h2 className="text-xl font-bold text-gray-800 mb-4">Recommended for You</h2>
-        <div className="space-y-4">
+        <div className="space-y-4 sm:space-y-6">
           {listings.length > 0 ? (
             listings.map((listing) => (
               <ListingCard
@@ -267,7 +273,7 @@ const DashboardContent = ({ onApply }) => {
             ))
           ) : (
             !isLoading && (
-              <p className="text-center text-gray-500 py-10">
+              <p className="text-center text-gray-500 py-8 sm:py-10 text-sm sm:text-base">
                 No recommendations found at the moment.
               </p>
             )
@@ -279,7 +285,7 @@ const DashboardContent = ({ onApply }) => {
           </div>
         )}
         {!hasMore && listings.length > 0 && (
-          <p className="text-center text-gray-500 py-6">
+          <p className="text-center text-gray-500 py-6 text-sm sm:text-base">
             You've seen all recommendations.
           </p>
         )}
@@ -291,6 +297,17 @@ const DashboardContent = ({ onApply }) => {
 const ApplicationFormView = ({ onClose, selectedListing }) => (
   <div className="flex-1 bg-gray-50 overflow-y-auto">
     <div className="h-full">
+      <div className="p-4 sm:p-6 bg-white border-b border-gray-200 flex items-center">
+        <button
+          onClick={onClose}
+          className="flex items-center text-gray-600 hover:text-gray-800 mr-4"
+        >
+          <ArrowLeft className="w-5 h-5" />
+        </button>
+        <h2 className="text-lg sm:text-xl font-semibold text-gray-800">
+          Application Form
+        </h2>
+      </div>
       <MultiStepApplicationForm onClose={onClose} listing={selectedListing} />
     </div>
   </div>
