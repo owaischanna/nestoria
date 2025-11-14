@@ -19,6 +19,12 @@ export default function HostHeader() {
     return null;
   };
 
+  // --- NEW FUNCTIONALITY ADDED ---
+ const handleNotificationClick = () => {
+ // Calls the desired route when the Bell icon is clicked
+ router.push('/hostnotification'); 
+  };
+
   const displayName = user?.firstName
     ? `${user.firstName} ${user.lastName || ''}`.trim()
     : user?.email || 'Loading...';
@@ -61,7 +67,10 @@ return (
     {/* ✅ Right Section */}
     <div className="flex items-center justify-between sm:justify-end sm:space-x-4 w-full sm:w-auto">
 
-      <Bell className="text-gray-500 h-6 w-6 cursor-pointer hover:text-green-600" />
+<Bell 
+            className="text-gray-500 h-6 w-6 cursor-pointer hover:text-green-600" 
+            onClick={handleNotificationClick} 
+        />
 
       {/* ✅ User Icon + Info */}
       <div className="flex items-center space-x-2 bg-gray-100 p-1 rounded-full cursor-pointer">

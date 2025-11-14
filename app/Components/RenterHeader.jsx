@@ -1,11 +1,12 @@
 "use client";
-
 import { useState, useEffect } from "react";
 import { Search, Bell, LogOut, Heart, User } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
+import { useRouter } from "next/navigation";
 
 export default function RenterHeader() {
   const { user, loading, logout } = useAuth();
+  const router = useRouter();
 
   const getInitials = (firstName, lastName) => {
     if (firstName && lastName) {
@@ -15,6 +16,11 @@ export default function RenterHeader() {
     }
     return null;
   };
+
+const handleNotificationClick = () => {
+    // Now 'router' is defined and accessible
+    router.push('/renternotification');
+};
 
   const displayName = user
     ? `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.email
@@ -59,10 +65,12 @@ export default function RenterHeader() {
       {/* ✅ Right Section */}
       <div className="flex items-center justify-between sm:justify-end sm:space-x-4 w-full sm:w-auto">
         
-        {/* Heart Icon - Hidden on mobile */}
-        <Heart className="h-6 w-6 text-gray-500 hover:text-red-500 cursor-pointer hidden sm:block" />
+
         
-        <Bell className="text-gray-500 h-6 w-6 cursor-pointer hover:text-green-600" />
+     <Bell 
+            className="text-gray-500 h-6 w-6 cursor-pointer hover:text-green-600" 
+            onClick={handleNotificationClick}
+        />
 
         {/* ✅ User Icon + Info */}
         <div className="flex items-center space-x-2 bg-gray-100 p-1 rounded-full cursor-pointer">

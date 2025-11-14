@@ -1,69 +1,101 @@
-// GuestNotificationsPage.js
+// NotificationsPage.js
 "use client";
 
 import { useState } from 'react';
-import RenterHeader from './RenterHeader';
-import RenterSidebar from './RenterSidebar';
-import { Bell, Search, ChevronDown, Trash2, CheckCircle, Clock, DollarSign, AlertTriangle, Home, X, TrendingUp, TrendingDown, RefreshCw } from 'lucide-react';
+import HostHeader from './HostHeader';
+import HostSidebar from './HostSidebar';
+import { Bell, Search, ChevronDown, Trash2, CheckCircle, Clock, MessageSquare, PlusSquare, Star, DollarSign, AlertTriangle, X } from 'lucide-react';
 
 // --- Dummy Data Structure ---
-const initialGuestNotifications = [
+const initialNotifications = [
     {
         id: 1,
-        type: 'Application Approved!',
-        title: "Modern Studio in Cantabria",
-        subtitle: "Great news! Your application has been approved. You can now proceed with the payment and check-in process.",
+        type: 'Payment Overdue',
+        title: "Alex Kim's rent payment is 3 days overdue",
         time: '2 minutes ago',
-        icon: CheckCircle,
-        iconColor: 'text-green-600',
-        bgColor: 'bg-green-50',
-        actionText: 'View Details',
-        group: 'Today',
-    },
-    {
-        id: 2,
-        type: 'Refund Completed!',
-        title: "Refund has been processed and completed successfully",
-        subtitle: "You've received a rent payment of €950 from Alex Kim for November 2024.",
-        time: '2 minutes ago',
-        icon: DollarSign,
-        iconColor: 'text-green-600',
-        bgColor: 'bg-green-50',
-        actionText: 'View Details',
-        group: 'Today',
-    },
-    {
-        id: 3,
-        type: 'Refund Request Approved!',
-        title: "Your refund request has been approved and is being processed.",
-        time: '2 minutes ago',
-        icon: RefreshCw,
-        iconColor: 'text-orange-500',
-        bgColor: 'bg-orange-50',
-        actionText: 'View Details',
-        group: 'Today',
-    },
-    {
-        id: 4,
-        type: 'Refund Request Denied!',
-        title: "Your refund request has been denied and is being processed.",
-        time: '2 minutes ago',
-        icon: RefreshCw,
+        icon: Clock,
         iconColor: 'text-red-500',
         bgColor: 'bg-red-50',
         actionText: 'View Details',
         group: 'Today',
     },
     {
-        id: 5,
-        type: 'Dispute Resolved',
-        title: "Thank you for accepting the dispute. The payment has been processed and the case is now closed.",
-        time: '2 minutes ago',
-        icon: AlertTriangle,
+        id: 2,
+        type: 'Payment Received',
+        title: "You've received a rent payment of €950 from Alex Kim for November 2024.",
+        time: '1 hour ago',
+        icon: DollarSign,
         iconColor: 'text-green-600',
         bgColor: 'bg-green-50',
-        actionText: 'View Details',
+        actionText: 'View Receipt',
         group: 'Today',
+    },
+    {
+        id: 3,
+        type: 'New Message',
+        title: "Alex Kim sent a message",
+        subtitle: "Hi! I'm interested in the room near Campus. When would be a good time to visit and...",
+        time: '1 hour ago',
+        icon: MessageSquare,
+        iconColor: 'text-blue-500',
+        bgColor: 'bg-blue-50',
+        actionText: 'View Message',
+        group: 'Today',
+    },
+    {
+        id: 4,
+        type: 'New Booking Request',
+        title: "Sarah Chen has submitted a booking request for your listing (€750/month).",
+        time: '2 minutes ago',
+        icon: PlusSquare,
+        iconColor: 'text-green-600',
+        bgColor: 'bg-green-50',
+        actionText: 'View Request',
+        group: 'Yesterday',
+    },
+    {
+        id: 5,
+        type: 'New Review',
+        title: "Guest has left a review for your listing",
+        time: '2 minutes ago',
+        icon: Star,
+        iconColor: 'text-yellow-500',
+        bgColor: 'bg-yellow-50',
+        actionText: 'View Details',
+        group: 'Yesterday',
+    },
+    {
+        id: 6,
+        type: 'Payment Deducted',
+        title: "Refund payment has been processed from your account",
+        time: '2 minutes ago',
+        icon: DollarSign,
+        iconColor: 'text-red-500',
+        bgColor: 'bg-red-50',
+        actionText: 'View Details',
+        group: 'Yesterday',
+    },
+    {
+        id: 7,
+        type: 'Refund Request',
+        title: "Sarah Johnson submitted a refund request for their booking.",
+        time: '2 minutes ago',
+        icon: Clock,
+        iconColor: 'text-blue-500',
+        bgColor: 'bg-blue-50',
+        actionText: 'View Details',
+        group: 'Yesterday',
+    },
+    {
+        id: 8,
+        type: 'Dispute Filed',
+        title: "Alex Kim filed a dispute against you",
+        time: '2 minutes ago',
+        icon: AlertTriangle,
+        iconColor: 'text-red-600',
+        bgColor: 'bg-red-50',
+        actionText: 'View Details',
+        group: 'Yesterday',
     },
 ];
 
@@ -122,13 +154,9 @@ const NotificationItem = ({ notification, onDelete }) => {
 };
 
 // --- Main Component ---
-const GuestNotificationsPage = () => {
-    const [notifications, setNotifications] = useState(initialGuestNotifications);
-    
-    // Calculate counts based on dummy data
-    const totalCount = notifications.length;
-    const todayCount = notifications.filter(n => n.group === 'Today').length;
-    const unreadCount = 5;
+const NotificationsPage = () => {
+    const [notifications, setNotifications] = useState(initialNotifications);
+    const [unreadCount, setUnreadCount] = useState(5);
 
     const handleDelete = (id) => {
         setNotifications(prev => prev.filter(notif => notif.id !== id));
@@ -136,6 +164,7 @@ const GuestNotificationsPage = () => {
     };
 
     const handleMarkAllRead = () => {
+        setUnreadCount(0);
         console.log("All notifications marked as read.");
     };
 
@@ -148,43 +177,48 @@ const GuestNotificationsPage = () => {
         return acc;
     }, {});
 
-    // Ensure 'Today' appears first
-    const orderedGroups = ['Today', ...Object.keys(groupedNotifications).filter(g => g !== 'Today')];
+    const totalCount = notifications.length;
+    const todayCount = notifications.filter(n => n.group === 'Today').length;
+    
+    const orderedGroups = ['Today', 'Yesterday', ...Object.keys(groupedNotifications).filter(g => g !== 'Today' && g !== 'Yesterday')];
 
     return (
         <div className="flex min-h-screen bg-gray-50">
             
-            <RenterSidebar />
+            <HostSidebar />
 
             <div className="flex-1 flex flex-col min-w-0">
-                <RenterHeader />
+                <HostHeader />
                 
                 <main className="flex-1 p-3 sm:p-4 md:p-6 lg:p-8">
                     
                     {/* Header */}
                     <div className="max-w-7xl mx-auto w-full">
                         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6">
-                            <div className="flex flex-col sm:flex-row sm:items-center gap-3">
-                                <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 flex items-center">
-                                    <Bell className="w-5 h-5 sm:w-6 sm:h-6 mr-2 text-green-600" />
-                                    Notifications
-                                </h1>
-                                {/* Date Filter */}
-                                <button className="flex items-center py-1.5 sm:py-2 px-2 sm:px-3 border border-gray-300 rounded-lg text-gray-700 bg-white hover:bg-gray-50 text-xs sm:text-sm transition duration-150 whitespace-nowrap flex-shrink-0 self-start sm:self-auto">
+                            <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 flex items-center">
+                                <Bell className="w-5 h-5 sm:w-6 sm:h-6 mr-2 text-green-600" />
+                                Notifications
+                            </h1>
+                            <div className="flex items-center space-x-2 sm:space-x-4 overflow-x-auto">
+                                {/* Search/Filter */}
+                                <div className="relative min-w-[120px] sm:min-w-0">
+                                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-3 h-3 sm:w-4 sm:h-4 text-gray-400" />
+                                    <input 
+                                        type="text" 
+                                        placeholder="Search" 
+                                        className="py-1.5 sm:py-2 pl-8 pr-3 sm:pl-10 sm:pr-4 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500 transition duration-150 w-full text-xs sm:text-sm"
+                                    />
+                                </div>
+                                <button className="flex items-center py-1.5 sm:py-2 px-2 sm:px-3 border border-gray-300 rounded-lg text-gray-700 bg-white hover:bg-gray-50 text-xs sm:text-sm transition duration-150 whitespace-nowrap flex-shrink-0">
                                     Last 30 days <ChevronDown className="w-3 h-3 sm:w-4 sm:h-4 ml-1" />
                                 </button>
                             </div>
                         </div>
 
-                        {/* Sub-Header / Description */}
-                        <p className="text-sm sm:text-base text-gray-600 mb-4 sm:mb-6">
-                            Stay on top of your rent payments and receive important updates
-                        </p>
-
                         {/* Stats Section */}
-                        <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4 mb-6 sm:mb-8 max-w-md">
+                        <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4 mb-6 sm:mb-8 max-w-lg">
                             <StatCard icon={Bell} title="Total" count={totalCount} color="text-gray-800" bgColor="bg-gray-200" />
-                            <StatCard icon={TrendingUp} title="Today" count={todayCount} color="text-orange-500" bgColor="bg-orange-100" />
+                            <StatCard icon={CheckCircle} title="Today" count={todayCount} color="text-orange-500" bgColor="bg-orange-100" />
                             <StatCard icon={X} title="Unread" count={unreadCount} color="text-red-500" bgColor="bg-red-100" />
                         </div>
 
@@ -197,7 +231,7 @@ const GuestNotificationsPage = () => {
                                     onClick={handleMarkAllRead}
                                     className="py-1 px-2 sm:px-3 text-xs sm:text-sm font-medium text-green-600 hover:text-green-700 transition duration-150 whitespace-nowrap"
                                 >
-                                    Mark as read
+                                    Mark All Read
                                 </button>
                             </div>
 
@@ -207,7 +241,7 @@ const GuestNotificationsPage = () => {
 
                                 return (
                                     <section key={group} className="pt-2 sm:pt-4">
-                                        <h2 className="text-lg sm:text-xl font-bold mb-3 sm:mb-4 text-gray-700">
+                                        <h2 className={`text-lg sm:text-xl font-bold mb-3 sm:mb-4 ${group === 'Yesterday' ? 'border-t border-gray-200 pt-3 sm:pt-4' : ''}`}>
                                             {group}
                                         </h2>
                                         <div className="space-y-2 sm:space-y-3">
@@ -244,4 +278,4 @@ const StatCard = ({ icon: Icon, title, count, color, bgColor }) => (
     </div>
 );
 
-export default GuestNotificationsPage;
+export default NotificationsPage;

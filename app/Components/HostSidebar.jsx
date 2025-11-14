@@ -40,6 +40,7 @@ const mainMenuItems = [
   { id: "messages", label: "Messages", icon: MessageSquare, dot: true, route: "/hostmessage" },
   { id: "reviews", label: "Reviews", icon: Star, route: "/hostreview" },
   { id: "payments", label: "Earnings", icon: EuroIcon, route: "/hostearning" },
+    { id: "disputes", label: "Disputes", icon: ClipboardList, route: "/hostdispute" },
 ];
 
 const accountItems = [
