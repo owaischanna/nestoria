@@ -6,30 +6,39 @@ import { useAuth } from "../context/AuthContext";
 import toast from "react-hot-toast";
 import {
   Heart,
-  Bell,
   User,
   MapPin,
   DollarSign,
-  EuroIcon,
   FileText,
   Briefcase,
   ChevronRight,
   Loader2,
   ArrowLeft,
-  Menu,
-  X,
 } from "lucide-react";
 import MultiStepApplicationForm from "./MultiStepApplicationForm";
 
-const iconsMap = { FileText, Heart, EuroIcon, Briefcase };
+const iconsMap = { FileText, Heart, DollarSign, Briefcase };
 
-const StatCard = ({ iconName, title, value, subtext, colorClass }) => {
+const StatCard = ({ iconName, title, value, subtext, colorClass, isLoading }) => {
   const Icon = iconsMap[iconName];
+
+  if (isLoading) {
+    return (
+      <div className={`p-4 rounded-xl shadow-sm border border-gray-100 flex flex-col justify-between bg-white ${colorClass || "border-l-4 border-gray-300"}`}>
+        <div className="flex justify-between items-start mb-2">
+          <h4 className="text-xs font-semibold text-gray-500 uppercase">{title}</h4>
+          {Icon && <Icon className="h-5 w-5 text-gray-400" />}
+        </div>
+        <div className="animate-pulse">
+          <div className="h-8 bg-gray-200 rounded w-20 mb-2"></div>
+          <div className="h-3 bg-gray-200 rounded w-24"></div>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div
-      className={`p-4 rounded-xl shadow-sm border border-gray-100 flex flex-col justify-between bg-white ${colorClass || "border-l-4 border-gray-300"
-        }`}
-    >
+    <div className={`p-4 rounded-xl shadow-sm border border-gray-100 flex flex-col justify-between bg-white ${colorClass || "border-l-4 border-gray-300"}`}>
       <div className="flex justify-between items-start mb-2">
         <h4 className="text-xs font-semibold text-gray-500 uppercase">{title}</h4>
         {Icon && <Icon className="h-5 w-5 text-gray-400" />}
@@ -56,10 +65,7 @@ const ListingCard = ({ listing, onApply, onMessage }) => (
   <div className="bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden flex flex-col sm:flex-row h-auto sm:h-48">
     <div className="w-full sm:w-48 h-48 sm:h-full flex-shrink-0">
       <img
-        src={
-          listing.photos?.cover ||
-          "https://via.placeholder.com/192x192?text=No+Image"
-        }
+        src={listing.photos?.cover || "https://via.placeholder.com/192x192?text=No+Image"}
         alt={listing.listingTitle}
         className="w-full h-full object-cover"
       />
@@ -110,6 +116,8 @@ const DashboardContent = ({ onApply }) => {
   const { user } = useAuth();
   const router = useRouter();
   const [listings, setListings] = useState([]);
+  const [dashboardStats, setDashboardStats] = useState(null);
+  const [statsLoading, setStatsLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [isInitiatingChat, setIsInitiatingChat] = useState(false);
@@ -117,12 +125,36 @@ const DashboardContent = ({ onApply }) => {
   const scrollContainerRef = useRef(null);
   const hasFetchedInitial = useRef(false);
 
+  const fetchDashboardStats = async () => {
+    try {
+      console.log('📊 Fetching dashboard stats...');
+      const response = await fetch('/api/dashboard/stats', {
+        method: 'GET',
+        credentials: 'include'
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+
+        if (data.success) {
+          setDashboardStats(data);
+          console.log('✅ Dashboard stats loaded:', data);
+        }
+      } else {
+        console.error('❌ Failed to fetch dashboard stats');
+      }
+    } catch (error) {
+      console.error('❌ Error fetching dashboard stats:', error);
+    } finally {
+      setStatsLoading(false);
+    }
+  };
+
   const fetchListings = useCallback(
     async (pageToFetch) => {
       if (isLoading || !hasMore) return;
       setIsLoading(true);
-      const toastId =
-        pageToFetch === 1 ? toast.loading("Finding recommendations...") : null;
+      const toastId = pageToFetch === 1 ? toast.loading("Finding recommendations...") : null;
 
       try {
         const response = await fetch(`/api/listings/all?page=${pageToFetch}&limit=5`);
@@ -180,10 +212,10 @@ const DashboardContent = ({ onApply }) => {
     }
   };
 
-  // Fixed: Only fetch once on mount
   useEffect(() => {
     if (user && !hasFetchedInitial.current) {
       hasFetchedInitial.current = true;
+      fetchDashboardStats();
       fetchListings(1);
     }
   }, [user]);
@@ -193,8 +225,7 @@ const DashboardContent = ({ onApply }) => {
     const handleScroll = () => {
       if (
         container &&
-        container.scrollHeight - container.scrollTop - container.clientHeight <
-        200 &&
+        container.scrollHeight - container.scrollTop - container.clientHeight < 200 &&
         !isLoading &&
         hasMore
       ) {
@@ -219,46 +250,80 @@ const DashboardContent = ({ onApply }) => {
             Let's find your perfect home away from home
           </p>
         </div>
-        <div className="flex items-center justify-between sm:justify-start bg-white border border-yellow-400 text-yellow-700 p-2 sm:p-3 rounded-full text-sm font-medium shadow-sm cursor-pointer hover:bg-yellow-50 w-full sm:w-auto">
-          <div className="flex items-center">
-            <User className="w-4 h-4 mr-2" />
-            <span className="text-xs sm:text-sm">Profile 90% Complete</span>
+
+        {statsLoading ? (
+          <div className="animate-pulse bg-gray-200 h-12 w-48 rounded-full"></div>
+        ) : dashboardStats?.profile?.completion && (
+          <div
+            onClick={() => router.push('/renterprofile')}
+            className="flex items-center justify-between sm:justify-start bg-white border border-yellow-400 text-yellow-700 p-2 sm:p-3 rounded-full text-sm font-medium shadow-sm cursor-pointer hover:bg-yellow-50 w-full sm:w-auto"
+          >
+            <div className="flex items-center">
+              <User className="w-4 h-4 mr-2" />
+              <span className="text-xs sm:text-sm">
+                Profile {dashboardStats.profile.completion.percentage}% Complete
+              </span>
+            </div>
+            <ChevronRight className="w-4 h-4 ml-2" />
           </div>
-          <ChevronRight className="w-4 h-4 ml-2" />
-        </div>
+        )}
       </div>
-      
+
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-8 sm:mb-10">
         <StatCard
           iconName="FileText"
           title="Active Applications"
-          value={<>3</>}
-          subtext="2 pending responses"
+          value={dashboardStats?.applications?.total || 0}
+          subtext={
+            dashboardStats?.applications?.pendingResponses
+              ? `${dashboardStats.applications.pendingResponses} pending response${dashboardStats.applications.pendingResponses !== 1 ? 's' : ''}`
+              : 'No pending responses'
+          }
           colorClass="border-l-4 border-blue-500"
+          isLoading={statsLoading}
         />
         <StatCard
           iconName="Heart"
           title="Saved Favorites"
-          value={<>7</>}
-          subtext="3 new this week"
+          value={dashboardStats?.favorites?.total || 0}
+          subtext={
+            dashboardStats?.favorites?.newThisWeek
+              ? `${dashboardStats.favorites.newThisWeek} new this week`
+              : 'No new favorites'
+          }
           colorClass="border-l-4 border-red-500"
+          isLoading={statsLoading}
         />
         <StatCard
           iconName="DollarSign"
           title="Budget Range"
-          value={<>€600-900</>}
+          value={dashboardStats?.budget?.range || 'Not Set'}
           subtext="Per month"
           colorClass="border-l-4 border-green-500"
+          isLoading={statsLoading}
         />
         <StatCard
           iconName="Briefcase"
           title="Preferred Move-in"
-          value={<span className="text-xl font-bold text-purple-600">Sep 1</span>}
-          subtext="2024"
+          value={
+            dashboardStats?.moveIn?.date && dashboardStats.moveIn.isSet ? (
+              <span className="text-xl font-bold text-purple-600">
+                {new Date(dashboardStats.moveIn.rawDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+              </span>
+            ) : (
+              'Not Set'
+            )
+          }
+          subtext={
+            dashboardStats?.moveIn?.isSet
+              ? new Date(dashboardStats.moveIn.rawDate).getFullYear().toString()
+              : 'Set your preferred date'
+          }
           colorClass="border-l-4 border-purple-500"
+          isLoading={statsLoading}
         />
       </div>
-      
+
       <div className="mb-8 sm:mb-10">
         <h2 className="text-xl font-bold text-gray-800 mb-4">Recommended for You</h2>
         <div className="space-y-4 sm:space-y-6">
@@ -328,9 +393,7 @@ const RenterDashboard = () => {
   if (loading || !user || user.role !== "renter") {
     return (
       <div className="flex h-screen w-full items-center justify-center bg-gray-50">
-        <p className="text-lg font-semibold text-gray-700">
-          Loading your dashboard...
-        </p>
+        <Loader2 className="w-8 h-8 animate-spin text-orange-500" />
       </div>
     );
   }

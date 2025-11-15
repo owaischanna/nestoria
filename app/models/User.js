@@ -23,11 +23,11 @@ const RenterBasicInfoSchema = new mongoose.Schema({
 
 const RenterAboutSchema = new mongoose.Schema({
     bio: { type: String },
-    isStudent: { type: Boolean, default: true },
+    isStudent: { type: Boolean, default: false }, // Changed default to false, will be set by form
     university: { type: String },
     program: { type: String },
     degreeLevel: { type: String },
-    occupation: { type: String }
+    occupation: { type: String } // This field will be used
 });
 
 const RenterHousingSchema = new mongoose.Schema({
@@ -48,6 +48,19 @@ const RenterDocumentSchema = new mongoose.Schema({
     isVerified: { type: Boolean, default: false }
 });
 
+const NotificationPreferencesSchema = new mongoose.Schema({
+    applicationStatus: { email: { type: Boolean, default: true }, push: { type: Boolean, default: true } },
+    newListingAlerts: { email: { type: Boolean, default: true }, push: { type: Boolean, default: false } },
+    priceDropAlerts: { email: { type: Boolean, default: true }, sms: { type: Boolean, default: false } },
+    bookingConfirmations: { email: { type: Boolean, default: true } },
+}, { _id: false });
+
+const PrivacySettingsSchema = new mongoose.Schema({
+    profileVisibility: { type: String, enum: ['Public', 'Hosts Only', 'Private'], default: 'Public' },
+    shareContactInfo: { type: Boolean, default: true },
+    locationPrecision: { type: String, enum: ['Exact', 'Approximate'], default: 'Approximate' },
+}, { _id: false });
+
 const UserSchema = new mongoose.Schema({
     firstName: { type: String, required: true, trim: true },
     lastName: { type: String, required: true, trim: true },
@@ -55,11 +68,17 @@ const UserSchema = new mongoose.Schema({
     password: { type: String, required: true },
     role: { type: String, enum: ['renter', 'host'], required: true },
     country: String,
+    // 'state' and 'zip' are removed from signup, but can stay in model
     state: String,
     zip: String,
     phone: String,
     isPhoneVerified: { type: Boolean, default: false },
     isEmailVerified: { type: Boolean, default: true },
+
+    // --- NEW FIELDS ADDED ---
+    gender: { type: String },
+    currentLocation: { type: String },
+    // ------------------------
 
     // Host Fields
     profileImage: { type: String },
@@ -72,11 +91,15 @@ const UserSchema = new mongoose.Schema({
     emergencyContact: EmergencyContactSchema,
     hostingPreferences: HostingPreferencesSchema,
 
-    // Renter Fields
+    // Renter Fields (Now populated at signup)
     renterBasic: RenterBasicInfoSchema,
     renterAbout: RenterAboutSchema,
     renterHousing: RenterHousingSchema,
     renterDocuments: [RenterDocumentSchema],
+    wantsLoginAlerts: { type: Boolean, default: true },
+    uiTheme: { type: String, enum: ['light', 'dark'], default: 'light' },
+    notificationPreferences: { type: NotificationPreferencesSchema, default: () => ({}) },
+    privacySettings: { type: PrivacySettingsSchema, default: () => ({}) },
 
 }, { timestamps: true });
 

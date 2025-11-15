@@ -1,45 +1,18 @@
 "use client";
 
-import { Heart, MapPin, Wifi, Users, Calendar, ArrowDown, DollarSign } from 'lucide-react'; 
-import { useState } from 'react';
+import { Heart, MapPin, Wifi, Users, Calendar, ArrowDown, DollarSign, Loader2, ArrowLeft } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { useAuth } from '../context/AuthContext';
+import toast from 'react-hot-toast'; // Added toast import
 import RenterHeader from './RenterHeader';
 import Sidebar from './RenterSidebar';
 import MultiStepApplicationForm from './MultiStepApplicationForm';
 
-// --- Mock Data ---
-const mockProperties = [
-    {
-      title: "Cozy Room Near Campus",
-      location: "Greenwich Village, Manhattan",
-      price: 750,
-      features: ["Private Room", "2 Roommates", "WiFi Included", "5min to Subway"],
-      tags: ["Student Friendly", "Female Only", "Available Sep 1"],
-      imageSrc: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=80&q=80",
-      currency: "€"
-    },
-    {
-      title: "Modern Room in Brooklyn",
-      location: "Williamsburg, Brooklyn",
-      price: 700,
-      features: ["Shared Room", "WiFi Included"],
-      tags: ["Student Friendly", "Pet Friendly", "Available Sep 25"],
-      imageSrc: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=80&q=80",
-      currency: "€"
-    },
-    {
-      title: "Modern Room in Brooklyn",
-      location: "Williamsburg, Brooklyn",
-      price: 650,
-      features: ["Private Room", "WiFi Included"],
-      tags: ["Fully Furnished", "Female Only", "Available Sep 30"],
-      imageSrc: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=80&q=80",
-      currency: "€"
-    },
-];
-
-// --- Sub-Component: PropertyCard ---
-const PropertyCard = ({ property, onApplyClick }) => {
-  const { title, location, price, features, tags, imageSrc, currency } = property;
+// Updated PropertyCard to handle favorite logic
+const PropertyCard = ({ property, onApplyClick, isFavorited, onToggleFavorite }) => {
+  const { title, location, price, features, tags, imageSrc, currency, id } = property; // Added 'id'
+  const [isTogglingFavorite, setIsTogglingFavorite] = useState(false);
 
   const tagColors = {
     "Student Friendly": "bg-blue-100 text-blue-800",
@@ -54,9 +27,9 @@ const PropertyCard = ({ property, onApplyClick }) => {
     "WiFi Included": <Wifi size={16} />,
     "Shared Room": <Users size={16} />,
   };
-  
+
   const formatTag = (tag) => {
-    if (tag.startsWith("Available")) {
+    if (tag.startsWith("Available") || tag.startsWith("Min Stay")) {
       return (
         <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-500 text-white">
           <Calendar size={12} className="mr-1" />
@@ -72,25 +45,41 @@ const PropertyCard = ({ property, onApplyClick }) => {
     );
   };
 
+  // Added favorite click handler
+  const handleFavoriteClick = async (e) => {
+    e.stopPropagation();
+    if (isTogglingFavorite) return;
+    setIsTogglingFavorite(true);
+    try {
+      await onToggleFavorite(id);
+    } finally {
+      setIsTogglingFavorite(false);
+    }
+  };
+
   return (
     <div className="flex flex-col md:flex-row border border-gray-200 rounded-xl shadow-sm overflow-hidden bg-white p-4 md:p-6 transition-shadow hover:shadow-lg">
-      
-      {/* 1. Image and Heart Icon */}
+
       <div className="relative w-full md:w-[240px] h-48 md:h-48 rounded-lg overflow-hidden mb-4 md:mb-0 md:mr-6 flex-shrink-0">
         <img
-          src={imageSrc}
+          src={imageSrc || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=240&q=80"}
           alt={title}
           className="w-full h-full object-cover"
         />
+        {/* Updated favorite button */}
         <button
-          className="absolute top-2 right-2 p-1 bg-white rounded-full shadow-md hover:scale-105 transition"
-          aria-label="Add to favorites"
+          onClick={handleFavoriteClick}
+          disabled={isTogglingFavorite}
+          className="absolute top-2 right-2 p-1 bg-white rounded-full shadow-md hover:scale-105 transition disabled:opacity-50"
+          aria-label={isFavorited ? "Remove from favorites" : "Add to favorites"}
         >
-          <Heart size={18} className="text-gray-500 fill-gray-100" />
+          <Heart
+            size={18}
+            className={isFavorited ? "text-red-500 fill-red-500" : "text-gray-500 fill-gray-100"}
+          />
         </button>
       </div>
 
-      {/* 2. Details and Actions */}
       <div className="flex-grow flex flex-col justify-between py-1">
         <div>
           <h2 className="text-lg md:text-xl font-semibold text-gray-900 mb-1">{title}</h2>
@@ -99,7 +88,6 @@ const PropertyCard = ({ property, onApplyClick }) => {
             {location}
           </div>
 
-          {/* Features */}
           <div className="flex flex-wrap gap-x-3 md:gap-x-4 gap-y-1 text-xs md:text-sm text-gray-600 mb-3 md:mb-4">
             {features.map((feature, index) => (
               <span key={index} className="flex items-center">
@@ -109,7 +97,6 @@ const PropertyCard = ({ property, onApplyClick }) => {
             ))}
           </div>
 
-          {/* Tags */}
           <div className="flex flex-wrap gap-1 md:gap-2 mb-3 md:mb-4">
             {tags.map((tag, index) => (
               <span key={index}>{formatTag(tag)}</span>
@@ -117,12 +104,11 @@ const PropertyCard = ({ property, onApplyClick }) => {
           </div>
         </div>
 
-        {/* Action Buttons */}
         <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3">
           <button className="px-3 md:px-4 py-2 border border-gray-300 text-xs md:text-sm font-medium rounded-md text-gray-700 hover:bg-gray-50 transition">
             Message Host
           </button>
-          <button 
+          <button
             className="px-3 md:px-4 py-2 text-xs md:text-sm font-medium rounded-md text-white bg-orange-500 hover:bg-orange-600 transition shadow-md"
             onClick={() => onApplyClick(property)}
           >
@@ -131,7 +117,6 @@ const PropertyCard = ({ property, onApplyClick }) => {
         </div>
       </div>
 
-      {/* 3. Price */}
       <div className="w-full md:w-1/6 flex justify-start md:justify-end text-left md:text-right pt-3 md:pt-1 flex-shrink-0 mt-3 md:mt-0 border-t md:border-t-0 border-gray-200 md:border-none pt-3 md:pt-0">
         <div className="text-lg md:text-xl font-bold text-gray-700">
           <span className="text-xl md:text-2xl">{currency}{price}</span>
@@ -142,105 +127,319 @@ const PropertyCard = ({ property, onApplyClick }) => {
   );
 };
 
+const ListingResultComponent = () => {
+  const { user: authUser, loading: authLoading } = useAuth();
+  const router = useRouter();
 
-// --- Main Component: Under800 ---
-const LisitngResultComponent = () => {
+  const [properties, setProperties] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [showApplicationForm, setShowApplicationForm] = useState(false);
   const [selectedProperty, setSelectedProperty] = useState(null);
+  const [totalProperties, setTotalProperties] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [sortBy, setSortBy] = useState('bestMatch');
+  const [favoriteStatus, setFavoriteStatus] = useState({}); // Added favorite state
+
+  const fetchProperties = async () => {
+    if (!authUser) return;
+
+    setLoading(true);
+    setError(null);
+
+    try {
+      const params = new URLSearchParams({
+        sortBy,
+        page: currentPage.toString(),
+        limit: '10'
+      });
+
+      console.log('🔍 Fetching properties under €800...');
+      const response = await fetch(`/api/listings/under-800?${params}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        credentials: 'include'
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to fetch properties');
+      }
+
+      const data = await response.json();
+      console.log('✅ Received', data.properties.length, 'properties');
+
+      if (data.success) {
+        setProperties(data.properties);
+        setTotalProperties(data.totalProperties);
+        setTotalPages(data.totalPages);
+        checkFavoriteStatus(data.properties.map(p => p.id)); // Check favorites
+      } else {
+        throw new Error(data.message || 'Failed to load properties');
+      }
+    } catch (err) {
+      setError(err.message);
+      console.error('❌ Error fetching properties:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Added function to check favorite status
+  const checkFavoriteStatus = async (listingIds) => {
+    if (!listingIds || listingIds.length === 0) return;
+
+    try {
+      console.log('🔍 Checking favorite status for', listingIds.length, 'listings');
+
+      const response = await fetch('/api/favorites/check', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        credentials: 'include',
+        body: JSON.stringify({ listingIds })
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setFavoriteStatus(data.favorites);
+        console.log('✅ Favorite status checked:', data.count, 'favorited');
+      }
+    } catch (error) {
+      console.error('❌ Error checking favorites:', error);
+    }
+  };
+
+  // Added function to toggle favorite
+  const handleToggleFavorite = async (listingId) => {
+    try {
+      console.log('❤️ Toggling favorite for listing:', listingId);
+
+      const response = await fetch('/api/favorites/toggle', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        credentials: 'include',
+        body: JSON.stringify({ listingId })
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setFavoriteStatus(prev => ({
+          ...prev,
+          [listingId]: data.isFavorited
+        }));
+
+        toast.success(data.message);
+        console.log('✅', data.action, 'favorite');
+      } else {
+        toast.error(data.message || 'Failed to update favorites');
+      }
+    } catch (error) {
+      console.error('❌ Error toggling favorite:', error);
+      toast.error('Failed to update favorites');
+    }
+  };
+
+  useEffect(() => {
+    if (!authLoading && (!authUser || authUser.role !== 'renter')) {
+      router.push('/');
+      return;
+    }
+    if (authUser) {
+      fetchProperties();
+    }
+  }, [authUser, authLoading, router, sortBy, currentPage]);
 
   const handleApplyClick = (property) => {
+    console.log('📝 Apply clicked for:', property.title);
     setSelectedProperty(property);
     setShowApplicationForm(true);
   };
 
   const handleCloseForm = () => {
+    console.log('❌ Closing application form');
     setShowApplicationForm(false);
     setSelectedProperty(null);
   };
 
-  // Show application form on the same page
+  const handleSortChange = (e) => {
+    const value = e.target.value;
+    console.log('🔄 Changing sort to:', value);
+    const sortMap = {
+      'Best Match': 'bestMatch',
+      'PriceLow': 'priceLow',
+      'PriceHigh': 'priceHigh',
+      'Newest': 'newest'
+    };
+    setSortBy(sortMap[value] || 'bestMatch');
+    setCurrentPage(1);
+  };
+
   if (showApplicationForm && selectedProperty) {
     return (
       <div className="flex min-h-screen bg-gray-50">
-        {/* Sidebar - First in layout */}
         <Sidebar />
-        
-        {/* Main Content Area */}
         <div className="flex-1 flex flex-col">
-          {/* RenterHeader - Below Sidebar */}
           <RenterHeader />
-          
-          {/* Application Form Content */}
-          <div className="flex-1 overflow-y-auto">
-            <MultiStepApplicationForm 
-              property={selectedProperty}
-              onClose={handleCloseForm}
-            />
+          <div className="flex-1 overflow-y-auto bg-gray-50">
+            <div className="h-full">
+              <div className="p-4 sm:p-6 bg-white border-b border-gray-200 flex items-center sticky top-0 z-10">
+                <button
+                  onClick={handleCloseForm}
+                  className="flex items-center text-gray-600 hover:text-gray-800 mr-4 transition-colors"
+                >
+                  <ArrowLeft className="w-5 h-5 mr-2" />
+                  <span className="text-sm font-medium">Back to Listings</span>
+                </button>
+                <h2 className="text-lg sm:text-xl font-semibold text-gray-800">
+                  Apply for {selectedProperty.title}
+                </h2>
+              </div>
+              <MultiStepApplicationForm
+                property={selectedProperty}
+                listing={selectedProperty}
+                onClose={handleCloseForm}
+              />
+            </div>
           </div>
         </div>
       </div>
     );
   }
 
-  // Show property listings
+  if (authLoading) {
+    return (
+      <div className="flex min-h-screen bg-gray-50">
+        <Sidebar />
+        <div className="flex-1 flex flex-col">
+          <RenterHeader />
+          <main className="flex-1 flex items-center justify-center">
+            <Loader2 className="w-8 h-8 animate-spin text-orange-500" />
+          </main>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="flex min-h-screen bg-gray-50">
-      {/* Sidebar - First in layout */}
       <Sidebar />
-      
-      {/* Main Content Area */}
+
       <div className="flex-1 flex flex-col">
-        {/* RenterHeader - Below Sidebar */}
         <RenterHeader />
-        
-        {/* Main Content Area (Scrollable) */}
+
         <div className="flex-1 p-4 md:p-6 lg:p-8 xl:p-10 overflow-y-auto">
-          
-          {/* Heading and Summary Section */}
-          <div className="mb-4 md:mb-6 p-4 md:p-6 rounded-xl shadow-lg border border-gray-100">
+
+          <div className="mb-4 md:mb-6 p-4 md:p-6 rounded-xl shadow-lg border border-gray-100 bg-white">
             <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Under €800</h1>
-            <p className="text-xs md:text-sm text-gray-600 mb-3 md:mb-4">47 properties found</p>
+            <p className="text-xs md:text-sm text-gray-600 mb-3 md:mb-4">
+              {totalProperties} {totalProperties === 1 ? 'property' : 'properties'} found
+            </p>
 
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between border-t pt-3 md:pt-4 gap-2">
-                {/* Quick Filter Tag */}
-                <div className="flex items-center text-xs md:text-sm font-medium text-orange-600">
-                    <DollarSign size={16} className="mr-1 md:mr-2" />
-                    Showing under €800 apartments
-                </div>
-                
-                {/* Best Match Dropdown */}
-                <div className="relative inline-block text-left">
-                    <select
-                        className="py-1.5 md:py-2 pl-2 md:pl-3 pr-6 md:pr-8 text-xs md:text-sm border border-gray-300 rounded-md bg-white text-gray-700 appearance-none focus:outline-none focus:ring-1 focus:ring-orange-500 cursor-pointer w-full sm:w-auto"
-                        defaultValue="Best Match"
-                    >
-                        <option value="Best Match">Best Match</option>
-                        <option value="PriceLow">Price (Low to High)</option>
-                        <option value="PriceHigh">Price (High to Low)</option>
-                        <option value="Newest">Newest</option>
-                    </select>
-                    <ArrowDown 
-                        size={14} 
-                        className="absolute right-1.5 md:right-2 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
-                    />
-                </div>
+              <div className="flex items-center text-xs md:text-sm font-medium text-orange-600">
+                <DollarSign size={16} className="mr-1 md:mr-2" />
+                Showing apartments under €800
+              </div>
+
+              <div className="relative inline-block text-left">
+                <select
+                  className="py-1.5 md:py-2 pl-2 md:pl-3 pr-6 md:pr-8 text-xs md:text-sm border border-gray-300 rounded-md bg-white text-gray-700 appearance-none focus:outline-none focus:ring-1 focus:ring-orange-500 cursor-pointer w-full sm:w-auto"
+                  defaultValue="Best Match"
+                  onChange={handleSortChange}
+                >
+                  <option value="Best Match">Best Match</option>
+                  <option value="PriceLow">Price (Low to High)</option>
+                  <option value="PriceHigh">Price (High to Low)</option>
+                  <option value="Newest">Newest</option>
+                </select>
+                <ArrowDown
+                  size={14}
+                  className="absolute right-1.5 md:right-2 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
+                />
+              </div>
             </div>
           </div>
 
-          {/* Property Listings */}
-          <div className="space-y-4 md:space-y-6">
-            {mockProperties.map((property, index) => (
-              <PropertyCard 
-                key={index} 
-                property={property} 
-                onApplyClick={handleApplyClick}
-              /> 
-            ))}
-          </div>
+          {loading && (
+            <div className="flex justify-center items-center py-12">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500"></div>
+            </div>
+          )}
+
+          {error && (
+            <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+              <p className="text-red-800 text-sm">{error}</p>
+              <button
+                onClick={fetchProperties}
+                className="mt-2 text-xs text-red-600 hover:text-red-800 underline"
+              >
+                Try again
+              </button>
+            </div>
+          )}
+
+          {!loading && !error && properties.length === 0 && (
+            <div className="bg-gray-50 border border-gray-200 rounded-lg p-8 text-center">
+              <DollarSign size={48} className="mx-auto text-gray-400 mb-4" />
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">No properties found under €800</h3>
+              <p className="text-sm text-gray-600">
+                Check back later for new listings or adjust your budget.
+              </p>
+            </div>
+          )}
+
+          {!loading && !error && properties.length > 0 && (
+            <>
+              <div className="space-y-4 md:space-y-6">
+                {properties.map((property) => (
+                  // Updated PropertyCard call
+                  <PropertyCard
+                    key={property.id}
+                    property={property}
+                    onApplyClick={handleApplyClick}
+                    isFavorited={favoriteStatus[property.id] || false}
+                    onToggleFavorite={handleToggleFavorite}
+                  />
+                ))}
+              </div>
+
+              {totalPages > 1 && (
+                <div className="flex justify-center items-center gap-2 mt-8">
+                  <button
+                    onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                    disabled={currentPage === 1}
+                    className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    Previous
+                  </button>
+
+                  <span className="text-sm text-gray-600">
+                    Page {currentPage} of {totalPages}
+                  </span>
+
+                  <button
+                    onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                    disabled={currentPage === totalPages}
+                    className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    Next
+                  </button>
+                </div>
+              )}
+            </>
+          )}
         </div>
       </div>
     </div>
   );
 };
 
-export default LisitngResultComponent;
+export default ListingResultComponent;
